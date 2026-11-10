@@ -348,6 +348,7 @@ export class LightboxModel implements LightboxState {
 			phase: 'opening',
 			preset: this.preset,
 			crossfade: this.#crossfades(trigger, 'open'),
+			content: this.contentEl,
 			from: triggerMorph(trigger),
 			update: () => {
 				reveal();
@@ -384,6 +385,7 @@ export class LightboxModel implements LightboxState {
 			phase: 'closing',
 			preset: this.preset,
 			crossfade: this.#crossfades(trigger, 'close'),
+			content: this.contentEl,
 			from,
 			update: () => {
 				flushSync(() => {

@@ -35,10 +35,8 @@
 			const returnFocus = document.activeElement as HTMLElement | null;
 			const html = document.documentElement;
 			const { overflow, paddingRight } = html.style;
-			if (!matchMedia('(pointer: coarse)').matches) {
-				html.style.paddingRight = `${window.innerWidth - html.clientWidth}px`;
-				html.style.overflow = 'hidden';
-			}
+			html.style.paddingRight = `${window.innerWidth - html.clientWidth}px`;
+			html.style.overflow = 'hidden';
 			queueMicrotask(() => el.focus({ preventScroll: true }));
 			const unguard = guardNativePinch();
 			return () => {

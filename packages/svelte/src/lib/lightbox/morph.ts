@@ -11,6 +11,7 @@ export const PRESETS: Record<MorphPreset, { duration: number; easing: string }> 
 };
 
 const NAME = 'lightbox-morph';
+const SCRIM = 'lightbox-scrim';
 
 /** True when the browser can run the morph and the user allows motion. */
 export function canMorph() {
@@ -153,12 +154,13 @@ interface MorphOptions {
 	phase: 'opening' | 'closing';
 	preset: MorphPreset;
 	crossfade: boolean;
+	content?: HTMLElement;
 	from: HTMLElement;
 	update: () => HTMLElement | null | undefined;
 }
 
 /** Runs one shared-element view transition from `from` to whatever `update` returns. */
-export async function morph({ phase, preset, crossfade, from, update }: MorphOptions) {
+export async function morph({ phase, preset, crossfade, content, from, update }: MorphOptions) {
 	const html = document.documentElement;
 	const [triggerVar, itemVar] =
 		phase === 'opening'
@@ -170,11 +172,15 @@ export async function morph({ phase, preset, crossfade, from, update }: MorphOpt
 	html.setAttribute('data-ramka-vt-preset', preset);
 	html.toggleAttribute('data-ramka-crossfade', crossfade);
 	html.toggleAttribute('data-ramka-vt-isolate', pageNeedsIsolation());
+	const liveRoot = !!content && snapshotRootMoves();
+	html.toggleAttribute('data-ramka-live-root', liveRoot);
+	if (liveRoot) content.style.setProperty('view-transition-name', SCRIM, 'important');
 	html.style.setProperty(triggerVar, visibleRadius(from));
 	from.style.setProperty('view-transition-name', NAME, 'important');
 
 	const transition = document.startViewTransition(() => {
 		from.style.removeProperty('view-transition-name');
+		if (liveRoot && phase === 'opening') from.style.visibility = 'hidden';
 		to = update();
 		if (!to) return;
 		html.style.setProperty(itemVar, visibleRadius(to));
@@ -185,7 +191,9 @@ export async function morph({ phase, preset, crossfade, from, update }: MorphOpt
 		await transition.finished;
 	} finally {
 		(to as HTMLElement | null | undefined)?.style.removeProperty('view-transition-name');
-		for (const name of ['view-transition', 'vt-preset', 'crossfade', 'vt-isolate'])
+		content?.style.removeProperty('view-transition-name');
+		if (liveRoot && phase === 'opening') from.style.removeProperty('visibility');
+		for (const name of ['view-transition', 'vt-preset', 'crossfade', 'vt-isolate', 'live-root'])
 			html.removeAttribute(`data-ramka-${name}`);
 		html.style.removeProperty(triggerVar);
 		html.style.removeProperty(itemVar);
@@ -215,6 +223,7 @@ const easing = `var(--lightbox-vt-easing, ${PRESETS.default.easing})`;
 export const CSS = `
 :root[data-ramka-vt-isolate] * { view-transition-name: none !important; }
 ${presetRules}
+:root[data-ramka-live-root] { view-transition-name: none; }
 :root[data-ramka-view-transition]::view-transition { --lightbox-morph-old-opacity: 1; }
 :root[data-ramka-view-transition="opening"]::view-transition {
   --lightbox-morph-new-opacity: 1;
@@ -231,7 +240,9 @@ ${presetRules}
 
 @media (prefers-reduced-motion: no-preference) {
   :root[data-ramka-view-transition]::view-transition-old(root),
-  :root[data-ramka-view-transition]::view-transition-new(root) {
+  :root[data-ramka-view-transition]::view-transition-new(root),
+  ::view-transition-old(${SCRIM}),
+  ::view-transition-new(${SCRIM}) {
     animation-duration: ${duration};
     animation-timing-function: var(--lightbox-vt-root-easing, ${ROOT_EASING});
   }
