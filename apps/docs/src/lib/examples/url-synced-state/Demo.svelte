@@ -21,10 +21,19 @@
 	const urlIndex = $derived(photoIndexFromPathname(pathname));
 	const deepLinkVisit = untrack(() => urlIndex !== -1);
 
-	let open = $derived(urlIndex !== -1);
-	let index = $derived(Math.max(urlIndex, 0));
-	let opening = 0;
+	let open = $state(deepLinkVisit);
+	let index = $state(untrack(() => Math.max(urlIndex, 0)));
+	let written: string | undefined;
 	let ssr = $state(deepLinkVisit);
+
+	$effect.pre(() => {
+		const i = urlIndex;
+		if (pathname === written) return void (written = undefined);
+		untrack(() => {
+			open = i !== -1;
+			if (i !== -1) index = i;
+		});
+	});
 
 	function hydrated() {
 		let frame = requestAnimationFrame(() => {
@@ -34,11 +43,12 @@
 	}
 
 	function write(path: string, push: boolean) {
+		written = path;
 		goto(path, { shallow: true, replace: !push });
 	}
 
 	function onOpenChange(next: boolean) {
-		if (next) write(`${BASE_PATH}/${galleryPhotos[opening].id}`, true);
+		if (next) write(`${BASE_PATH}/${galleryPhotos[index].id}`, true);
 		else write(BASE_PATH, false);
 	}
 
@@ -72,7 +82,6 @@
 					style="grid-row-end: span {span(
 						photo
 					)}; margin-bottom: calc(var(--masonry-unit) * {GAP_UNITS})"
-					onclick={() => (opening = i)}
 				>
 					<img
 						src={photo.src}

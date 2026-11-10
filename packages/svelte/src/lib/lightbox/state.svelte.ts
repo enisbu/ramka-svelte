@@ -266,6 +266,12 @@ export class LightboxModel implements LightboxState {
 		return this.stageMorph ?? item?.morph ?? item?.media ?? item?.image ?? item?.el;
 	}
 
+	/** Backdrop and content, which fade as their own groups when the page stays live during a morph. */
+	layers() {
+		const backdrop = this.portal?.querySelector<HTMLElement>('[data-ramka-backdrop]');
+		return [backdrop, this.contentEl].filter((el): el is HTMLElement => !!el);
+	}
+
 	/** Scrolls the close target into view for one `scrollTriggerIntoView` moment. */
 	scrollTrigger(type: ScrollTriggerOption['type']) {
 		const options = scrollOption(this.#props.scrollTriggerIntoView, type);
@@ -348,7 +354,7 @@ export class LightboxModel implements LightboxState {
 			phase: 'opening',
 			preset: this.preset,
 			crossfade: this.#crossfades(trigger, 'open'),
-			content: this.contentEl,
+			layers: this.layers(),
 			from: triggerMorph(trigger),
 			update: () => {
 				reveal();
@@ -385,7 +391,7 @@ export class LightboxModel implements LightboxState {
 			phase: 'closing',
 			preset: this.preset,
 			crossfade: this.#crossfades(trigger, 'close'),
-			content: this.contentEl,
+			layers: this.layers(),
 			from,
 			update: () => {
 				flushSync(() => {
