@@ -1,14 +1,14 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
-	import { getLightbox } from './state.svelte.js';
+	import { getModel } from './state.svelte.js';
 
 	interface Props extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
 		children?: Snippet<[{ current: number; total: number }]>;
 	}
 
 	let { children, ...rest }: Props = $props();
-	const lb = getLightbox();
+	const lb = getModel();
 </script>
 
 <div data-ramka-counter aria-live="polite" aria-atomic="true" {...rest}>

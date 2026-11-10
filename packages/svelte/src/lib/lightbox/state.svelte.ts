@@ -33,27 +33,50 @@ export interface ZoomApi {
 	readonly maxZoom: number;
 	readonly panDistance: number;
 	readonly gesturing: boolean;
+	readonly canZoomIn: boolean;
+	readonly canZoomOut: boolean;
 	zoomIn(): void;
 	zoomOut(): void;
 	reset(): void;
 	pan(dx: number, dy: number): void;
 }
 
-export interface RootProps {
-	open: boolean;
-	index: number;
-	loop: boolean;
+interface RootProps {
+	loop?: boolean;
 	count?: number;
 	dir?: TextDirection;
-	viewTransition: boolean | MorphPreset;
-	morphTo: MorphTo;
+	viewTransition?: boolean | MorphPreset;
+	morphTo?: MorphTo;
 	scrollTriggerIntoView?: ScrollTriggerIntoView;
-	awaitImageDecode: boolean | number;
+	awaitImageDecode?: boolean | number;
 	onOpenChange?: (open: boolean) => void;
 	onOpenChangeComplete?: (open: boolean) => void;
 	onValueChange?: (value: number, meta: { source: NavigationSource }) => void;
 	onBeforeOpen?: (ctx: BeforeOpenContext) => void | Promise<void>;
 	onBeforeClose?: (ctx: BeforeCloseContext) => void;
+}
+
+interface Binding {
+	open: boolean;
+	index: number;
+}
+
+/** Read-only view of the enclosing Root for custom parts, returned by `getLightbox()`. */
+export interface LightboxState {
+	readonly open: boolean;
+	readonly index: number;
+	readonly count: number;
+	readonly loop: boolean;
+	readonly dir: TextDirection;
+	readonly canPrev: boolean;
+	readonly canNext: boolean;
+	readonly caption: Caption | undefined;
+	readonly zoomed: boolean;
+	readonly pulling: boolean;
+	readonly pullDismissing: boolean;
+	go(index: number, source?: NavigationSource): void;
+	show(index?: number): Promise<void>;
+	close(): Promise<void>;
 }
 
 export interface TriggerEntry {
@@ -68,6 +91,7 @@ export interface TriggerEntry {
 export interface ItemEntry {
 	el: HTMLElement;
 	caption?: Caption;
+	media?: HTMLElement;
 	morph?: HTMLElement;
 	image?: HTMLImageElement;
 }
@@ -84,10 +108,12 @@ export const triggerMorph = (t: TriggerEntry) => t.morph ?? t.image ?? morphSour
 const DECODE_CAP = 200;
 
 /** Shared state of one lightbox: open/index, registries, gesture flags and the morph flows. */
-export class LightboxState {
-	#props: RootProps;
+export class LightboxModel implements LightboxState {
+	#readProps: () => RootProps;
+	#binding: Binding;
 	readonly id: string;
 	present = $state(false);
+	preparing = $state(false);
 	scrolling = $state(false);
 	pulling = $state(false);
 	pullSnapping = $state(false);
@@ -100,13 +126,9 @@ export class LightboxState {
 	slidesEl = $state<HTMLElement>();
 	items = new SvelteMap<number, ItemEntry>();
 	triggers = new SvelteSet<TriggerEntry>();
-	count = $derived.by(() => this.items.size || this.#props.count || 0);
-	zoomed = $derived.by(() => {
-		const zoom = this.activeZoom;
-		return !!zoom && zoom.zoom > zoom.minZoom + 0.01;
-	});
+	count = $derived(this.items.size || this.#props.count || 0);
+	zoomed = $derived(!!this.activeZoom?.canZoomOut);
 	zooming = $derived(!!this.activeZoom?.gesturing);
-	media = new Map<number, HTMLElement>();
 	zooms = new SvelteMap<number, ZoomApi>();
 	portal: HTMLElement | null = null;
 	stageMorph: HTMLElement | undefined;
@@ -118,23 +140,28 @@ export class LightboxState {
 	#settled: boolean;
 	#abort = new AbortController();
 
-	constructor(props: RootProps, id: string) {
-		this.#props = props;
+	constructor(binding: Binding, props: () => RootProps, id: string) {
+		this.#binding = binding;
+		this.#readProps = props;
 		this.id = id;
-		this.present = props.open;
-		this.#settled = props.open;
+		this.present = binding.open;
+		this.#settled = binding.open;
+	}
+
+	get #props() {
+		return this.#readProps();
 	}
 
 	get open() {
-		return this.#props.open;
+		return this.#binding.open;
 	}
 
 	get index() {
-		return this.#props.index;
+		return this.#binding.index;
 	}
 
 	get loop() {
-		return this.#props.loop;
+		return this.#props.loop ?? false;
 	}
 
 	get dir(): TextDirection {
@@ -160,11 +187,11 @@ export class LightboxState {
 	}
 
 	get canPrev() {
-		return this.#props.loop || this.index > 0;
+		return this.loop || this.index > 0;
 	}
 
 	get canNext() {
-		return this.#props.loop || this.index < this.count - 1;
+		return this.loop || this.index < this.count - 1;
 	}
 
 	get activeZoom() {
@@ -175,14 +202,14 @@ export class LightboxState {
 	setIndex(i: number, source: NavigationSource) {
 		if (i === this.index) return;
 		this.direction = i > this.index ? 'forward' : 'backward';
-		this.#props.index = i;
+		this.#binding.index = i;
 		this.#props.onValueChange?.(i, { source });
 	}
 
 	/** Moves to slide `i`; `instant` skips the smooth scroll (used inside a crossfade). */
-	go(i: number, source: NavigationSource, instant = false) {
+	go(i: number, source: NavigationSource = 'imperative', instant = false) {
 		if (!this.count || this.scrolling) return;
-		const next = resolveIndex(i, this.count, this.#props.loop);
+		const next = resolveIndex(i, this.count, this.loop);
 		if (next === this.index) return;
 		this.instant = instant;
 		if (source !== 'thumbnail') this.strip?.scrub(next);
@@ -198,7 +225,7 @@ export class LightboxState {
 
 	/** Trigger that receives the close morph, picked by `morphTo`. */
 	closeTarget(): TriggerEntry | undefined {
-		const { morphTo } = this.#props;
+		const morphTo = this.#props.morphTo ?? 'active';
 		if (morphTo === 'origin') return this.triggerAt(this.origin);
 		const active = this.triggerAt(this.index);
 		if (active || morphTo === 'active') return active;
@@ -212,7 +239,7 @@ export class LightboxState {
 	/** The element the morph lands on for item `i`: Stage morphRef, item morphRef, Media, image, then the item. */
 	destination(i: number) {
 		const item = this.items.get(i);
-		return this.stageMorph ?? item?.morph ?? this.media.get(i) ?? item?.image ?? item?.el;
+		return this.stageMorph ?? item?.morph ?? item?.media ?? item?.image ?? item?.el;
 	}
 
 	/** Scrolls the close target into view for one `scrollTriggerIntoView` moment. */
@@ -242,65 +269,72 @@ export class LightboxState {
 		return trigger.crossfade === 'both' || trigger.crossfade === phase;
 	}
 
+	#cancelPrepare() {
+		this.#abort.abort();
+		flushSync(() => (this.preparing = false));
+	}
+
 	async show(index = this.index, via?: TriggerEntry | string, source: NavigationSource = 'imperative') {
-		if (this.open || this.#busy) return;
+		if (this.open || this.preparing || this.#busy) return;
 		const trigger =
 			(typeof via === 'string' ? [...this.triggers].find((t) => t.id === via) : via) || this.triggerAt(index);
+		const morphs = this.#morphs(trigger);
 		this.#abort.abort();
 		const { signal } = (this.#abort = new AbortController());
-		const commit = () =>
+		flushSync(() => {
+			this.origin = index;
+			this.opener = trigger;
+			this.setIndex(index, source);
+			this.preparing = morphs;
+		});
+		const reveal = () => {
 			flushSync(() => {
-				this.origin = index;
-				this.opener = trigger;
-				this.setIndex(index, source);
-				this.#props.open = true;
+				this.preparing = false;
+				this.#binding.open = true;
 				this.present = true;
 			});
-		if (!this.#morphs(trigger)) {
-			commit();
 			this.#props.onOpenChange?.(true);
-			return;
+		};
+		if (!morphs) return reveal();
+		const entry = this.items.get(index);
+		const to = this.destination(index);
+		const host = entry?.media;
+		const image = entry?.image ?? host?.querySelector('img');
+		const removePlaceholder =
+			image && host && !image.complete
+				? paintPlaceholder(image, trigger.image ?? trigger.el.querySelector('img'), host)
+				: null;
+		try {
+			const wait = this.#props.awaitImageDecode ?? true;
+			if (to && !removePlaceholder) await decoded(to, wait === true ? DECODE_CAP : wait || 0);
+			if (!signal.aborted) await this.#props.onBeforeOpen?.({ destination: to ?? null, signal });
+		} catch {
+			if (!signal.aborted) this.#cancelPrepare();
 		}
+		if (signal.aborted) return removePlaceholder?.();
 		this.#busy = true;
-		this.#props.onOpenChange?.(true);
-		let item: HTMLElement | undefined;
-		let removePlaceholder: (() => void) | null = null;
-		let image: HTMLImageElement | null | undefined;
+		entry?.el.setAttribute('data-skip-fade', '');
 		this.transition = morph({
 			phase: 'opening',
 			preset: this.preset,
 			crossfade: this.#crossfades(trigger, 'open'),
 			from: triggerMorph(trigger),
-			update: async () => {
-				commit();
-				item = this.items.get(index)?.el;
-				item?.setAttribute('data-skip-fade', '');
-				const to = this.destination(index);
-				if (!to) return to;
-				const host = this.media.get(index);
-				image = this.items.get(index)?.image ?? host?.querySelector('img');
-				if (image && host && !image.complete)
-					removePlaceholder = paintPlaceholder(image, trigger.image ?? trigger.el.querySelector('img'), host);
-				const wait = this.#props.awaitImageDecode;
-				if (!removePlaceholder) await decoded(to, wait === true ? DECODE_CAP : wait || 0);
-				await this.#props.onBeforeOpen?.({ destination: to, signal });
+			update: () => {
+				reveal();
 				return to;
 			}
-		});
-		try {
-			await this.transition;
-		} finally {
-			this.#busy = false;
-			item?.removeAttribute('data-skip-fade');
-			const remove = removePlaceholder as (() => void) | null;
-			if (remove && image && !image.complete) {
-				image.addEventListener('load', remove, { once: true });
-				image.addEventListener('error', remove, { once: true });
-			} else remove?.();
-		}
+		}).catch(() => {});
+		await this.transition;
+		this.#busy = false;
+		entry?.el.removeAttribute('data-skip-fade');
+		if (removePlaceholder && image && !image.complete) {
+			image.addEventListener('load', removePlaceholder, { once: true });
+			image.addEventListener('error', removePlaceholder, { once: true });
+		} else removePlaceholder?.();
 	}
 
 	async close() {
+		if (this.preparing) return this.#cancelPrepare();
 		if (!this.open || this.#busy) return;
 		this.#abort.abort();
 		const trigger = this.closeTarget();
@@ -309,7 +343,7 @@ export class LightboxState {
 		this.scrollTrigger('onClose');
 		this.#props.onOpenChange?.(false);
 		if (!from || !this.#morphs(trigger)) {
-			this.#props.open = false;
+			this.#binding.open = false;
 			this.pullDismissing = false;
 			return;
 		}
@@ -322,31 +356,31 @@ export class LightboxState {
 			from,
 			update: () => {
 				flushSync(() => {
-					this.#props.open = false;
+					this.#binding.open = false;
 					this.present = false;
 				});
 				return to;
 			}
-		});
-		try {
-			await this.transition;
-		} finally {
-			this.#busy = false;
-			this.pullDismissing = false;
-			this.settle(false);
-		}
+		}).catch(() => {});
+		await this.transition;
+		this.#busy = false;
+		this.pullDismissing = false;
+		this.settle(false);
 	}
 }
 
-export const [getLightbox, setLightbox] = createContext<LightboxState>();
+export const [getModel, setModel] = createContext<LightboxModel>();
+
+/** State of the enclosing Root for custom parts; throws outside a Root. */
+export const getLightbox: () => LightboxState = getModel;
 
 /** Imperative handle from `createHandle()`; pass it to Root and to detached Triggers. */
 export class LightboxHandle {
-	state = $state<LightboxState>();
+	state = $state<LightboxModel>();
 
 	/** Opens at `index`; `triggerId` picks the registered Trigger the morph starts from. */
 	open(index?: number, options?: { triggerId?: string }) {
-		this.state?.show(index ?? this.state.index, options?.triggerId, 'imperative');
+		this.state?.show(index, options?.triggerId, 'imperative');
 	}
 
 	close() {
@@ -376,13 +410,16 @@ export interface ItemContext {
 	readonly active: boolean;
 	morphRef: MorphRef;
 	imageRef: ImageRef;
-	setMedia(el: HTMLElement | null): void;
 }
 
 const ITEM = Symbol('ramka-item');
 export const setItem = (item: ItemContext) => setContext(ITEM, item);
 /** Context of the enclosing `Item`, or null outside one. */
 export const getItem = () => getContext<ItemContext | undefined>(ITEM) ?? null;
+
+const ENTRY = Symbol('ramka-item-entry');
+export const setEntry = (entry: ItemEntry) => setContext(ENTRY, entry);
+export const getEntry = () => getContext<ItemEntry | undefined>(ENTRY);
 
 export interface TriggerContext {
 	readonly open: boolean;
@@ -415,8 +452,7 @@ export const setMedia = (media: MediaContext) => setContext(MEDIA, media);
 /** Context of the enclosing `Media`, or null outside one. */
 export const getMedia = () => getContext<MediaContext | undefined>(MEDIA) ?? null;
 
-/** Thumbnail strip API: selecting a thumb scrubs the strip and crossfades the slides. */
-export interface StripContext {
+interface StripContext {
 	select(index: number, viewTransition: boolean): void;
 	setTrack(el: HTMLElement | undefined): void;
 }
@@ -425,8 +461,7 @@ const STRIP = Symbol('ramka-strip');
 export const setStrip = (strip: StripContext) => setContext(STRIP, strip);
 export const getStrip = () => getContext<StripContext | undefined>(STRIP);
 
-/** Thumbnail group (tablist) API for roving focus. */
-export interface GroupContext {
+interface GroupContext {
 	thumbs: Map<number, HTMLElement>;
 }
 

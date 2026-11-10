@@ -1,13 +1,13 @@
 export type MorphPreset = 'default' | 'snappy' | 'relaxed' | 'spring';
 
-const ROOT_EASING = 'cubic-bezier(0.16, 1, 0.3, 1)';
+export const ROOT_EASING = 'cubic-bezier(0.16, 1, 0.3, 1)';
 const CLOSE_EASING = 'cubic-bezier(0.22, 0, 0.35, 1)';
 
-export const PRESETS: Record<MorphPreset, { duration: number; easing: string; rootEasing: string; closeEasing: string }> = {
-	default: { duration: 360, easing: 'cubic-bezier(0.44, 0.58, 0, 1)', rootEasing: ROOT_EASING, closeEasing: CLOSE_EASING },
-	snappy: { duration: 340, easing: 'cubic-bezier(0.38, 0.66, 0, 1)', rootEasing: ROOT_EASING, closeEasing: CLOSE_EASING },
-	relaxed: { duration: 400, easing: 'cubic-bezier(0.48, 0.5, 0, 1)', rootEasing: ROOT_EASING, closeEasing: CLOSE_EASING },
-	spring: { duration: 450, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', rootEasing: ROOT_EASING, closeEasing: CLOSE_EASING }
+export const PRESETS: Record<MorphPreset, { duration: number; easing: string }> = {
+	default: { duration: 360, easing: 'cubic-bezier(0.44, 0.58, 0, 1)' },
+	snappy: { duration: 340, easing: 'cubic-bezier(0.38, 0.66, 0, 1)' },
+	relaxed: { duration: 400, easing: 'cubic-bezier(0.48, 0.5, 0, 1)' },
+	spring: { duration: 450, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
 };
 
 const NAME = 'lightbox-morph';
@@ -54,12 +54,31 @@ function pageNeedsIsolation(doc = document) {
 	return result;
 }
 
+const PILL_RADIUS = 1e9;
+
+function cornerPx(token: string, width: number) {
+	const n = Number.parseFloat(token);
+	if (!Number.isFinite(n)) return PILL_RADIUS;
+	return Math.max(0, token.endsWith('%') ? (width * n) / 100 : n);
+}
+
+/** Border radius in used px after the corner-overlap rule, so pill and infinite radii interpolate. */
+export function usedRadius(el: HTMLElement) {
+	const { width, height } = el.getBoundingClientRect();
+	const tokens = getComputedStyle(el).borderRadius.split('/')[0].match(/[^\s(]+(\([^)]*\))?/g) ?? [];
+	if (!width || !height || !tokens.length) return '0px';
+	const [a, b = a, c = a, d = b] = tokens as [string, ...string[]];
+	const [tl, tr, br, bl] = [a, b, c, d].map((t) => cornerPx(t, width));
+	const f = Math.min(1, width / (tl + tr), width / (bl + br), height / (tr + br), height / (tl + bl));
+	return [tl, tr, br, bl].map((r) => `${Math.round(r * f * 100) / 100}px`).join(' ');
+}
+
 interface MorphOptions {
 	phase: 'opening' | 'closing';
 	preset: MorphPreset;
 	crossfade: boolean;
 	from: HTMLElement;
-	update: () => HTMLElement | null | undefined | Promise<HTMLElement | null | undefined>;
+	update: () => HTMLElement | null | undefined;
 }
 
 /** Runs one shared-element view transition from `from` to whatever `update` returns. */
@@ -75,14 +94,14 @@ export async function morph({ phase, preset, crossfade, from, update }: MorphOpt
 	html.setAttribute('data-ramka-vt-preset', preset);
 	html.toggleAttribute('data-ramka-crossfade', crossfade);
 	html.toggleAttribute('data-ramka-vt-isolate', pageNeedsIsolation());
-	html.style.setProperty(triggerVar, getComputedStyle(from).borderRadius);
+	html.style.setProperty(triggerVar, usedRadius(from));
 	from.style.setProperty('view-transition-name', NAME, 'important');
 
-	const transition = document.startViewTransition(async () => {
+	const transition = document.startViewTransition(() => {
 		from.style.removeProperty('view-transition-name');
-		to = await update();
+		to = update();
 		if (!to) return;
-		html.style.setProperty(itemVar, getComputedStyle(to).borderRadius);
+		html.style.setProperty(itemVar, usedRadius(to));
 		to.style.setProperty('view-transition-name', NAME, 'important');
 	});
 
@@ -109,8 +128,6 @@ const presetRules = Object.entries(PRESETS)
 		([name, p]) => `:root[data-ramka-vt-preset="${name}"]::view-transition {
   --lightbox-vt-duration: ${p.duration}ms;
   --lightbox-vt-easing: ${p.easing};
-  --lightbox-vt-crossfade-close-easing: ${p.closeEasing};
-  --lightbox-vt-root-easing: ${p.rootEasing};
 }`
 	)
 	.join('\n');
@@ -266,9 +283,9 @@ let adopted = false;
 
 /** Inserts the stylesheet once, ahead of consumer CSS; falls back to a constructed sheet when CSP refuses the tag. */
 export function ensureStyles(nonce?: string) {
-	if (typeof document === 'undefined' || adopted || document.querySelector('style[data-ramka]')) return;
+	if (typeof document === 'undefined' || adopted || document.querySelector('style[data-ramka-runtime]')) return;
 	const style = document.createElement('style');
-	style.setAttribute('data-ramka', '');
+	style.setAttribute('data-ramka-runtime', '');
 	if (nonce) style.nonce = nonce;
 	style.textContent = CSS;
 	document.head.prepend(style);

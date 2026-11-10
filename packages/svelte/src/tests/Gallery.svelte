@@ -1,12 +1,23 @@
 <script lang="ts">
 	import { Lightbox } from '#lib';
 
-	let { dir, viewTransition = false }: { dir?: 'ltr' | 'rtl'; viewTransition?: boolean } = $props();
-	const photos = ['Eins', 'Zwei', 'Drei'];
+	let {
+		dir,
+		viewTransition = false,
+		onBeforeOpen,
+		onOpenChange,
+		photos = ['Eins', 'Zwei', 'Drei']
+	}: {
+		dir?: 'ltr' | 'rtl';
+		viewTransition?: boolean;
+		onBeforeOpen?: (ctx: Lightbox.BeforeOpenContext) => void | Promise<void>;
+		onOpenChange?: (open: boolean) => void;
+		photos?: string[];
+	} = $props();
 	const pixel = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"/>';
 </script>
 
-<Lightbox.Root {dir} {viewTransition}>
+<Lightbox.Root {dir} {viewTransition} {onBeforeOpen} {onOpenChange}>
 	{#each photos as name, i (name)}
 		<Lightbox.Trigger index={i} aria-label="Open {name}">
 			<img src={pixel} alt="" width="40" height="30" />

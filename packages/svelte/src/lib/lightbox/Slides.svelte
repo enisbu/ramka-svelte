@@ -3,7 +3,7 @@
 	import type { Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { nearestIndex, slideOffsets } from './geometry.js';
-	import { getLightbox, setSlides } from './state.svelte.js';
+	import { getModel, setSlides } from './state.svelte.js';
 
 	interface Props extends HTMLAttributes<HTMLDivElement> {
 		preload?: number;
@@ -12,7 +12,7 @@
 	}
 
 	let { preload = 1, ssrSlideShift = false, children, ...rest }: Props = $props();
-	const lb = getLightbox();
+	const lb = getModel();
 	setSlides({
 		get preload() {
 			return preload;
@@ -20,33 +20,37 @@
 	});
 	const shift = $derived(!BROWSER && ssrSlideShift);
 	let el: HTMLElement;
-	let programmatic = false;
+	let jumpTarget: number | null = null;
 	let settleTimer = 0;
 
 	const nearest = () => nearestIndex(slideOffsets(el), el.scrollLeft);
 
 	function scrollToIndex(i: number, behavior: ScrollBehavior) {
 		const target = slideOffsets(el).find((s) => s.index === i);
-		if (!target) return;
-		programmatic = behavior === 'smooth';
+		if (!target || Math.abs(el.scrollLeft - target.offset) < 1) return;
+		jumpTarget = target.offset;
 		el.scrollTo({ left: target.offset, behavior });
 	}
 
 	function settle() {
 		clearTimeout(settleTimer);
-		programmatic = false;
+		jumpTarget = null;
 		lb.scrolling = false;
 		const i = nearest();
 		if (i >= 0) lb.setIndex(i, 'scroll');
 	}
 
 	function onscroll() {
-		lb.scrolling = true;
 		clearTimeout(settleTimer);
 		settleTimer = window.setTimeout(settle, 150);
-		if (programmatic) return;
+		if (jumpTarget !== null) return;
+		lb.scrolling = true;
 		const i = nearest();
 		if (i >= 0) lb.setIndex(i, 'scroll');
+	}
+
+	function onscrollend() {
+		if (jumpTarget === null || Math.abs(el.scrollLeft - jumpTarget) < 1) settle();
 	}
 
 	function track(node: HTMLElement) {
@@ -69,6 +73,9 @@
 			scrollToIndex(i, mounted && !instant && Math.abs(from - i) === 1 ? 'smooth' : 'instant');
 			mounted = true;
 		});
+		const release = () => (jumpTarget = null);
+		node.addEventListener('pointerdown', release, { capture: true, passive: true });
+		node.addEventListener('wheel', release, { capture: true, passive: true });
 		const widths = new WeakMap<Element, number>();
 		const observer = new ResizeObserver((entries) => {
 			let changed = false;
@@ -86,6 +93,8 @@
 		});
 		return () => {
 			observer.disconnect();
+			node.removeEventListener('pointerdown', release, true);
+			node.removeEventListener('wheel', release, true);
 			clearTimeout(settleTimer);
 			if (lb.slidesEl === node) lb.slidesEl = undefined;
 		};
@@ -105,7 +114,7 @@
 	style:--lightbox-ssr-shift-sign={shift ? (lb.dir === 'rtl' ? 1 : -1) : undefined}
 	{...rest}
 	{onscroll}
-	onscrollend={settle}
+	{onscrollend}
 	{@attach track}
 >
 	{@render children?.()}

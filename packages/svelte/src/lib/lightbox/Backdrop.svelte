@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { containTouchScroll } from './dom.js';
-	import { getLightbox } from './state.svelte.js';
+	import { getModel } from './state.svelte.js';
 
 	let props: HTMLAttributes<HTMLDivElement> = $props();
-	const lb = getLightbox();
+	const lb = getModel();
 </script>
 
 <div

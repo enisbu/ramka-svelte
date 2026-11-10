@@ -1,14 +1,14 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
-	import { getLightbox, setStage, type StageContext } from './state.svelte.js';
+	import { getModel, setStage, type StageContext } from './state.svelte.js';
 
 	interface Props extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
 		children?: Snippet<[StageContext]>;
 	}
 
 	let { children, ...rest }: Props = $props();
-	const lb = getLightbox();
+	const lb = getModel();
 
 	const context: StageContext = setStage({
 		morphRef(node) {

@@ -2,7 +2,7 @@
 	import { flushSync, type Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { scrollProgress } from './geometry.js';
-	import { getLightbox, setStrip } from './state.svelte.js';
+	import { getModel, setStrip } from './state.svelte.js';
 
 	interface Props extends HTMLAttributes<HTMLDivElement> {
 		scrubOnSelect?: boolean;
@@ -14,7 +14,7 @@
 
 	let { scrubOnSelect = true, selectViewTransition = true, wrapSelectCommit, children, indicator, ...rest }: Props =
 		$props();
-	const lb = getLightbox();
+	const lb = getModel();
 	let root = $state<HTMLElement>();
 	let track = $state<HTMLElement>();
 	let scrub: Animation | null = null;

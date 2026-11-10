@@ -69,8 +69,8 @@ The parts are also exported from `@ramka/svelte/lightbox` for `import * as Light
 | `Trigger` | Opens the lightbox at `index` and morphs from its image. `id`, `handle` (detached triggers), `crossfade`. Snippet args: `{ open, active, morphRef, imageRef }`. |
 | `Portal` | Mounts the dialog on `document.body`, a `container`, or in place with `container={null}`. `keepMounted` parks it inert. |
 | `Backdrop`, `Content` | Scrim and dialog. `Content` owns focus trap, scroll lock, keyboard, pull to dismiss (`pullToClose`). |
-| `Stage` | Optional region that scopes gallery keys and pan bounds, and can be the morph target. |
-| `Slides`, `Slide`, `Item` | Scroll snap track, slide wrapper, item with `index`, `caption` (string or snippet) and `preload` gating. |
+| `Stage` | Optional region that scopes gallery keys and pan bounds. Snippet args: `{ morphRef }`; attach `morphRef` to make an element the morph target and the element pull to dismiss moves. |
+| `Slides`, `Slide`, `Item` | Scroll snap track, slide wrapper, and item with `index` and `caption` (string or snippet). `Slides` takes `preload` (items rendered on each side of the active one, default 1) and `ssrSlideShift` (server render shifts the track to the active slide before hydration). `Item` snippet args: `{ index, active, visible, morphRef, imageRef }`, where `visible` is true inside the preload range. |
 | `Zoom`, `Media` | Pinch, wheel, double tap and keyboard zoom (`minZoom`, `maxZoom`, `zoomStep`, `scrollToZoom`, `wheelSensitivity`, `keyboardPanDistance`, `doubleClickDelay`, `onZoomChange`); `bind:this` exposes `zoomIn`, `zoomOut`, `zoomTo`, `reset`, `changeOffsets(dx, dy)` and the read only `zoom`, `maxZoom`, `offsetX`, `offsetY` (content pixels), `canZoomIn`, `canZoomOut`. A bare wheel pans when zoomed, Ctrl or Command plus wheel and trackpad pinch zoom. `Media` sizes the image box from `width` and `height`. |
 | `Close`, `Previous`, `Next`, `ZoomIn`, `ZoomOut` | Buttons with `data-disabled` at their bounds. |
 | `Counter`, `Caption` | Live regions. `Counter` snippet args: `{ current, total }`. `Caption` children are the fallback before items register. |
@@ -79,6 +79,8 @@ The parts are also exported from `@ramka/svelte/lightbox` for `import * as Light
 | `CSPProvider` | Passes a `nonce` to the injected `<style>` tag. |
 
 `createHandle()` returns a `LightboxHandle` with `open(index, { triggerId })`, `close()`, `goTo(index)` and `isOpen` for opening from anywhere. `getLightbox`, `getItem`, `getTrigger`, `getStage` and `getMedia` read the part contexts in custom parts. `getLightbox` throws outside a Root, the others return `null` outside their part.
+
+`getLightbox()` returns a read only `LightboxState`: `open`, `index`, `count`, `loop`, `dir`, `canPrev`, `canNext`, `caption`, `zoomed`, `pulling`, `pullDismissing`, plus `go(index, source?)`, `show(index?)` and `close()`.
 
 ## Styling
 

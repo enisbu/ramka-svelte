@@ -2,7 +2,7 @@
 	import { untrack, type Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { computeMaxZoom } from './gestures.js';
-	import { getItem, getLightbox, setZoom, type ZoomApi } from './state.svelte.js';
+	import { getItem, getModel, setZoom, type ZoomApi } from './state.svelte.js';
 	import { ZoomController } from './zoom.js';
 
 	const FALLBACK_MAX = 4;
@@ -41,7 +41,7 @@
 		children,
 		...rest
 	}: Props = $props();
-	const lb = getLightbox();
+	const lb = getModel();
 	const item = getItem();
 	const safariPinch = typeof window !== 'undefined' && 'GestureEvent' in window && navigator.maxTouchPoints === 0;
 	let scale = $state(untrack(() => minZoom));
@@ -87,6 +87,12 @@
 		get gesturing() {
 			return pinching || dragging;
 		},
+		get canZoomIn() {
+			return canZoomIn;
+		},
+		get canZoomOut() {
+			return zoomed;
+		},
 		zoomIn,
 		zoomOut,
 		reset: () => reset(),
@@ -95,6 +101,10 @@
 	setZoom(api);
 
 	function surface(viewport: HTMLElement) {
+		return untrack(() => mount(viewport));
+	}
+
+	function mount(viewport: HTMLElement) {
 		const content = viewport.firstElementChild as HTMLElement;
 		const c = (controller = new ZoomController(
 			viewport,
@@ -106,7 +116,6 @@
 				scrollToZoom,
 				wheelSensitivity,
 				doubleClickDelay,
-				panDistance: keyboardPanDistance,
 				panViewport: () => lb.stageEl ?? lb.contentEl ?? viewport
 			}),
 			{
@@ -144,15 +153,12 @@
 		viewport.addEventListener('wheel', c.onwheel, { passive: false });
 		const gestures = safariPinch ? ['gesturestart', 'gesturechange', 'gestureend'] : [];
 		for (const type of gestures) viewport.addEventListener(type, c.ongesture);
-		const keys = ['keydown', 'keyup', 'blur'];
-		for (const type of keys) window.addEventListener(type, c.onkey, true);
 		$effect(() => {
 			if (item && !item.active && c.scale !== minZoom) c.reset(true);
 		});
 		return () => {
 			for (const type of types) viewport.removeEventListener(type, handlers[type] as EventListener);
 			for (const type of gestures) viewport.removeEventListener(type, c.ongesture);
-			for (const type of keys) window.removeEventListener(type, c.onkey, true);
 			viewport.removeEventListener('wheel', c.onwheel);
 			viewport.removeEventListener('load', measure, true);
 			observer.disconnect();

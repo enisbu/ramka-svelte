@@ -1,14 +1,14 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
-	import { getLightbox } from './state.svelte.js';
+	import { getModel } from './state.svelte.js';
 
 	interface Props extends HTMLAttributes<HTMLDivElement> {
 		children?: Snippet;
 	}
 
 	let { children, ...rest }: Props = $props();
-	const lb = getLightbox();
+	const lb = getModel();
 	const caption = $derived(lb.caption);
 </script>
 

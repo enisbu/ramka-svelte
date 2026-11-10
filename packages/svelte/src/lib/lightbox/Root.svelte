@@ -2,9 +2,9 @@
 	import { untrack, type Snippet } from 'svelte';
 	import { ensureStyles, styleTag, type MorphPreset } from './morph.js';
 	import {
-		LightboxState,
+		LightboxModel,
 		getNonce,
-		setLightbox,
+		setModel,
 		triggerMorph,
 		type BeforeCloseContext,
 		type BeforeOpenContext,
@@ -34,28 +34,11 @@
 		children?: Snippet;
 	}
 
-	let {
-		open = $bindable(false),
-		index = $bindable(0),
-		loop = false,
-		count,
-		dir,
-		viewTransition = true,
-		morphTo = 'active',
-		scrollTriggerIntoView = null,
-		awaitImageDecode = true,
-		handle,
-		onOpenChange,
-		onOpenChangeComplete,
-		onValueChange,
-		onBeforeOpen,
-		onBeforeClose,
-		children
-	}: Props = $props();
+	let { open = $bindable(false), index = $bindable(0), ...props }: Props = $props();
 
 	const uid = $props.id();
-	const lb = setLightbox(
-		new LightboxState(
+	const lb = setModel(
+		new LightboxModel(
 			{
 				get open() {
 					return open;
@@ -68,44 +51,9 @@
 				},
 				set index(v) {
 					index = v;
-				},
-				get loop() {
-					return loop;
-				},
-				get count() {
-					return count;
-				},
-				get dir() {
-					return dir;
-				},
-				get viewTransition() {
-					return viewTransition;
-				},
-				get morphTo() {
-					return morphTo;
-				},
-				get scrollTriggerIntoView() {
-					return scrollTriggerIntoView;
-				},
-				get awaitImageDecode() {
-					return awaitImageDecode;
-				},
-				get onOpenChange() {
-					return onOpenChange;
-				},
-				get onOpenChangeComplete() {
-					return onOpenChangeComplete;
-				},
-				get onValueChange() {
-					return onValueChange;
-				},
-				get onBeforeOpen() {
-					return onBeforeOpen;
-				},
-				get onBeforeClose() {
-					return onBeforeClose;
 				}
 			},
+			() => props,
 			uid
 		)
 	);
@@ -129,6 +77,7 @@
 	});
 
 	$effect.pre(() => {
+		const { handle } = props;
 		if (!handle) return;
 		handle.state = lb;
 		return () => {
@@ -137,20 +86,14 @@
 	});
 
 	$effect(() => {
-		if (!open) return;
-		lb.present = true;
-		let cancelled = false;
-		settled().then(() => !cancelled && lb.settle(true));
-		return () => (cancelled = true);
-	});
-
-	$effect(() => {
-		if (open || !lb.present) return;
+		const opened = open;
+		if (opened) lb.present = true;
+		else if (!lb.present) return;
 		let cancelled = false;
 		settled().then(() => {
 			if (cancelled) return;
-			lb.present = false;
-			lb.settle(false);
+			if (!opened) lb.present = false;
+			lb.settle(opened);
 		});
 		return () => (cancelled = true);
 	});
@@ -178,7 +121,7 @@
 	});
 
 	async function settled() {
-		await lb.transition.catch(() => {});
+		await lb.transition;
 		await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 		const running = (lb.portal?.getAnimations({ subtree: true }) ?? []).filter(
 			(a) => a.effect?.getComputedTiming().iterations !== Infinity
@@ -191,4 +134,4 @@
 	{#if serverOpen}{@html styleTag(nonce)}{/if}
 </svelte:head>
 
-{@render children?.()}
+{@render props.children?.()}

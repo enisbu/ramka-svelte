@@ -5,8 +5,9 @@
 	import { warnUnnamed } from './dom.js';
 	import {
 		getSlides,
-		getLightbox,
+		getModel,
 		refs,
+		setEntry,
 		setItem,
 		type Caption,
 		type ImageRef,
@@ -21,7 +22,7 @@
 	}
 
 	let { index, caption, children, ...rest }: Props = $props();
-	const lb = getLightbox();
+	const lb = getModel();
 	const slides = getSlides();
 	const active = $derived(lb.index === index);
 	const visible = $derived(!slides || Math.abs(lb.index - index) <= slides.preload);
@@ -45,12 +46,9 @@
 			return active;
 		},
 		morphRef,
-		imageRef,
-		setMedia(el) {
-			if (el) lb.media.set(index, el);
-			else if (lb.media.get(index)) lb.media.delete(index);
-		}
+		imageRef
 	});
+	setEntry(entry);
 
 	function register(el: HTMLElement) {
 		entry.el = el;

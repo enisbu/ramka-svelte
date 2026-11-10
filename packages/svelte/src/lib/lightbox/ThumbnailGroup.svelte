@@ -2,14 +2,14 @@
 	import { untrack, type Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { arrowKeyDelta, resolveIndex } from './gestures.js';
-	import { getLightbox, getStrip, setGroup } from './state.svelte.js';
+	import { getModel, getStrip, setGroup } from './state.svelte.js';
 
 	interface Props extends HTMLAttributes<HTMLDivElement> {
 		children?: Snippet;
 	}
 
 	let { children, ...rest }: Props = $props();
-	const lb = getLightbox();
+	const lb = getModel();
 	const strip = getStrip();
 	const thumbs = new Map<number, HTMLElement>();
 	let focusWithin = $state(false);

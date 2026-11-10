@@ -16,13 +16,14 @@
 		"accessible",
 		"ramka"
 	],
-	"homepage": "TODO",
+	"homepage": "https://ramka-svelte.enisdev.com",
 	"bugs": {
-		"url": "TODO"
+		"url": "https://github.com/enisbu/ramka-svelte/issues"
 	},
 	"repository": {
 		"type": "git",
-		"url": "TODO"
+		"url": "git+https://github.com/enisbu/ramka-svelte.git",
+		"directory": "packages/svelte"
 	},
 	"type": "module",
 	"files": [

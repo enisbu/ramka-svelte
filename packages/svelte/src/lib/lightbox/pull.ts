@@ -6,12 +6,12 @@ import {
 	shouldDismiss,
 	springEasing
 } from './gestures.js';
-import type { LightboxState } from './state.svelte.js';
+import type { LightboxModel } from './state.svelte.js';
 
 const IGNORED = 'button, a, input, select, textarea, [data-ramka-no-pull]';
 
 /** Attachment: touch drag and trackpad wheel pull the active item down to dismiss. */
-export function pullToDismiss(lb: LightboxState) {
+export function pullToDismiss(lb: LightboxModel) {
 	return (content: HTMLElement) => {
 		let item: HTMLElement | undefined;
 		let start = { x: 0, y: 0 };
@@ -34,7 +34,7 @@ export function pullToDismiss(lb: LightboxState) {
 		}
 
 		function begin() {
-			item = lb.items.get(lb.index)?.el;
+			item = lb.stageMorph ?? lb.items.get(lb.index)?.el;
 			if (!item) return false;
 			clearTimeout(snapTimer);
 			item.style.transition = 'none';

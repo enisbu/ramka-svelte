@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
-	import { getItem, setMedia } from './state.svelte.js';
+	import { getEntry, setMedia } from './state.svelte.js';
 
 	interface Props extends HTMLAttributes<HTMLDivElement> {
 		width?: number;
@@ -10,7 +10,7 @@
 	}
 
 	let { width, height, children, ...rest }: Props = $props();
-	const item = getItem();
+	const entry = getEntry();
 	let auto = $state<{ w: number; h: number }>();
 	let element = $state<HTMLElement | null>(null);
 	setMedia({
@@ -24,7 +24,7 @@
 
 	function media(el: HTMLElement) {
 		element = el;
-		item?.setMedia(el);
+		if (entry) entry.media = el;
 		const img = el.querySelector('img, video') as HTMLImageElement | HTMLVideoElement | null;
 		const read = () => {
 			const w = img instanceof HTMLImageElement ? Number(img.getAttribute('width')) || img.naturalWidth : img?.videoWidth;
@@ -36,7 +36,7 @@
 		img?.addEventListener('loadedmetadata', read);
 		return () => {
 			element = null;
-			item?.setMedia(null);
+			if (entry?.media === el) entry.media = undefined;
 			img?.removeEventListener('load', read);
 			img?.removeEventListener('loadedmetadata', read);
 		};

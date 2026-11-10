@@ -3,7 +3,7 @@
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 	import { ensureStyles } from './morph.js';
 	import {
-		getLightbox,
+		getModel,
 		getNonce,
 		refs,
 		setTrigger,
@@ -22,7 +22,7 @@
 	}
 
 	let { index, id, handle, crossfade, children, ...rest }: Props = $props();
-	const root = untrack(() => handle) ? undefined : getLightbox();
+	const root = untrack(() => handle) ? undefined : getModel();
 	const lb = $derived(handle ? handle.state : root);
 	const nonce = getNonce();
 	const open = $derived(!!lb?.open);
@@ -55,12 +55,10 @@
 
 	function register(el: HTMLElement) {
 		entry.el = el;
-		$effect(() => {
-			const state = lb;
-			if (!state) return;
-			state.triggers.add(entry);
-			return () => state.triggers.delete(entry);
-		});
+		const state = lb;
+		if (!state) return;
+		state.triggers.add(entry);
+		return () => state.triggers.delete(entry);
 	}
 </script>
 

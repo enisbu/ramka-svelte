@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
-	import { getGroup, getLightbox, getStrip } from './state.svelte.js';
+	import { getGroup, getModel, getStrip } from './state.svelte.js';
 
 	interface Props extends HTMLButtonAttributes {
 		index: number;
@@ -9,7 +9,7 @@
 	}
 
 	let { index, children, ...rest }: Props = $props();
-	const lb = getLightbox();
+	const lb = getModel();
 	const strip = getStrip();
 	const group = getGroup();
 	const active = $derived(lb.index === index);

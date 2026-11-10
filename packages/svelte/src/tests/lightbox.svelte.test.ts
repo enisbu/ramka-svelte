@@ -2,8 +2,10 @@ import { expect, test } from 'vitest';
 import { page, userEvent } from 'vitest/browser';
 import { render } from 'vitest-browser-svelte';
 import Gallery from './Gallery.svelte';
+import ResizeZoom from './ResizeZoom.svelte';
 import ZoomProbe from './ZoomProbe.svelte';
 import type { Lightbox } from '#lib';
+import { usedRadius } from '#lib/lightbox/morph.js';
 
 const counter = () => document.querySelector('[data-ramka-counter]')?.textContent?.trim();
 
@@ -76,4 +78,97 @@ test('exposes zoom state on the instance and nullable part contexts', async () =
 	expect(zoom.offsetX).toBeCloseTo(-50);
 	zoom.changeOffsets(-20, 0);
 	await expect.poll(() => zoom.offsetX).toBeCloseTo(-30);
+});
+
+test('Escape cancels an open that waits on onBeforeOpen', async () => {
+	let signal: AbortSignal | undefined;
+	const changes: boolean[] = [];
+	render(Gallery, {
+		viewTransition: true,
+		onBeforeOpen: (ctx: Lightbox.BeforeOpenContext) => {
+			signal = ctx.signal;
+			return new Promise<void>((resolve) => setTimeout(resolve, 400));
+		},
+		onOpenChange: (open: boolean) => changes.push(open)
+	});
+	const trigger = page.getByRole('button', { name: 'Open Zwei' });
+	await trigger.click();
+	await expect.poll(() => signal).toBeDefined();
+	await userEvent.keyboard('{Escape}');
+	expect(signal?.aborted).toBe(true);
+	await new Promise((resolve) => setTimeout(resolve, 600));
+	expect(document.querySelector('[data-ramka-content]')).toBeNull();
+	expect(changes).toEqual([]);
+	await expect.element(trigger).toHaveAttribute('aria-expanded', 'false');
+});
+
+test('a throwing onBeforeOpen leaves the lightbox closed and ready', async () => {
+	const rejections: unknown[] = [];
+	const onRejection = (e: PromiseRejectionEvent) => {
+		e.preventDefault();
+		rejections.push(e.reason);
+	};
+	window.addEventListener('unhandledrejection', onRejection);
+	let fail = true;
+	render(Gallery, {
+		viewTransition: true,
+		onBeforeOpen: () => {
+			if (fail) throw new Error('not ready');
+		}
+	});
+	const trigger = page.getByRole('button', { name: 'Open Eins' });
+	await trigger.click();
+	await new Promise((resolve) => setTimeout(resolve, 100));
+	expect(document.querySelector('[data-ramka-content]')).toBeNull();
+	fail = false;
+	await trigger.click();
+	await expect.element(page.getByRole('dialog', { name: 'Viewer' })).toHaveAttribute('data-open');
+	window.removeEventListener('unhandledrejection', onRejection);
+	expect(rejections).toEqual([]);
+});
+
+test('keeps zoom and pan across a viewport resize', async () => {
+	await page.viewport(800, 600);
+	let zoom: ReturnType<typeof Lightbox.Zoom> | undefined;
+	render(ResizeZoom, { report: (z: ReturnType<typeof Lightbox.Zoom>) => (zoom = z) });
+	await expect.poll(() => zoom?.maxZoom).toBe(10);
+	zoom!.zoomTo(4, { rapid: true });
+	await expect.poll(() => zoom!.zoom).toBe(4);
+	const content = document.querySelector<HTMLElement>('[data-ramka-zoom-content]')!;
+	await page.viewport(1000, 750);
+	await expect.poll(() => zoom!.maxZoom).toBe(8);
+	expect(zoom!.zoom).toBe(4);
+	expect(content.style.transform).toContain('scale(4)');
+	zoom!.changeOffsets(-20, 0);
+	await expect.poll(() => zoom!.offsetX).toBeCloseTo(20);
+	expect(zoom!.zoom).toBe(4);
+	expect(content.style.transform).toContain('scale(4)');
+});
+
+test('rapid arrow presses each advance one slide while the track is still scrolling', async () => {
+	const photos = Array.from({ length: 20 }, (_, i) => `Foto ${i + 1}`);
+	render(Gallery, { photos });
+	await page.getByRole('button', { name: 'Open Foto 1' }).click();
+	await expect.element(page.getByRole('dialog')).toHaveAttribute('data-open');
+	for (let i = 0; i < 12; i++) {
+		document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+		await new Promise((resolve) => setTimeout(resolve, 40));
+	}
+	await expect.poll(counter).toBe('13 / 20');
+	await new Promise((resolve) => setTimeout(resolve, 600));
+	expect(counter()).toBe('13 / 20');
+	const slides = document.querySelector<HTMLElement>('[data-ramka-slides]')!;
+	expect(Math.round(slides.scrollLeft / slides.clientWidth)).toBe(12);
+});
+
+test('resolves pill radii to used pixels for the morph', () => {
+	const el = document.createElement('div');
+	el.style.cssText = 'width:100px;height:40px;border-radius:9999px';
+	document.body.append(el);
+	expect(usedRadius(el)).toBe('20px 20px 20px 20px');
+	el.style.borderRadius = 'calc(infinity * 1px)';
+	expect(usedRadius(el)).toBe('20px 20px 20px 20px');
+	el.style.borderRadius = '8px';
+	expect(usedRadius(el)).toBe('8px 8px 8px 8px');
+	el.remove();
 });

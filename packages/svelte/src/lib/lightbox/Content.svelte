@@ -4,7 +4,7 @@
 	import { containTouchScroll, guardNativePinch, warnUnnamed } from './dom.js';
 	import { arrowKeyDelta, zoomProgress } from './gestures.js';
 	import { pullToDismiss } from './pull.js';
-	import { getLightbox } from './state.svelte.js';
+	import { getModel } from './state.svelte.js';
 
 	interface Props extends HTMLAttributes<HTMLDivElement> {
 		pullToClose?: boolean;
@@ -12,7 +12,7 @@
 	}
 
 	let { pullToClose = true, children, ...rest }: Props = $props();
-	const lb = getLightbox();
+	const lb = getModel();
 	const FOCUSABLE = 'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 	const EDITABLE = 'input, textarea, select, [contenteditable]:not([contenteditable="false"])';
 	const parked = $derived(!lb.present);
@@ -65,7 +65,13 @@
 	}
 
 	function onkeydown(e: KeyboardEvent) {
-		if (e.defaultPrevented || !lb.open) return;
+		if (e.defaultPrevented) return;
+		if (e.key === 'Escape' && lb.preparing) {
+			e.preventDefault();
+			lb.close();
+			return;
+		}
+		if (!lb.open) return;
 		const target = e.target instanceof HTMLElement ? e.target : null;
 		if (target && target !== document.body && !dialogEl.contains(target)) return;
 		if (e.key === 'Tab') return trapTab(e);
@@ -119,7 +125,6 @@
 	role="dialog"
 	id="{lb.id}-content"
 	aria-modal={parked ? undefined : 'true'}
-	aria-hidden={parked || undefined}
 	tabindex={parked ? undefined : -1}
 	data-ramka-content
 	data-open={lb.open || undefined}

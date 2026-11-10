@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 	import { warnUnnamed } from './dom.js';
-	import { getLightbox } from './state.svelte.js';
+	import { getModel } from './state.svelte.js';
 
 	let { children, ...rest }: HTMLButtonAttributes = $props();
-	const lb = getLightbox();
+	const lb = getModel();
 </script>
 
 <button
