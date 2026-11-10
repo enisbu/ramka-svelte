@@ -1,0 +1,23 @@
+{
+	"name": "ramka-svelte-monorepo",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"license": "MIT",
+	"scripts": {
+		"build": "pnpm -r --filter ./packages/* build && pnpm --filter docs build",
+		"dev": "pnpm --parallel --filter ./packages/* --filter docs dev",
+		"check": "pnpm -r check",
+		"test": "pnpm -r --if-present test",
+		"changeset": "changeset",
+		"version": "changeset version",
+		"release": "pnpm --filter ./packages/* build && changeset publish"
+	},
+	"devDependencies": {
+		"@changesets/cli": "^2.29.0"
+	},
+	"packageManager": "pnpm@12.16.1",
+	"engines": {
+		"node": ">=20"
+	}
+}
