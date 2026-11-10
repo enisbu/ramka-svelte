@@ -2,6 +2,7 @@
 	import { Lightbox } from '@ramka/svelte';
 	import SoloViewer from '#lib/examples/film-trailers/SoloViewer.svelte';
 	import { mountScene, waitForLightboxPainted, type Product } from './scene.js';
+	import CloseOnBack from '#lib/gallery/CloseOnBack.svelte';
 
 	let { product }: { product: Product } = $props();
 
@@ -19,6 +20,7 @@
 	onBeforeOpen={({ signal }) => waitForLightboxPainted(product.id, { signal, timeoutMs: 2500 })}
 	onOpenChangeComplete={(next) => (orbitReady = next)}
 >
+	<CloseOnBack />
 	<Lightbox.Trigger index={0} crossfade="both" class="models-3d-trigger">
 		<div data-ramka-morph class="tile">
 			<div

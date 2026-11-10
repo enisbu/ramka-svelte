@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Lightbox } from '@ramka/svelte';
 	import Gallery from '../photos-app/Gallery.svelte';
+	import CloseOnBack from '#lib/gallery/CloseOnBack.svelte';
 
 	const messageImages = [
 		{ alt: 'Screenshot of a changelog notification' },
@@ -21,6 +22,7 @@
 
 <div class="text-message">
 	<Lightbox.Root morphTo="origin">
+		<CloseOnBack />
 		<div class="text-message-thread">
 			<span class="text-message-time">Today at 11:11 AM</span>
 			<div class="text-message-bubble">some imgs</div>

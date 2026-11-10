@@ -7,6 +7,7 @@
 	import Gallery from './Gallery.svelte';
 	import { photoAssets } from './photos.js';
 	import './photos-app.css';
+	import CloseOnBack from '#lib/gallery/CloseOnBack.svelte';
 
 	let { dir = 'ltr' }: { dir?: 'ltr' | 'rtl' } = $props();
 
@@ -57,6 +58,7 @@
 		]}
 		awaitImageDecode={false}
 	>
+		<CloseOnBack />
 		<div>
 			<div class="photos-app-toolbar">
 				<div class="photos-app-heading">

@@ -2,7 +2,7 @@
 	import { page } from '$app/state';
 	import { navSections, type NavLink } from '#lib/content/nav.js';
 
-	let { onnavigate }: { onnavigate?: () => void } = $props();
+	let { replace = false }: { replace?: boolean } = $props();
 
 	function isActive(link: NavLink) {
 		const path = page.url.pathname;
@@ -24,7 +24,7 @@
 					<li>
 						<a
 							href={link.href}
-							onclick={onnavigate}
+							data-sveltekit-replacestate={replace || undefined}
 							aria-current={active ? 'page' : undefined}
 							class={[
 								'block rounded-lg px-2.5 py-[5px] text-[13px] leading-6 transition-colors',

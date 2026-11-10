@@ -10,6 +10,7 @@
 	import '../photos-app/chrome.css';
 	import '../photos-app/photos-app.css';
 	import './infinite-scroll.css';
+	import CloseOnBack from '#lib/gallery/CloseOnBack.svelte';
 
 	const PAGE_SIZE = 12;
 	const LOAD_AHEAD = 4;
@@ -70,6 +71,7 @@
 		]}
 		awaitImageDecode={false}
 	>
+		<CloseOnBack />
 		<div class="infinite-scroll-toolbar">
 			<div class="photos-app-heading">
 				<span class="photos-app-title">Feed</span>

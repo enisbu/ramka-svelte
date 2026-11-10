@@ -1,12 +1,21 @@
 <script lang="ts">
 	import Menu from '@lucide/svelte/icons/menu';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import { githubUrl } from '#lib/content/site.js';
 	import * as Drawer from '#lib/components/ui/drawer/index.js';
 	import GitHubIcon from './GitHubIcon.svelte';
 	import SidebarNav from './SidebarNav.svelte';
 	import ThemeToggle from './ThemeToggle.svelte';
 
-	let open = $state(false);
+	let open = $derived(!!page.state.nav);
+
+	function setOpen(value: boolean) {
+		open = value;
+		if (value) goto('', { shallow: true, state: { nav: true } });
+		else if (page.state.nav) history.back();
+	}
+
 	const button =
 		'inline-flex h-8 w-8 items-center justify-center rounded-md border border-neutral-200 bg-white text-neutral-700 transition hover:bg-neutral-100 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800';
 </script>
@@ -32,7 +41,7 @@
 				<GitHubIcon class="h-4 w-4" />
 			</a>
 			<ThemeToggle />
-			<Drawer.Root bind:open shouldScaleBackground={false}>
+			<Drawer.Root bind:open={() => open, setOpen} shouldScaleBackground={false}>
 				<Drawer.Trigger aria-label="Open navigation" class={button}>
 					<Menu class="h-4 w-4" />
 				</Drawer.Trigger>
@@ -42,7 +51,7 @@
 						<Drawer.Description>The lightbox for Svelte.</Drawer.Description>
 					</Drawer.Header>
 					<div class="min-h-0 flex-1 overflow-y-auto px-4 pt-2 pb-6">
-						<SidebarNav onnavigate={() => (open = false)} />
+						<SidebarNav replace />
 					</div>
 				</Drawer.Content>
 			</Drawer.Root>

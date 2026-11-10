@@ -18,6 +18,7 @@
 	import { Lightbox } from '@ramka/svelte';
 	import Play from '@lucide/svelte/icons/play';
 	import SoloViewer from './SoloViewer.svelte';
+	import CloseOnBack from '#lib/gallery/CloseOnBack.svelte';
 
 	let { film }: { film: FilmItem } = $props();
 
@@ -39,6 +40,7 @@
 	}}
 	onOpenChangeComplete={(open) => (readyToPlay = open)}
 >
+	<CloseOnBack />
 	<Lightbox.Trigger index={0} crossfade="close" class="film-trailers-trigger">
 		{#snippet children({ morphRef })}
 			<div class="film-trailers-poster" {@attach morphRef}>
