@@ -126,6 +126,29 @@ export function usedRadius(el: HTMLElement) {
 	return [tl, tr, br, bl].map((r) => `${Math.round(r * f * 100) / 100}px`).join(' ');
 }
 
+function sameBox(a: DOMRect, b: DOMRect) {
+	return (
+		Math.abs(a.left - b.left) <= 1 &&
+		Math.abs(a.top - b.top) <= 1 &&
+		Math.abs(a.right - b.right) <= 1 &&
+		Math.abs(a.bottom - b.bottom) <= 1
+	);
+}
+
+function visibleRadius(el: HTMLElement) {
+	const box = el.getBoundingClientRect();
+	for (
+		let node: HTMLElement | null = el;
+		node && sameBox(node.getBoundingClientRect(), box);
+		node = node.parentElement
+	) {
+		const radius = usedRadius(node);
+		if ((node === el || getComputedStyle(node).overflow !== 'visible') && /[1-9]/.test(radius))
+			return radius;
+	}
+	return usedRadius(el);
+}
+
 interface MorphOptions {
 	phase: 'opening' | 'closing';
 	preset: MorphPreset;
@@ -147,14 +170,14 @@ export async function morph({ phase, preset, crossfade, from, update }: MorphOpt
 	html.setAttribute('data-ramka-vt-preset', preset);
 	html.toggleAttribute('data-ramka-crossfade', crossfade);
 	html.toggleAttribute('data-ramka-vt-isolate', pageNeedsIsolation());
-	html.style.setProperty(triggerVar, usedRadius(from));
+	html.style.setProperty(triggerVar, visibleRadius(from));
 	from.style.setProperty('view-transition-name', NAME, 'important');
 
 	const transition = document.startViewTransition(() => {
 		from.style.removeProperty('view-transition-name');
 		to = update();
 		if (!to) return;
-		html.style.setProperty(itemVar, usedRadius(to));
+		html.style.setProperty(itemVar, visibleRadius(to));
 		to.style.setProperty('view-transition-name', NAME, 'important');
 	});
 
