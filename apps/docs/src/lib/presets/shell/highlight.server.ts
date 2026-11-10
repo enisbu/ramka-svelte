@@ -1,8 +1,17 @@
 import { createHighlighter } from 'shiki';
 import type { SourceFile } from './source.js';
 
-const langs = { svelte: 'svelte', ts: 'typescript', js: 'javascript', css: 'css', html: 'html' } as const;
-const highlighter = createHighlighter({ themes: ['github-light', 'github-dark'], langs: Object.values(langs) });
+const langs = {
+	svelte: 'svelte',
+	ts: 'typescript',
+	js: 'javascript',
+	css: 'css',
+	html: 'html'
+} as const;
+const highlighter = createHighlighter({
+	themes: ['github-light', 'github-dark'],
+	langs: Object.values(langs)
+});
 
 /** Highlights raw source files with Shiki (github-light/dark as CSS variables) for a source card. */
 export async function highlight(files: Omit<SourceFile, 'html'>[]): Promise<SourceFile[]> {

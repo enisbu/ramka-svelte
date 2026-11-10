@@ -18,7 +18,11 @@
 		['"open"', 'Rare inverse of close']
 	];
 
-	const photos = [photo('xfade-a', 'Coastal cliffs'), photo('xfade-b', 'Mountain lake'), photo('xfade-c', 'Desert road')];
+	const photos = [
+		photo('xfade-a', 'Coastal cliffs'),
+		photo('xfade-b', 'Mountain lake'),
+		photo('xfade-c', 'Desert road')
+	];
 	const album = [
 		...photos,
 		photo('xfade-d', 'Pine forest'),
@@ -27,10 +31,30 @@
 		photo('xfade-g', 'River bend')
 	];
 	const team = [
-		{ ...photo('xfade-ava', 'Portrait of Ava Chen', 'Ava Chen'), name: 'Ava Chen', initials: 'AC', color: '#2a7ab5' },
-		{ ...photo('xfade-jules', 'Portrait of Jules Okonkwo', 'Jules Okonkwo'), name: 'Jules Okonkwo', initials: 'JO', color: '#c93c20' },
-		{ ...photo('xfade-sam', 'Portrait of Sam Rivera', 'Sam Rivera'), name: 'Sam Rivera', initials: 'SR', color: '#7a9a6d' },
-		{ ...photo('xfade-mei', 'Portrait of Mei Laurent', 'Mei Laurent'), name: 'Mei Laurent', initials: 'ML', color: '#7b3f72' }
+		{
+			...photo('xfade-ava', 'Portrait of Ava Chen', 'Ava Chen'),
+			name: 'Ava Chen',
+			initials: 'AC',
+			color: '#2a7ab5'
+		},
+		{
+			...photo('xfade-jules', 'Portrait of Jules Okonkwo', 'Jules Okonkwo'),
+			name: 'Jules Okonkwo',
+			initials: 'JO',
+			color: '#c93c20'
+		},
+		{
+			...photo('xfade-sam', 'Portrait of Sam Rivera', 'Sam Rivera'),
+			name: 'Sam Rivera',
+			initials: 'SR',
+			color: '#7a9a6d'
+		},
+		{
+			...photo('xfade-mei', 'Portrait of Mei Laurent', 'Mei Laurent'),
+			name: 'Mei Laurent',
+			initials: 'ML',
+			color: '#7b3f72'
+		}
 	];
 	const trailer = {
 		...photo('bbb-poster', 'Big Buck Bunny', 'Big Buck Bunny'),
@@ -60,12 +84,16 @@
 		<h4 class={heading}>Omit: same picture</h4>
 		<p class={text}>
 			Same picture and intrinsic aspect ratio; element boxes may differ. Both sides use
-			<code class={code}>object-fit: cover</code>. Below: square thumbs → landscape viewer from 3∶2 sources.
+			<code class={code}>object-fit: cover</code>. Below: square thumbs → landscape viewer from 3∶2
+			sources.
 		</p>
 		<Lightbox.Root>
 			<div class="grid max-w-md grid-cols-3 gap-2">
 				{#each photos as item, i (item.src)}
-					<Lightbox.Trigger index={i} class="block aspect-square overflow-hidden rounded-lg bg-transparent p-0 {triggerFocus}">
+					<Lightbox.Trigger
+						index={i}
+						class="block aspect-square overflow-hidden rounded-lg bg-transparent p-0 {triggerFocus}"
+					>
 						<img src={item.thumb} alt={item.alt} class="block size-full object-cover" />
 					</Lightbox.Trigger>
 				{/each}
@@ -91,7 +119,8 @@
 	<section class="space-y-3">
 		<h4 class={heading}><code class={code}>crossfade="both"</code>: any element</h4>
 		<p class={text}>
-			Morph sources don’t have to be images: dissolve initials chips into portraits so letters don’t stretch.
+			Morph sources don’t have to be images: dissolve initials chips into portraits so letters don’t
+			stretch.
 		</p>
 		<Lightbox.Root>
 			<InitialsTriggers people={team} />
@@ -102,26 +131,51 @@
 
 	<section class="space-y-3">
 		<h4 class={heading}><code class={code}>crossfade="close"</code>: poster → video</h4>
-		<p class={text}>Open hard-cuts into the matching poster frame; close dissolves the live video back to the poster.</p>
-		<Lightbox.Root onOpenChange={(open) => !open && (playing = false)} onOpenChangeComplete={(open) => (playing = open)}>
-			<Lightbox.Trigger index={0} crossfade="close" class="group block w-40 bg-transparent p-0 {triggerFocus}">
+		<p class={text}>
+			Open hard-cuts into the matching poster frame; close dissolves the live video back to the
+			poster.
+		</p>
+		<Lightbox.Root
+			onOpenChange={(open) => !open && (playing = false)}
+			onOpenChangeComplete={(open) => (playing = open)}
+		>
+			<Lightbox.Trigger
+				index={0}
+				crossfade="close"
+				class="group block w-40 bg-transparent p-0 {triggerFocus}"
+			>
 				{#snippet children({ morphRef })}
 					<div class="relative overflow-hidden rounded-xl" {@attach morphRef}>
-						<img src={trailer.thumb} alt={trailer.alt} class="block aspect-[2/3] w-full rounded-xl object-cover" />
+						<img
+							src={trailer.thumb}
+							alt={trailer.alt}
+							class="block aspect-[2/3] w-full rounded-xl object-cover"
+						/>
 						<div
 							class="pointer-events-none absolute inset-0 flex items-center justify-center rounded-xl bg-black/20 opacity-0 transition-opacity group-hover:opacity-100"
 						>
-							<div class="flex h-10 w-10 items-center justify-center rounded-full bg-white/95 text-black">
+							<div
+								class="flex h-10 w-10 items-center justify-center rounded-full bg-white/95 text-black"
+							>
 								<Play aria-hidden="true" class="h-4 w-4 fill-current" />
 							</div>
 						</div>
 					</div>
 				{/snippet}
 			</Lightbox.Trigger>
-			<LightboxGallery items={[trailer]} ariaLabel={trailer.alt} thumbnails="never" zoomControls={false}>
+			<LightboxGallery
+				items={[trailer]}
+				ariaLabel={trailer.alt}
+				thumbnails="never"
+				zoomControls={false}
+			>
 				{#snippet item()}
 					<Lightbox.Zoom>
-						<Lightbox.Media width={trailer.width} height={trailer.height} class="overflow-hidden rounded-xl">
+						<Lightbox.Media
+							width={trailer.width}
+							height={trailer.height}
+							class="overflow-hidden rounded-xl"
+						>
 							<video
 								src={trailer.video}
 								poster={trailer.src}

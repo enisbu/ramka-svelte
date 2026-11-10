@@ -16,8 +16,12 @@
 	>
 		{#if prev}
 			<a href={prev.href} class={card}>
-				<div class="text-[11px] font-medium tracking-[0.08em] text-neutral-400 uppercase">Previous</div>
-				<div class="mt-1.5 text-sm font-semibold text-neutral-900 dark:text-neutral-50">{prev.title}</div>
+				<div class="text-[11px] font-medium tracking-[0.08em] text-neutral-400 uppercase">
+					Previous
+				</div>
+				<div class="mt-1.5 text-sm font-semibold text-neutral-900 dark:text-neutral-50">
+					{prev.title}
+				</div>
 			</a>
 		{:else}
 			<div></div>
@@ -25,7 +29,9 @@
 		{#if next}
 			<a href={next.href} class={[card, prev && 'sm:text-right']}>
 				<div class="text-[11px] font-medium tracking-[0.08em] text-neutral-400 uppercase">Next</div>
-				<div class="mt-1.5 text-sm font-semibold text-neutral-900 dark:text-neutral-50">{next.title}</div>
+				<div class="mt-1.5 text-sm font-semibold text-neutral-900 dark:text-neutral-50">
+					{next.title}
+				</div>
 			</a>
 		{/if}
 	</nav>

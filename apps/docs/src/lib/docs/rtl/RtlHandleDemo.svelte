@@ -17,7 +17,9 @@
 
 <div class="space-y-4" dir="rtl">
 	<div class="flex flex-wrap items-center justify-between gap-3">
-		<p class="text-sm text-neutral-600 dark:text-neutral-400">גלריית תמונות · active index {index}</p>
+		<p class="text-sm text-neutral-600 dark:text-neutral-400">
+			גלריית תמונות · active index {index}
+		</p>
 		<button type="button" onclick={() => lightbox.open(0)} class={demoButton}>פתיחת הגלריה</button>
 	</div>
 	<TriggerGrid items={docsImages} handle={lightbox} />

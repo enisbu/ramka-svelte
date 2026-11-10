@@ -94,7 +94,13 @@
 	</div>
 
 	<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-	<div {@attach focusOnOpen} class="xlb-thread-scroll" tabindex="0" role="region" aria-label="Thread">
+	<div
+		{@attach focusOnOpen}
+		class="xlb-thread-scroll"
+		tabindex="0"
+		role="region"
+		aria-label="Thread"
+	>
 		<div class="xlb-thread-body">
 			<div class="xlb-author">
 				<img src={thread.author.avatar} alt="" class="xlb-avatar" draggable="false" />
@@ -146,14 +152,29 @@
 		</div>
 
 		<div class="xlb-reply-box">
-			<img src={thread.author.avatar} alt="" class="xlb-avatar xlb-reply-avatar" draggable="false" />
-			<input type="text" class="xlb-reply-input" placeholder="Post your reply" aria-label="Post your reply" />
+			<img
+				src={thread.author.avatar}
+				alt=""
+				class="xlb-avatar xlb-reply-avatar"
+				draggable="false"
+			/>
+			<input
+				type="text"
+				class="xlb-reply-input"
+				placeholder="Post your reply"
+				aria-label="Post your reply"
+			/>
 		</div>
 
 		<ul class="xlb-replies" aria-label="Replies">
 			{#each thread.replies as reply (reply.id)}
 				<li class="xlb-reply">
-					<img src={reply.author.avatar} alt="" class="xlb-avatar xlb-reply-avatar" draggable="false" />
+					<img
+						src={reply.author.avatar}
+						alt=""
+						class="xlb-avatar xlb-reply-avatar"
+						draggable="false"
+					/>
 					<div class="xlb-author-meta">
 						<div class="xlb-author-line">
 							<span class="xlb-author-name">{reply.author.name}</span>

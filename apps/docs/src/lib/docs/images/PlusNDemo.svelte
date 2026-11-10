@@ -22,7 +22,11 @@
 		<LightboxGallery items={album} ariaLabel="Plus N image demo" zoomControls={false}>
 			{#snippet item(entry, i)}
 				<Lightbox.Zoom>
-					<Lightbox.Media width={entry.width} height={entry.height} class="overflow-hidden rounded-none md:rounded-lg">
+					<Lightbox.Media
+						width={entry.width}
+						height={entry.height}
+						class="overflow-hidden rounded-none md:rounded-lg"
+					>
 						<SlowImage item={entry} blur={i >= visible} />
 					</Lightbox.Media>
 				</Lightbox.Zoom>

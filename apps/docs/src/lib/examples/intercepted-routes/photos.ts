@@ -30,6 +30,22 @@ export const interceptedPhotos: InterceptedPhoto[] = [
 	{ id: '4', alt: 'Wide desert dunes', caption: 'Dunes', file: 'mb-05', height: 467 },
 	{ id: '5', alt: 'Calm lake reflection', caption: 'Still water', file: 'mb-07', height: 533 },
 	{ id: '6', alt: 'Tall concrete staircase', caption: 'Ascent', file: 'mb-08', height: 1200 },
-	{ id: '7', alt: 'Panoramic city skyline at dusk', caption: 'Dusk skyline', file: 'mb-10', height: 451 },
-	{ id: '8', alt: 'Single tree in a green field', caption: 'Lone tree', file: 'mb-11', height: 1161 }
-].map(({ file, ...photo }) => ({ ...photo, src: `/examples/url-synced-state/${file}.jpg`, width: 800 }));
+	{
+		id: '7',
+		alt: 'Panoramic city skyline at dusk',
+		caption: 'Dusk skyline',
+		file: 'mb-10',
+		height: 451
+	},
+	{
+		id: '8',
+		alt: 'Single tree in a green field',
+		caption: 'Lone tree',
+		file: 'mb-11',
+		height: 1161
+	}
+].map(({ file, ...photo }) => ({
+	...photo,
+	src: `/examples/url-synced-state/${file}.jpg`,
+	width: 800
+}));

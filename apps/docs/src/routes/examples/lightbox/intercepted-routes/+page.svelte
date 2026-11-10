@@ -11,37 +11,54 @@
 		type InterceptedPhoto
 	} from '#lib/examples/intercepted-routes/photos.js';
 
-	const selected = $derived((page.state as { photo?: string }).photo);
+	const selected = $derived(page.state.photo);
 	const selectedIndex = $derived(interceptedPhotos.findIndex((photo) => photo.id === selected));
 
 	function intercept(event: MouseEvent, photo: InterceptedPhoto) {
-		if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+		if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+			return;
 		event.preventDefault();
-		goto(photoHref(photo), { shallow: true, state: { photo: photo.id } as App.PageState });
+		goto(photoHref(photo), { shallow: true, state: { photo: photo.id } });
 	}
 </script>
 
 <svelte:head>
-	<title>{selectedIndex === -1 ? EXAMPLE_PAGE_TITLE : interceptedPhotoTitle(interceptedPhotos[selectedIndex])}</title>
+	<title
+		>{selectedIndex === -1
+			? EXAMPLE_PAGE_TITLE
+			: interceptedPhotoTitle(interceptedPhotos[selectedIndex])}</title
+	>
 	<meta
 		name="description"
 		content="A photo grid wired to SvelteKit shallow routing: clicking a tile pushes the photo URL and opens the lightbox over the grid; loading that URL cold renders a standalone photo page instead. Built with ramka."
 	/>
 </svelte:head>
 
-<ExampleShell title="Intercepted routes" docsHref="/docs/lightbox/state-lifecycle" docsLabel="State & lifecycle docs">
+<ExampleShell
+	title="Intercepted routes"
+	docsHref="/docs/lightbox/state-lifecycle"
+	docsLabel="State & lifecycle docs"
+>
 	{#snippet description()}
-		The nextgram pattern in SvelteKit: a grid of plain links whose clicks become shallow routing. Each click calls
-		goto(url, &#123; shallow: true, state &#125;) with the photo URL, and the grid renders an already-open, controlled lightbox from
-		that state, so the URL reads /examples/lightbox/intercepted-routes/photos/3 while the grid stays underneath. Browser
-		Back closes it. Hard-loading the same photo URL skips the shallow state entirely and renders the real photos/[id]
-		route, a standalone photo page: one URL, two presentations. Compare with the URL-synced state example, which keeps
-		one presentation (grid + viewer) on refresh and keeps trigger morphs.
+		The nextgram pattern in SvelteKit: a grid of plain links whose clicks become shallow routing.
+		Each click calls goto(url, &#123; shallow: true, state &#125;) with the photo URL, and the grid
+		renders an already-open, controlled lightbox from that state, so the URL reads
+		/examples/lightbox/intercepted-routes/photos/3 while the grid stays underneath. Browser Back
+		closes it. Hard-loading the same photo URL skips the shallow state entirely and renders the real
+		photos/[id] route, a standalone photo page: one URL, two presentations. Compare with the
+		URL-synced state example, which keeps one presentation (grid + viewer) on refresh and keeps
+		trigger morphs.
 	{/snippet}
 	<div class="grid">
 		{#each interceptedPhotos as photo (photo.id)}
 			<a href={photoHref(photo)} onclick={(event) => intercept(event, photo)}>
-				<img src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} loading="lazy" />
+				<img
+					src={photo.src}
+					alt={photo.alt}
+					width={photo.width}
+					height={photo.height}
+					loading="lazy"
+				/>
 			</a>
 		{/each}
 	</div>
@@ -79,7 +96,8 @@
 		border-radius: 0.75rem;
 		object-fit: cover;
 		background-color: #f5f5f5;
-		transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke,
+		transition-property:
+			color, background-color, border-color, outline-color, text-decoration-color, fill, stroke,
 			opacity, box-shadow, transform, translate, scale, rotate, filter, backdrop-filter;
 		transition-duration: 200ms;
 		transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);

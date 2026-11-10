@@ -5,7 +5,8 @@
 
 	let { report }: { report: (name: string, value: unknown) => void } = $props();
 	let zoom = $state<ReturnType<typeof Lightbox.Zoom>>();
-	const pixel = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"/>';
+	const pixel =
+		'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"/>';
 	$effect(() => report('zoom', zoom));
 </script>
 

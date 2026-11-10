@@ -46,20 +46,29 @@ export function shouldDismiss(dy: number, velocity: number) {
 export function springEasing(velocity = 0, settle = 7.5, samples = 40) {
 	const s = (p: number) => Math.exp(-settle * p) * (1 + (velocity + settle) * p);
 	const points = Array.from({ length: samples }, (_, i) =>
-		i === samples - 1 ? '1' : String(Math.min(Math.round((1 - s(i / (samples - 1))) * 1e4) / 1e4, 1))
+		i === samples - 1
+			? '1'
+			: String(Math.min(Math.round((1 - s(i / (samples - 1))) * 1e4) / 1e4, 1))
 	);
 	return `linear(${points.join(', ')})`;
 }
 
 /** UIScrollView rubber band: in range passes through, past an edge the overflow approaches `dimension`. */
 export function rubberBandClamp(value: number, min: number, max: number, dimension: number) {
-	const band = (x: number) => (dimension > 0 ? (x * dimension * RUBBER_BAND_CONSTANT) / (dimension + RUBBER_BAND_CONSTANT * x) : 0);
+	const band = (x: number) =>
+		dimension > 0
+			? (x * dimension * RUBBER_BAND_CONSTANT) / (dimension + RUBBER_BAND_CONSTANT * x)
+			: 0;
 	return value < min ? min - band(min - value) : value > max ? max + band(value - max) : value;
 }
 
 /** Linear resistance past the zoom bounds, used for pinch overshoot. */
 export function elasticClamp(value: number, min: number, max: number) {
-	return value < min ? min - (min - value) * ELASTIC_FACTOR : value > max ? max + (value - max) * ELASTIC_FACTOR : value;
+	return value < min
+		? min - (min - value) * ELASTIC_FACTOR
+		: value > max
+			? max + (value - max) * ELASTIC_FACTOR
+			: value;
 }
 
 /** Inverse of `elasticClamp`, so a new pinch continues from a displayed overshoot without a jump. */
@@ -72,16 +81,30 @@ export function invertElasticClamp(displayed: number, min: number, max: number) 
 }
 
 /** Pinch zoom with iOS-style begin slop: zoom holds until the fingers spread, a two-finger slide needs more spread. */
-export function resolvePinchZoom(zoom: number, baseline: number, engaged: boolean, a0: Point, a1: Point, b0: Point, b1: Point) {
+export function resolvePinchZoom(
+	zoom: number,
+	baseline: number,
+	engaged: boolean,
+	a0: Point,
+	a1: Point,
+	b0: Point,
+	b1: Point
+) {
 	const current = Math.hypot(a1.x - b1.x, a1.y - b1.y);
 	if (engaged) return { zoom: (zoom * current) / baseline, engaged, baseline };
 	const [ax, ay, bx, by] = [a1.x - a0.x, a1.y - a0.y, b1.x - b0.x, b1.y - b0.y];
 	const [la, lb] = [Math.hypot(ax, ay), Math.hypot(bx, by)];
-	const aligned = la >= PINCH_ALIGNMENT_MIN_TRAVEL && lb >= PINCH_ALIGNMENT_MIN_TRAVEL && (ax * bx + ay * by) / (la * lb) >= PINCH_PAN_ALIGNMENT;
+	const aligned =
+		la >= PINCH_ALIGNMENT_MIN_TRAVEL &&
+		lb >= PINCH_ALIGNMENT_MIN_TRAVEL &&
+		(ax * bx + ay * by) / (la * lb) >= PINCH_PAN_ALIGNMENT;
 	const pan = Math.hypot((ax + bx) / 2, (ay + by) / 2);
 	const spread = current - baseline;
-	const panIntent = aligned || (pan >= PINCH_PAN_TRAVEL && pan > Math.abs(spread) * PINCH_PAN_DOMINANCE);
-	const gate = panIntent ? Math.max(PINCH_ENGAGE_SPREAD_PAN, baseline * PINCH_ENGAGE_SPREAD_PAN_RATIO) : PINCH_ENGAGE_SPREAD;
+	const panIntent =
+		aligned || (pan >= PINCH_PAN_TRAVEL && pan > Math.abs(spread) * PINCH_PAN_DOMINANCE);
+	const gate = panIntent
+		? Math.max(PINCH_ENGAGE_SPREAD_PAN, baseline * PINCH_ENGAGE_SPREAD_PAN_RATIO)
+		: PINCH_ENGAGE_SPREAD;
 	if (Math.abs(spread) <= gate) return { zoom, engaged: false, baseline };
 	const next = panIntent ? baseline + Math.sign(spread) * gate : baseline;
 	return { zoom: (zoom * current) / next, engaged: true, baseline: next };
@@ -102,7 +125,14 @@ export function scaleZoom(zoom: number, delta: number, sensitivity: number) {
 }
 
 /** Auto max zoom: the image at its natural pixel size, but at least one step above `min`. */
-export function computeMaxZoom(imageW: number, imageH: number, boxW: number, boxH: number, min: number, fallback: number) {
+export function computeMaxZoom(
+	imageW: number,
+	imageH: number,
+	boxW: number,
+	boxH: number,
+	min: number,
+	fallback: number
+) {
 	if (!imageW || !imageH || !boxW || !boxH) return fallback;
 	return Math.max(imageW / boxW, imageH / boxH, min + 1);
 }
@@ -133,7 +163,11 @@ export function panRange(size: number, center: number, viewStart: number, viewEn
 /** Slide index step for an arrow key, mirrored horizontally in RTL. */
 export function arrowKeyDelta(key: string, dir: TextDirection) {
 	const rtl = dir === 'rtl' ? -1 : 1;
-	return ({ ArrowRight: rtl, ArrowLeft: -rtl, ArrowDown: 1, ArrowUp: -1 } as Record<string, number>)[key] ?? 0;
+	return (
+		({ ArrowRight: rtl, ArrowLeft: -rtl, ArrowDown: 1, ArrowUp: -1 } as Record<string, number>)[
+			key
+		] ?? 0
+	);
 }
 
 /** Clamps or wraps an index into `[0, count)`. */

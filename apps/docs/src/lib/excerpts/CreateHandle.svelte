@@ -5,7 +5,9 @@
 	const lightbox = Lightbox.createHandle();
 </script>
 
-<button type="button" onclick={() => lightbox.open(0, { triggerId: 'photo-0' })}>View gallery</button>
+<button type="button" onclick={() => lightbox.open(0, { triggerId: 'photo-0' })}
+	>View gallery</button
+>
 
 {#each images as img, i (img.id)}
 	<Lightbox.Trigger handle={lightbox} id="photo-{i}" index={i}>

@@ -26,10 +26,17 @@
 		{#each items.slice(0, triggers) as item, i (item.src)}
 			<Lightbox.Trigger
 				index={i}
-				crossfade={crossfade === 'all' || (crossfade === 'last' && i === triggers - 1) ? 'both' : undefined}
+				crossfade={crossfade === 'all' || (crossfade === 'last' && i === triggers - 1)
+					? 'both'
+					: undefined}
 				class="block cursor-pointer rounded-lg border-none bg-transparent p-0 {triggerFocus}"
 			>
-				<img src={item.thumb} alt={item.alt} loading="lazy" class="block aspect-[3/2] w-full rounded-lg object-cover" />
+				<img
+					src={item.thumb}
+					alt={item.alt}
+					loading="lazy"
+					class="block aspect-[3/2] w-full rounded-lg object-cover"
+				/>
 			</Lightbox.Trigger>
 		{/each}
 	</div>

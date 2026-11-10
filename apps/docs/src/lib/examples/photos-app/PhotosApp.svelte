@@ -36,7 +36,10 @@
 	function zoomTo(next: number) {
 		const target = Math.min(MAX_COLUMNS, Math.max(MIN_COLUMNS, next));
 		if (target === columns) return;
-		if (typeof document.startViewTransition !== 'function' || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+		if (
+			typeof document.startViewTransition !== 'function' ||
+			matchMedia('(prefers-reduced-motion: reduce)').matches
+		) {
 			columns = target;
 			return;
 		}

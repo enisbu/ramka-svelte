@@ -33,7 +33,13 @@
 	<Lightbox.Content aria-label={ariaLabel} class="stl-content">
 		{#if multiple}
 			<Lightbox.Previous class="stl-nav stl-nav-prev stl-chrome-gesture-hide" aria-label="Previous">
-				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+				<svg
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.75"
+					aria-hidden="true"
+				>
 					<path d="m15 18-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
 				</svg>
 			</Lightbox.Previous>
@@ -41,10 +47,19 @@
 		<Lightbox.Stage class="stl-stage">
 			{#snippet children({ morphRef })}
 				<div class="stl-frame" {@attach morphRef}>
-					<Lightbox.Slides aria-label="Stories" aria-roledescription="carousel" preload={1} class="stl-slides">
+					<Lightbox.Slides
+						aria-label="Stories"
+						aria-roledescription="carousel"
+						preload={1}
+						class="stl-slides"
+					>
 						{#each items as item, i (item.id ?? i)}
 							<Lightbox.Slide class="stl-slide">
-								<Lightbox.Item index={i} aria-roledescription="slide" aria-label="{i + 1} of {items.length}">
+								<Lightbox.Item
+									index={i}
+									aria-roledescription="slide"
+									aria-label="{i + 1} of {items.length}"
+								>
 									{#snippet children({ active })}
 										<Lightbox.Media
 											width={item.width}
@@ -83,7 +98,11 @@
 															stroke-width="1.75"
 															aria-hidden="true"
 														>
-															<path d="M18 6 6 18M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
+															<path
+																d="M18 6 6 18M6 6l12 12"
+																stroke-linecap="round"
+																stroke-linejoin="round"
+															/>
 														</svg>
 													</Lightbox.Close>
 												</div>
@@ -99,7 +118,13 @@
 		</Lightbox.Stage>
 		{#if multiple}
 			<Lightbox.Next class="stl-nav stl-nav-next stl-chrome-gesture-hide" aria-label="Next">
-				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+				<svg
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.75"
+					aria-hidden="true"
+				>
 					<path d="m9 18 6-6-6-6" stroke-linecap="round" stroke-linejoin="round" />
 				</svg>
 			</Lightbox.Next>

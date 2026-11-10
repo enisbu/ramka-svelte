@@ -96,7 +96,9 @@ export function warnUnnamed(part: string, { namedByContent = true, hint = DEFAUL
 		if (!DEV) return;
 		const timer = setTimeout(() => {
 			if (el.getAttribute('aria-hidden') === 'true' || !el.isConnected) return;
-			const named = ['aria-label', 'aria-labelledby', 'title'].some((a) => el.getAttribute(a)?.trim());
+			const named = ['aria-label', 'aria-labelledby', 'title'].some((a) =>
+				el.getAttribute(a)?.trim()
+			);
 			if (named || (namedByContent && el.textContent?.trim())) return;
 			console.warn(
 				`[ramka] ${part} has no accessible name. ${hint} The library ships no default label so it never hard-codes English into your UI.`

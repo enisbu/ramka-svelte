@@ -2,10 +2,18 @@
 	import { Lightbox, type LightboxItem } from './index.js';
 
 	const mixkit = (id: number) => `https://assets.mixkit.co/videos/${id}/${id}-720.mp4`;
-	const mixkitPoster = (id: number) => `https://assets.mixkit.co/videos/${id}/${id}-thumb-720-0.jpg`;
-	const portrait = (gender: 'women' | 'men', n: number) => `https://randomuser.me/api/portraits/${gender}/${n}.jpg`;
+	const mixkitPoster = (id: number) =>
+		`https://assets.mixkit.co/videos/${id}/${id}-thumb-720-0.jpg`;
+	const portrait = (gender: 'women' | 'men', n: number) =>
+		`https://randomuser.me/api/portraits/${gender}/${n}.jpg`;
 
-	const story = (id: string, name: string, time: string, avatar: string, clip: number): LightboxItem => ({
+	const story = (
+		id: string,
+		name: string,
+		time: string,
+		avatar: string,
+		clip: number
+	): LightboxItem => ({
 		id,
 		name,
 		time,

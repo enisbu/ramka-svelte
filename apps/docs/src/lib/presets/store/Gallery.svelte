@@ -51,7 +51,12 @@
 	<Lightbox.Backdrop class="slb-backdrop" />
 	<Lightbox.Content aria-label={ariaLabel} class="slb-content">
 		<Lightbox.Stage class="slb-stage">
-			<Lightbox.Slides aria-label="Product images" aria-roledescription="carousel" preload={2} class="slb-slides">
+			<Lightbox.Slides
+				aria-label="Product images"
+				aria-roledescription="carousel"
+				preload={2}
+				class="slb-slides"
+			>
 				{#each items as item, i (item.id ?? i)}
 					<Lightbox.Slide class="slb-slide">
 						<Lightbox.Item
@@ -77,13 +82,22 @@
 			</Lightbox.Slides>
 
 			<Lightbox.Close class="slb-control slb-close slb-chrome-gesture-hide" aria-label="Close">
-				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+				<svg
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					aria-hidden="true"
+				>
 					<path d="M18 6 6 18M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
 				</svg>
 			</Lightbox.Close>
 
 			{#if multiple}
-				<Lightbox.ThumbnailGroup class="slb-rail slb-chrome-gesture-hide" aria-label="Product images">
+				<Lightbox.ThumbnailGroup
+					class="slb-rail slb-chrome-gesture-hide"
+					aria-label="Product images"
+				>
 					{#each items as item, i (item.id ?? i)}
 						<Lightbox.Thumbnail index={i} class="slb-rail-thumb">
 							<img src={item.thumb} alt={item.alt} draggable="false" />
@@ -93,13 +107,25 @@
 
 				<div class="slb-pager slb-chrome-gesture-hide">
 					<Lightbox.Previous class="slb-control slb-nav" aria-label="Previous">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+						<svg
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							aria-hidden="true"
+						>
 							<path d="m15 18-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
 						</svg>
 					</Lightbox.Previous>
 					<Lightbox.Counter class="slb-counter" />
 					<Lightbox.Next class="slb-control slb-nav" aria-label="Next">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+						<svg
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							aria-hidden="true"
+						>
 							<path d="m9 18 6-6-6-6" stroke-linecap="round" stroke-linejoin="round" />
 						</svg>
 					</Lightbox.Next>
@@ -108,13 +134,25 @@
 
 			<div class="slb-zoom-group slb-chrome-gesture-hide">
 				<Lightbox.ZoomOut class="slb-control" aria-label="Zoom out">
-					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+					<svg
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						aria-hidden="true"
+					>
 						<circle cx="11" cy="11" r="8" />
 						<path d="m21 21-4.3-4.3M8 11h6" stroke-linecap="round" stroke-linejoin="round" />
 					</svg>
 				</Lightbox.ZoomOut>
 				<Lightbox.ZoomIn class="slb-control" aria-label="Zoom in">
-					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+					<svg
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						aria-hidden="true"
+					>
 						<circle cx="11" cy="11" r="8" />
 						<path d="m21 21-4.3-4.3M11 8v6M8 11h6" stroke-linecap="round" stroke-linejoin="round" />
 					</svg>
@@ -151,7 +189,8 @@
 				<span class="slb-mobile-name">{product.name}</span>
 				{@render priceRow(true)}
 			</div>
-			<button type="button" class="slb-cta slb-cta-compact" onclick={onAddToCart}>{ctaLabel}</button>
+			<button type="button" class="slb-cta slb-cta-compact" onclick={onAddToCart}>{ctaLabel}</button
+			>
 		</div>
 	</Lightbox.Content>
 </Lightbox.Portal>

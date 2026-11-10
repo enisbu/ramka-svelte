@@ -11,6 +11,9 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 	await new Promise((resolve) => setTimeout(resolve, ms));
 	const response = await fetch(src);
 	return new Response(response.body, {
-		headers: { 'content-type': response.headers.get('content-type') ?? 'image/jpeg', 'cache-control': 'no-store' }
+		headers: {
+			'content-type': response.headers.get('content-type') ?? 'image/jpeg',
+			'cache-control': 'no-store'
+		}
 	});
 };

@@ -17,7 +17,9 @@
 	onclick={() => (tease === null ? showNext() : (tease = null))}
 >
 	{#key tease}
-		<span class="inline-block animate-[wordplay_400ms_cubic-bezier(0.41,1.03,0.6,1.03)]">{tease ?? ramka}</span>
+		<span class="inline-block animate-[wordplay_400ms_cubic-bezier(0.41,1.03,0.6,1.03)]"
+			>{tease ?? ramka}</span
+		>
 	{/key}
 </p>
 

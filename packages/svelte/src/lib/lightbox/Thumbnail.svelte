@@ -26,7 +26,10 @@
 		const track = el.parentElement;
 		if (strip || !active || !track) return;
 		const offset = el.getBoundingClientRect().left - track.getBoundingClientRect().left;
-		track.scrollTo({ left: track.scrollLeft + offset - (track.clientWidth - el.offsetWidth) / 2, behavior: 'smooth' });
+		track.scrollTo({
+			left: track.scrollLeft + offset - (track.clientWidth - el.offsetWidth) / 2,
+			behavior: 'smooth'
+		});
 	}
 </script>
 

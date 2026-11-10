@@ -93,11 +93,17 @@ html.dark .lightbox-demo-backdrop-light {
 	--lightbox-snug-gap: 1.25rem;
 	--lightbox-snug-slide-width-start: min(
 		calc(100cqw - 2 * var(--lightbox-inset-inline)),
-		calc((100cqh - var(--lightbox-inset-top) - var(--lightbox-inset-bottom)) * var(--lightbox-snug-ratio-start, 1))
+		calc(
+			(100cqh - var(--lightbox-inset-top) - var(--lightbox-inset-bottom)) *
+				var(--lightbox-snug-ratio-start, 1)
+		)
 	);
 	--lightbox-snug-slide-width-end: min(
 		calc(100cqw - 2 * var(--lightbox-inset-inline)),
-		calc((100cqh - var(--lightbox-inset-top) - var(--lightbox-inset-bottom)) * var(--lightbox-snug-ratio-end, 1))
+		calc(
+			(100cqh - var(--lightbox-inset-top) - var(--lightbox-inset-bottom)) *
+				var(--lightbox-snug-ratio-end, 1)
+		)
 	);
 	gap: var(--lightbox-snug-gap);
 }
@@ -105,7 +111,10 @@ html.dark .lightbox-demo-backdrop-light {
 .lightbox-demo-content-snug .lightbox-demo-slide-snug {
 	--lightbox-snug-slide-width: min(
 		calc(100cqw - 2 * var(--lightbox-inset-inline)),
-		calc((100cqh - var(--lightbox-inset-top) - var(--lightbox-inset-bottom)) * var(--lightbox-snug-ratio))
+		calc(
+			(100cqh - var(--lightbox-inset-top) - var(--lightbox-inset-bottom)) *
+				var(--lightbox-snug-ratio)
+		)
 	);
 }
 
@@ -131,15 +140,19 @@ html.dark .lightbox-demo-backdrop-light {
 	}
 
 	.lightbox-demo-slide-snug [data-ramka-item] {
-		transition: opacity var(--lightbox-pull-snap-duration, 500ms) var(--lightbox-pull-snap-easing, var(--ease-out-expo));
+		transition: opacity var(--lightbox-pull-snap-duration, 500ms)
+			var(--lightbox-pull-snap-easing, var(--ease-out-expo));
 	}
 
 	.lightbox-demo-slide-snug [data-ramka-item]:not([data-active]) {
 		opacity: calc(1 - var(--lightbox-pull-progress, 0) * 0.85);
-		filter: opacity(calc(1 - var(--lightbox-pull-progress, 0))) blur(calc(var(--lightbox-pull-progress, 0) * 6px));
+		filter: opacity(calc(1 - var(--lightbox-pull-progress, 0)))
+			blur(calc(var(--lightbox-pull-progress, 0) * 6px));
 	}
 
-	.lightbox-demo-content:is([data-pulling], [data-pull-dismissing]) .lightbox-demo-slide-snug [data-ramka-item] {
+	.lightbox-demo-content:is([data-pulling], [data-pull-dismissing])
+		.lightbox-demo-slide-snug
+		[data-ramka-item] {
 		transition: none;
 	}
 }

@@ -22,7 +22,9 @@
 		<TriggerGrid items={docsImages} />
 		<LightboxGallery items={docsImages} ariaLabel="Lifecycle-callbacks photo gallery" />
 	</Lightbox.Root>
-	<section class="w-full max-w-2xl rounded-xl border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-800 dark:bg-neutral-900">
+	<section
+		class="w-full max-w-2xl rounded-xl border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-800 dark:bg-neutral-900"
+	>
 		<div class="text-xs font-semibold tracking-widest text-neutral-500 uppercase">Event log</div>
 		{#if log.length === 0}
 			<p class="mt-2 text-sm text-neutral-500">Open or close the lightbox to see events.</p>

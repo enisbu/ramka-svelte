@@ -27,7 +27,14 @@
 		ssrSlideShift?: boolean;
 	}
 
-	let { items, ariaLabel, captionFallback, inPlace = false, portalClass, ssrSlideShift = false }: Props = $props();
+	let {
+		items,
+		ariaLabel,
+		captionFallback,
+		inPlace = false,
+		portalClass,
+		ssrSlideShift = false
+	}: Props = $props();
 </script>
 
 <Lightbox.Portal container={inPlace ? null : undefined} class={portalClass}>
@@ -44,7 +51,11 @@
 				<Lightbox.Slide class="url-synced-state-slide">
 					<Lightbox.Item index={i} caption={item.caption} aria-roledescription="slide">
 						<Lightbox.Zoom maxZoom={6}>
-							<Lightbox.Media width={item.width} height={item.height} class="url-synced-state-media">
+							<Lightbox.Media
+								width={item.width}
+								height={item.height}
+								class="url-synced-state-media"
+							>
 								<img
 									src={item.src}
 									alt={item.alt}
@@ -65,7 +76,10 @@
 				<Lightbox.ZoomOut class="url-synced-state-segment" aria-label="Zoom out">
 					<ZoomOutIcon aria-hidden="true" size={16} strokeWidth={2.25} />
 				</Lightbox.ZoomOut>
-				<Lightbox.ZoomIn class="url-synced-state-segment url-synced-state-segment-divider" aria-label="Zoom in">
+				<Lightbox.ZoomIn
+					class="url-synced-state-segment url-synced-state-segment-divider"
+					aria-label="Zoom in"
+				>
 					<ZoomInIcon aria-hidden="true" size={16} strokeWidth={2.25} />
 				</Lightbox.ZoomIn>
 			</div>

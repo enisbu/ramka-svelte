@@ -96,12 +96,18 @@
 		</div>
 
 		<div class="infinite-scroll-sentinel" aria-hidden="true" {@attach sentinel}>
-			<LoaderCircle class={['infinite-scroll-spinner', loading && 'infinite-scroll-visible']} size={20} />
+			<LoaderCircle
+				class={['infinite-scroll-spinner', loading && 'infinite-scroll-visible']}
+				size={20}
+			/>
 		</div>
 
 		<Lightbox.Portal class="photos-app-lb-portal">
 			<Lightbox.Backdrop class="photos-app-lb-backdrop photos-app-lb-backdrop-solid" />
-			<Lightbox.Content aria-label="Feed photos" class="photos-app-lb-content photos-app-lb-content-solo">
+			<Lightbox.Content
+				aria-label="Feed photos"
+				class="photos-app-lb-content photos-app-lb-content-solo"
+			>
 				<Lightbox.Slides
 					aria-roledescription="carousel"
 					aria-label="Full-size photos"
@@ -110,9 +116,17 @@
 				>
 					{#each photos as photo, i (photo.id)}
 						<Lightbox.Slide class="photos-app-lb-slide">
-							<Lightbox.Item index={i} aria-roledescription="slide" aria-label="{i + 1} of {photos.length}">
+							<Lightbox.Item
+								index={i}
+								aria-roledescription="slide"
+								aria-label="{i + 1} of {photos.length}"
+							>
 								<Lightbox.Zoom maxZoom={6}>
-									<Lightbox.Media width={photo.width} height={photo.height} class="photos-app-lb-media">
+									<Lightbox.Media
+										width={photo.width}
+										height={photo.height}
+										class="photos-app-lb-media"
+									>
 										<img
 											src={photo.src}
 											alt={photo.alt}
@@ -129,7 +143,10 @@
 				</Lightbox.Slides>
 
 				<div class="infinite-scroll-nav infinite-scroll-nav-start photos-app-lb-chrome-hide">
-					<Lightbox.Previous class="photos-app-lb-button photos-app-lb-md" aria-label="Previous photo">
+					<Lightbox.Previous
+						class="photos-app-lb-button photos-app-lb-md"
+						aria-label="Previous photo"
+					>
 						<ChevronLeft aria-hidden="true" size={20} strokeWidth={2.25} />
 					</Lightbox.Previous>
 				</div>
@@ -157,7 +174,10 @@
 					<Lightbox.Counter class="photos-app-lb-counter">
 						{#snippet children({ current, total })}{current} of {total}{/snippet}
 					</Lightbox.Counter>
-					<div class={['infinite-scroll-pill', loading && 'infinite-scroll-visible']} aria-hidden={!loading}>
+					<div
+						class={['infinite-scroll-pill', loading && 'infinite-scroll-visible']}
+						aria-hidden={!loading}
+					>
 						<LoaderCircle class="infinite-scroll-pill-spinner" size={12} />
 						Loading more photos
 					</div>

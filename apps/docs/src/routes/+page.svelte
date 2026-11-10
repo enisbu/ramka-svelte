@@ -11,7 +11,8 @@
 
 	const description =
 		'Headless Svelte lightbox with View Transitions morph animations, pinch to zoom, swipe navigation, and pull to dismiss. A Svelte 5 port of ramka by Artur Bień.';
-	const credit = 'text-neutral-500 underline decoration-neutral-300 underline-offset-2 transition hover:text-neutral-900 dark:text-neutral-400 dark:decoration-neutral-700 dark:hover:text-neutral-100';
+	const credit =
+		'text-neutral-500 underline decoration-neutral-300 underline-offset-2 transition hover:text-neutral-900 dark:text-neutral-400 dark:decoration-neutral-700 dark:hover:text-neutral-100';
 </script>
 
 <svelte:head>
@@ -26,12 +27,16 @@
 	<SiteHeader />
 	<main class="flex-1">
 		<section class="mx-auto w-full max-w-3xl px-6 pt-16 text-center md:pt-24">
-			<h1 class="text-5xl font-semibold tracking-tight text-balance text-neutral-950 md:text-7xl dark:text-neutral-50">
+			<h1
+				class="text-5xl font-semibold tracking-tight text-balance text-neutral-950 md:text-7xl dark:text-neutral-50"
+			>
 				The lightbox for&nbsp;Svelte.
 			</h1>
-			<p class="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-pretty text-neutral-500 md:text-xl dark:text-neutral-400">
-				Unstyled, accessible primitives built on native scrolling and view transitions. Morph, swipe, zoom, and
-				pull-to-dismiss, all out of the box.
+			<p
+				class="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-pretty text-neutral-500 md:text-xl dark:text-neutral-400"
+			>
+				Unstyled, accessible primitives built on native scrolling and view transitions. Morph,
+				swipe, zoom, and pull-to-dismiss, all out of the box.
 			</p>
 			<div class="mt-10 flex flex-wrap items-center justify-center gap-3">
 				<a
@@ -58,10 +63,15 @@
 				Click any image. Swipe, pinch to zoom, pull to dismiss.
 			</p>
 			<LandingDemo />
-			<p class="mx-auto mt-14 max-w-xl text-center text-sm leading-6 text-pretty text-neutral-400 md:mt-20 dark:text-neutral-500">
-				A Svelte 5 port of <a href={upstream.site} target="_blank" rel="noreferrer" class={credit}>ramka</a>, the React
-				lightbox by <a href={upstream.authorUrl} target="_blank" rel="noreferrer" class={credit}>{upstream.author}</a>,
-				ported with his blessing. Using React? Install
+			<p
+				class="mx-auto mt-14 max-w-xl text-center text-sm leading-6 text-pretty text-neutral-400 md:mt-20 dark:text-neutral-500"
+			>
+				A Svelte 5 port of <a href={upstream.site} target="_blank" rel="noreferrer" class={credit}
+					>ramka</a
+				>, the React lightbox by
+				<a href={upstream.authorUrl} target="_blank" rel="noreferrer" class={credit}
+					>{upstream.author}</a
+				>, ported with his blessing. Using React? Install
 				<a href={upstream.npm} target="_blank" rel="noreferrer" class={credit}>@ramka/react</a>.
 			</p>
 		</section>

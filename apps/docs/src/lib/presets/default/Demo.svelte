@@ -1,21 +1,90 @@
 <script lang="ts">
 	import { Lightbox, type LightboxItem } from './index.js';
 
-	const photo = (id: string) => ({ src: `/examples/default/preset-trip-${id}.jpg`, thumb: `/examples/default/preset-trip-${id}-thumb.jpg` });
+	const photo = (id: string) => ({
+		src: `/examples/default/preset-trip-${id}.jpg`,
+		thumb: `/examples/default/preset-trip-${id}-thumb.jpg`
+	});
 
 	const trip: LightboxItem[] = [
 		{ ...photo('a'), alt: 'Maya on the ridge', caption: 'Maya Chen', width: 1200, height: 1200 },
-		{ ...photo('b'), alt: 'Cliffside road at sunset', caption: 'Cliffside road at sunset', width: 1600, height: 1000 },
-		{ ...photo('c'), alt: 'Turquoise cove', caption: 'A turquoise cove', width: 1600, height: 1000 },
-		{ ...photo('d'), alt: 'Trail through pines', caption: 'Through the pines', width: 1200, height: 1500 },
-		{ ...photo('e'), alt: 'Camp under the stars', caption: 'Camp under the stars', width: 1600, height: 1000 },
-		{ ...photo('f'), alt: 'Morning coffee on the rocks', caption: 'Morning on the rocks', width: 1200, height: 1200 },
-		{ ...photo('g'), alt: 'Waterfall in the canyon', caption: 'Hidden waterfall', width: 1600, height: 1000 },
-		{ ...photo('h'), alt: 'Wildflowers on the hillside', caption: 'Wildflower meadow', width: 1200, height: 1500 },
-		{ ...photo('i'), alt: 'Kayaks on calm water', caption: 'Kayak at dawn', width: 1600, height: 1000 },
-		{ ...photo('j'), alt: 'Sunset over the lake', caption: 'Golden hour', width: 1200, height: 1200 },
-		{ ...photo('k'), alt: 'Boardwalk through the marsh', caption: 'Coastal marsh', width: 1600, height: 1000 },
-		{ ...photo('l'), alt: 'Fire lookout tower', caption: 'Summit lookout', width: 1200, height: 1500 }
+		{
+			...photo('b'),
+			alt: 'Cliffside road at sunset',
+			caption: 'Cliffside road at sunset',
+			width: 1600,
+			height: 1000
+		},
+		{
+			...photo('c'),
+			alt: 'Turquoise cove',
+			caption: 'A turquoise cove',
+			width: 1600,
+			height: 1000
+		},
+		{
+			...photo('d'),
+			alt: 'Trail through pines',
+			caption: 'Through the pines',
+			width: 1200,
+			height: 1500
+		},
+		{
+			...photo('e'),
+			alt: 'Camp under the stars',
+			caption: 'Camp under the stars',
+			width: 1600,
+			height: 1000
+		},
+		{
+			...photo('f'),
+			alt: 'Morning coffee on the rocks',
+			caption: 'Morning on the rocks',
+			width: 1200,
+			height: 1200
+		},
+		{
+			...photo('g'),
+			alt: 'Waterfall in the canyon',
+			caption: 'Hidden waterfall',
+			width: 1600,
+			height: 1000
+		},
+		{
+			...photo('h'),
+			alt: 'Wildflowers on the hillside',
+			caption: 'Wildflower meadow',
+			width: 1200,
+			height: 1500
+		},
+		{
+			...photo('i'),
+			alt: 'Kayaks on calm water',
+			caption: 'Kayak at dawn',
+			width: 1600,
+			height: 1000
+		},
+		{
+			...photo('j'),
+			alt: 'Sunset over the lake',
+			caption: 'Golden hour',
+			width: 1200,
+			height: 1200
+		},
+		{
+			...photo('k'),
+			alt: 'Boardwalk through the marsh',
+			caption: 'Coastal marsh',
+			width: 1600,
+			height: 1000
+		},
+		{
+			...photo('l'),
+			alt: 'Fire lookout tower',
+			caption: 'Summit lookout',
+			width: 1200,
+			height: 1500
+		}
 	];
 
 	const extra = trip.length - 4;
@@ -32,7 +101,13 @@
 				<Lightbox.Trigger index={i} crossfade={overlay ? 'both' : undefined} class="tile">
 					{#snippet children({ morphRef, imageRef })}
 						<span class="tile-morph corner-{i}" {@attach morphRef}>
-							<img width={img.width} height={img.height} src={img.thumb} alt={img.alt} {@attach imageRef} />
+							<img
+								width={img.width}
+								height={img.height}
+								src={img.thumb}
+								alt={img.alt}
+								{@attach imageRef}
+							/>
 							{#if overlay}
 								<span class="more">+{extra}</span>
 							{/if}
@@ -64,7 +139,10 @@
 				</span>
 			{/snippet}
 		</Lightbox.Trigger>
-		<Lightbox.Gallery items={[{ ...listing, caption: 'Cliffside cottage · Big Sur' }]} ariaLabel="Cliffside cottage" />
+		<Lightbox.Gallery
+			items={[{ ...listing, caption: 'Cliffside cottage · Big Sur' }]}
+			ariaLabel="Cliffside cottage"
+		/>
 	</Lightbox.Root>
 
 	<Lightbox.Root awaitImageDecode={false}>
@@ -72,7 +150,13 @@
 		<Lightbox.Trigger index={0} crossfade="both" class="user">
 			{#snippet children({ morphRef, imageRef })}
 				<span class="card user-card" {@attach morphRef}>
-					<img width={portrait.width} height={portrait.height} src={portrait.thumb} alt="" {@attach imageRef} />
+					<img
+						width={portrait.width}
+						height={portrait.height}
+						src={portrait.thumb}
+						alt=""
+						{@attach imageRef}
+					/>
 					<span class="user-text">
 						<span class="title">Maya Chen</span>
 						<span class="meta">@mayachen</span>

@@ -13,10 +13,15 @@
 
 	let { pullToClose = true, children, ...rest }: Props = $props();
 	const lb = getModel();
-	const FOCUSABLE = 'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+	const FOCUSABLE =
+		'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 	const EDITABLE = 'input, textarea, select, [contenteditable]:not([contenteditable="false"])';
 	const parked = $derived(!lb.present);
-	const progress = $derived(lb.activeZoom ? zoomProgress(lb.activeZoom.zoom, lb.activeZoom.minZoom, lb.activeZoom.maxZoom) : 0);
+	const progress = $derived(
+		lb.activeZoom
+			? zoomProgress(lb.activeZoom.zoom, lb.activeZoom.minZoom, lb.activeZoom.maxZoom)
+			: 0
+	);
 
 	let dialogEl: HTMLElement;
 	let pressedScrim = false;
@@ -83,7 +88,12 @@
 		if (target?.isContentEditable || target?.closest(EDITABLE)) return;
 		if (e.ctrlKey || e.metaKey || e.altKey) return;
 		const stage = lb.stageEl;
-		const outsideStage = !!stage && !!target && target !== dialogEl && target !== document.body && !stage.contains(target);
+		const outsideStage =
+			!!stage &&
+			!!target &&
+			target !== dialogEl &&
+			target !== document.body &&
+			!stage.contains(target);
 		const zoom = lb.activeZoom;
 		const zoomKeys: Record<string, (() => void) | undefined> = {
 			'+': zoom?.zoomIn,
@@ -112,7 +122,13 @@
 			return;
 		}
 		const delta = arrowKeyDelta(e.key, lb.dir);
-		const next = delta ? lb.index + delta : e.key === 'Home' ? 0 : e.key === 'End' ? lb.count - 1 : null;
+		const next = delta
+			? lb.index + delta
+			: e.key === 'Home'
+				? 0
+				: e.key === 'End'
+					? lb.count - 1
+					: null;
 		if (next === null) return;
 		e.preventDefault();
 		lb.go(next, 'keyboard');

@@ -92,7 +92,12 @@ export class ZoomController {
 	#options: () => ZoomOptions;
 	#events: ZoomEvents;
 
-	constructor(viewport: HTMLElement, content: HTMLElement, options: () => ZoomOptions, events: ZoomEvents) {
+	constructor(
+		viewport: HTMLElement,
+		content: HTMLElement,
+		options: () => ZoomOptions,
+		events: ZoomEvents
+	) {
 		this.#viewport = viewport;
 		this.#content = content;
 		this.#options = options;
@@ -174,7 +179,9 @@ export class ZoomController {
 		if (isPerceptibleSnapback(this.scale, min, max)) haptic();
 		const ratio = bound / this.scale;
 		const f = this.#focal;
-		const coast = velocity ? { x: velocity.x / PAN_FRICTION, y: velocity.y / PAN_FRICTION } : { x: 0, y: 0 };
+		const coast = velocity
+			? { x: velocity.x / PAN_FRICTION, y: velocity.y / PAN_FRICTION }
+			: { x: 0, y: 0 };
 		this.animateTo(
 			bound,
 			f.x - (f.x - this.x) * ratio + coast.x,
@@ -196,7 +203,12 @@ export class ZoomController {
 		const { min, max } = this.#options();
 		const s = clamp(scale, min, max);
 		const ratio = s / this.scale;
-		this.animateTo(s, focal.x - (focal.x - this.x) * ratio, focal.y - (focal.y - this.y) * ratio, duration);
+		this.animateTo(
+			s,
+			focal.x - (focal.x - this.x) * ratio,
+			focal.y - (focal.y - this.y) * ratio,
+			duration
+		);
 	}
 
 	zoomIn = () => this.zoomAt(this.scale * this.#options().step);
@@ -204,7 +216,8 @@ export class ZoomController {
 	zoomTo = (target: number, { rapid = false, dx = 0, dy = 0 } = {}) =>
 		this.zoomAt(target, { x: dx, y: dy }, rapid ? 0 : undefined);
 	reset = (rapid = false) => this.animateTo(this.#options().min, 0, 0, rapid ? 0 : 300);
-	pan = (dx: number, dy: number) => this.animateTo(this.scale, this.x + dx * this.scale, this.y + dy * this.scale, 200);
+	pan = (dx: number, dy: number) =>
+		this.animateTo(this.scale, this.x + dx * this.scale, this.y + dy * this.scale, 200);
 	changeOffsets = (dx: number, dy: number) => {
 		this.#cancel();
 		this.#set(...this.#clamped(this.scale, this.x - dx * this.scale, this.y - dy * this.scale));
@@ -274,7 +287,8 @@ export class ZoomController {
 		if (this.#pointers.size === 1) return this.#startGesture();
 		const { min } = this.#options();
 		const last = this.#samples.at(-1);
-		const velocity = last && e.timeStamp - last.t <= VELOCITY_WINDOW ? momentumVelocity(this.#samples) : null;
+		const velocity =
+			last && e.timeStamp - last.t <= VELOCITY_WINDOW ? momentumVelocity(this.#samples) : null;
 		this.#gesture = null;
 		this.#samples = [];
 		this.#drag(false);
@@ -289,7 +303,8 @@ export class ZoomController {
 		const { min, max, doubleClickDelay } = this.#options();
 		const last = this.#lastTap;
 		const double =
-			e.timeStamp - last.t < doubleClickDelay && Math.hypot(point.x - last.x, point.y - last.y) < DOUBLE_TAP_DISTANCE;
+			e.timeStamp - last.t < doubleClickDelay &&
+			Math.hypot(point.x - last.x, point.y - last.y) < DOUBLE_TAP_DISTANCE;
 		this.#lastTap = double ? { t: 0, x: 0, y: 0 } : { t: e.timeStamp, ...point };
 		if (double) this.toggle(point);
 		else if (this.scale !== clamp(this.scale, min, max)) this.#settle();
@@ -322,7 +337,10 @@ export class ZoomController {
 				this.#zoomAround(elasticClamp(this.#wheelZoom, min, max), focal);
 			} else {
 				this.#wheelZoom = undefined;
-				this.#zoomAround(clamp(scaleZoom(this.scale, -e.deltaY, wheelSensitivity), min, max), focal);
+				this.#zoomAround(
+					clamp(scaleZoom(this.scale, -e.deltaY, wheelSensitivity), min, max),
+					focal
+				);
 			}
 			this.#wheelTimer = window.setTimeout(() => {
 				this.#pinch(false);

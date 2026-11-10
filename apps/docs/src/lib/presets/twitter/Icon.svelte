@@ -1,6 +1,18 @@
 <script lang="ts">
-	let { name }: { name: 'x' | 'chevron-left' | 'chevron-right' | 'verified' | 'reply' | 'repost' | 'like' | 'views' | 'share' } =
-		$props();
+	let {
+		name
+	}: {
+		name:
+			| 'x'
+			| 'chevron-left'
+			| 'chevron-right'
+			| 'verified'
+			| 'reply'
+			| 'repost'
+			| 'like'
+			| 'views'
+			| 'share';
+	} = $props();
 </script>
 
 {#if name === 'verified'}
@@ -12,7 +24,11 @@
 {:else if name === 'x' || name === 'chevron-left' || name === 'chevron-right'}
 	<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" aria-hidden="true">
 		<path
-			d={name === 'x' ? 'M18 6 6 18M6 6l12 12' : name === 'chevron-left' ? 'm15 18-6-6 6-6' : 'm9 18 6-6-6-6'}
+			d={name === 'x'
+				? 'M18 6 6 18M6 6l12 12'
+				: name === 'chevron-left'
+					? 'm15 18-6-6 6-6'
+					: 'm9 18 6-6-6-6'}
 			stroke-linecap="round"
 			stroke-linejoin="round"
 		/>

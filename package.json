@@ -11,10 +11,15 @@
 		"test": "pnpm -r --if-present test",
 		"changeset": "changeset",
 		"version": "changeset version",
-		"release": "pnpm --filter ./packages/* build && changeset publish"
+		"release": "pnpm --filter ./packages/* build && changeset publish",
+		"format": "prettier --write .",
+		"lint": "prettier --check ."
 	},
 	"devDependencies": {
-		"@changesets/cli": "^2.29.0"
+		"@changesets/cli": "^2.29.0",
+		"prettier": "^3.9.10",
+		"prettier-plugin-svelte": "^4.1.1",
+		"prettier-plugin-tailwindcss": "^0.8.1"
 	},
 	"packageManager": "pnpm@12.16.1",
 	"engines": {

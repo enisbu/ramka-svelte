@@ -17,7 +17,9 @@
 	const groups = $derived.by(() => {
 		const order = ['package', 'example', undefined] as const;
 		return order
-			.map((group) => files.map((file, i) => ({ file, i })).filter(({ file }) => file.group === group))
+			.map((group) =>
+				files.map((file, i) => ({ file, i })).filter(({ file }) => file.group === group)
+			)
 			.filter((list) => list.length);
 	});
 
@@ -68,7 +70,12 @@
 				{:else}
 					<span class="single">{current?.name}</span>
 				{/if}
-				<button type="button" class="copy" onclick={copy} aria-label="Copy {current?.name ?? 'code'}">
+				<button
+					type="button"
+					class="copy"
+					onclick={copy}
+					aria-label="Copy {current?.name ?? 'code'}"
+				>
 					{#if copied}
 						<svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></svg>
 					{:else}
@@ -244,7 +251,9 @@
 	.code :global(.shiki) {
 		margin: 0;
 		padding: 1rem;
-		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+		font-family:
+			ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+			monospace;
 		font-size: 13px;
 		line-height: 1.625;
 		tab-size: 2;

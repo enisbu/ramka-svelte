@@ -1,6 +1,27 @@
 const keywords = new Set([
-	'boolean', 'string', 'number', 'bigint', 'symbol', 'object', 'void', 'null', 'undefined', 'never', 'any', 'unknown',
-	'true', 'false', 'readonly', 'const', 'keyof', 'infer', 'extends', 'typeof', 'in', 'as', 'is'
+	'boolean',
+	'string',
+	'number',
+	'bigint',
+	'symbol',
+	'object',
+	'void',
+	'null',
+	'undefined',
+	'never',
+	'any',
+	'unknown',
+	'true',
+	'false',
+	'readonly',
+	'const',
+	'keyof',
+	'infer',
+	'extends',
+	'typeof',
+	'in',
+	'as',
+	'is'
 ]);
 
 const tokenClass = {
@@ -12,7 +33,8 @@ const tokenClass = {
 	plain: 'text-neutral-800 dark:text-neutral-200'
 };
 
-const pattern = /('(?:\\.|[^'])*'|"(?:\\.|[^"])*"|`(?:\\.|[^`])*`)|(\d+(?:\.\d+)?)|([A-Za-z_$][\w$]*)|([{}()<>[\]|&?:,.;=+\-*/!~%]+)|(\s+|.)/g;
+const pattern =
+	/('(?:\\.|[^'])*'|"(?:\\.|[^"])*"|`(?:\\.|[^`])*`)|(\d+(?:\.\d+)?)|([A-Za-z_$][\w$]*)|([{}()<>[\]|&?:,.;=+\-*/!~%]+)|(\s+|.)/g;
 
 /** Splits a TypeScript type string into spans with a color class each. */
 export function typeTokens(code: string) {

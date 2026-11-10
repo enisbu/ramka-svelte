@@ -26,6 +26,9 @@
 	<span
 		class="text-neutral-400 transition group-hover:text-neutral-600 dark:text-neutral-600 dark:group-hover:text-neutral-300"
 	>
-		{#if copied}<Check aria-hidden="true" class="size-4" />{:else}<Copy aria-hidden="true" class="size-4" />{/if}
+		{#if copied}<Check aria-hidden="true" class="size-4" />{:else}<Copy
+				aria-hidden="true"
+				class="size-4"
+			/>{/if}
 	</span>
 </button>

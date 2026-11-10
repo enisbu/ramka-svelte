@@ -18,7 +18,10 @@
 <div class="space-y-3">
 	<DemoBadge tone={kind}>{kind === 'do' ? 'Do' : 'Don’t'}</DemoBadge>
 	<Lightbox.Root awaitImageDecode={false}>
-		<Lightbox.Trigger index={0} class="block aspect-square w-40 overflow-hidden rounded-xl bg-transparent p-0 {triggerFocus}">
+		<Lightbox.Trigger
+			index={0}
+			class="block aspect-square w-40 overflow-hidden rounded-xl bg-transparent p-0 {triggerFocus}"
+		>
 			{#snippet children({ imageRef })}
 				<img
 					{@attach imageRef}
@@ -32,7 +35,11 @@
 		<LightboxGallery items={[image]} ariaLabel={image.alt} thumbnails="never" zoomControls={false}>
 			{#snippet item(entry)}
 				<Lightbox.Zoom>
-					<Lightbox.Media width={entry.width} height={entry.height} class="overflow-hidden rounded-none md:rounded-lg">
+					<Lightbox.Media
+						width={entry.width}
+						height={entry.height}
+						class="overflow-hidden rounded-none md:rounded-lg"
+					>
 						<SlowImage item={entry} blur={kind === 'dont'} />
 					</Lightbox.Media>
 				</Lightbox.Zoom>

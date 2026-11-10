@@ -213,7 +213,10 @@ interface SceneOptions {
 }
 
 /** Mounts a Three.js canvas into `host`, synced with every other canvas of the same product; returns the cleanup. */
-export function mountScene(host: HTMLElement, { product, role, interactive, autoRotate }: SceneOptions) {
+export function mountScene(
+	host: HTMLElement,
+	{ product, role, interactive, autoRotate }: SceneOptions
+) {
 	let teardown: (() => void) | undefined;
 	let disposed = false;
 	if (role === 'lightbox') resetPaintGate(product.id);
@@ -248,7 +251,12 @@ function setup(
 	const store = getViewStore(product.id);
 	let paintSignaled = false;
 
-	const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, premultipliedAlpha: false });
+	const renderer = new THREE.WebGLRenderer({
+		canvas,
+		antialias: true,
+		alpha: true,
+		premultipliedAlpha: false
+	});
 	renderer.setClearColor(0x000000, 0);
 	renderer.outputColorSpace = THREE.SRGBColorSpace;
 	renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -277,7 +285,9 @@ function setup(
 	controls.enabled = interactive();
 
 	const spin: SpinState = {
-		axis: store.pose ? new THREE.Vector3().fromArray(store.pose.spinAxis).normalize() : new THREE.Vector3(0, 1, 0),
+		axis: store.pose
+			? new THREE.Vector3().fromArray(store.pose.spinAxis).normalize()
+			: new THREE.Vector3(0, 1, 0),
 		speed: store.pose?.spinSpeed ?? TARGET_SPIN_RAD_PER_SEC
 	};
 

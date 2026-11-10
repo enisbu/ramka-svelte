@@ -53,7 +53,8 @@ export const apiParts: ApiPart[] = [
 			{
 				name: 'children',
 				type: 'Snippet',
-				description: 'Lightbox parts and page content (triggers typically live as children of Root).'
+				description:
+					'Lightbox parts and page content (triggers typically live as children of Root).'
 			},
 			{
 				name: 'handle',
@@ -200,7 +201,10 @@ export const apiParts: ApiPart[] = [
 				description:
 					'Present while the lightbox is open on the element the close morph will land on: the node from `morphRef` or `imageRef` when attached, otherwise the first `[data-ramka-morph]`, `[data-ramka-media]`, `img` or `video` inside the trigger, else the button itself. Style against this attribute directly; do not assume it lives on the button.'
 			},
-			{ name: 'data-crossfade', description: 'Reflects the `crossfade` prop: `open`, `close` or `both`.' },
+			{
+				name: 'data-crossfade',
+				description: 'Reflects the `crossfade` prop: `open`, `close` or `both`.'
+			},
 			{
 				name: 'data-ramka-morph',
 				description:
@@ -218,7 +222,8 @@ export const apiParts: ApiPart[] = [
 				name: 'container',
 				type: 'HTMLElement | ShadowRoot | null',
 				default: 'document.body',
-				description: 'Where to mount the portal host. Pass `null` to render the host in place (no portal).'
+				description:
+					'Where to mount the portal host. Pass `null` to render the host in place (no portal).'
 			},
 			{
 				name: 'keepMounted',
@@ -227,10 +232,16 @@ export const apiParts: ApiPart[] = [
 				description:
 					'Keep Portal, Backdrop and Content mounted while the lightbox is closed. Closed nodes stay in the DOM but are inert and hidden (`visibility: hidden`, `pointer-events: none`). Useful for a warm reopen of expensive destinations such as map iframes.'
 			},
-			{ name: 'children', type: 'Snippet', description: 'Backdrop, Content and anything else that belongs in the portal.' },
+			{
+				name: 'children',
+				type: 'Snippet',
+				description: 'Backdrop, Content and anything else that belongs in the portal.'
+			},
 			restDiv('portal host `<div>`')
 		],
-		attributes: [{ name: 'data-ramka-portal', description: 'Always present on the portal host element.' }],
+		attributes: [
+			{ name: 'data-ramka-portal', description: 'Always present on the portal host element.' }
+		],
 		cssVariables: [
 			{
 				name: '--lightbox-vt-duration',
@@ -241,7 +252,8 @@ export const apiParts: ApiPart[] = [
 			{
 				name: '--lightbox-vt-easing',
 				type: '<easing-function>',
-				description: 'Morph easing of the active preset, written on the Portal host like `--lightbox-vt-duration`.'
+				description:
+					'Morph easing of the active preset, written on the Portal host like `--lightbox-vt-duration`.'
 			},
 			{
 				name: '--lightbox-vt-root-easing',
@@ -260,9 +272,18 @@ export const apiParts: ApiPart[] = [
 		attributes: [
 			{ name: 'data-ramka-backdrop', description: 'Always present on the backdrop element.' },
 			{ name: 'data-open', description: 'Present while the lightbox is open.' },
-			{ name: 'data-closed', description: 'Present while the lightbox is closed (still rendered).' },
-			{ name: 'data-pulling', description: 'Present while pull to dismiss is active (mirrors Content).' },
-			{ name: 'data-pull-snapping', description: 'Present while a cancelled pull springs back (mirrors Content).' }
+			{
+				name: 'data-closed',
+				description: 'Present while the lightbox is closed (still rendered).'
+			},
+			{
+				name: 'data-pulling',
+				description: 'Present while pull to dismiss is active (mirrors Content).'
+			},
+			{
+				name: 'data-pull-snapping',
+				description: 'Present while a cancelled pull springs back (mirrors Content).'
+			}
 		],
 		cssVariables: [
 			{
@@ -295,13 +316,20 @@ export const apiParts: ApiPart[] = [
 				description:
 					'Enable pull to close on touch and trackpad wheel. Starts from anywhere in Stage (or Content when Stage is omitted), except buttons, links, form fields and elements marked `data-ramka-no-pull`. Publishes `data-pulling`, `data-pull-snapping`, `data-pull-dismissing` and `--lightbox-pull-progress` while active.'
 			},
-			{ name: 'children', type: 'Snippet', description: 'Dialog contents (close, slides and items, chrome).' },
+			{
+				name: 'children',
+				type: 'Snippet',
+				description: 'Dialog contents (close, slides and items, chrome).'
+			},
 			restDiv('dialog `<div>`')
 		],
 		attributes: [
 			{ name: 'data-ramka-content', description: 'Always present on the dialog surface.' },
 			{ name: 'data-open', description: 'Present while the lightbox is open.' },
-			{ name: 'data-closed', description: 'Present while the lightbox is closed (still rendered).' },
+			{
+				name: 'data-closed',
+				description: 'Present while the lightbox is closed (still rendered).'
+			},
 			{ name: 'data-pulling', description: 'Present while a pull to dismiss drag is in progress.' },
 			{
 				name: 'data-pull-snapping',
@@ -314,12 +342,17 @@ export const apiParts: ApiPart[] = [
 			},
 			{
 				name: 'data-zooming',
-				description: 'Present during an active pinch or pan on the active Zoom (blocks pull to dismiss).'
+				description:
+					'Present during an active pinch or pan on the active Zoom (blocks pull to dismiss).'
 			},
-			{ name: 'data-zoomed', description: 'Present when the active zoom is greater than its minimum.' },
+			{
+				name: 'data-zoomed',
+				description: 'Present when the active zoom is greater than its minimum.'
+			},
 			{
 				name: 'data-ramka-no-pull',
-				description: 'Not set by the library. Put it on a descendant to keep pull to dismiss from starting there.'
+				description:
+					'Not set by the library. Put it on a descendant to keep pull to dismiss from starting there.'
 			}
 		],
 		cssVariables: [
@@ -363,7 +396,9 @@ export const apiParts: ApiPart[] = [
 			},
 			restDiv('stage `<div>`')
 		],
-		attributes: [{ name: 'data-ramka-stage', description: 'Always present on the media interaction stage.' }]
+		attributes: [
+			{ name: 'data-ramka-stage', description: 'Always present on the media interaction stage.' }
+		]
 	},
 	{
 		id: 'api-slides',
@@ -395,7 +430,8 @@ export const apiParts: ApiPart[] = [
 			{ name: 'data-orientation', description: 'Always `horizontal`.' },
 			{
 				name: 'data-locked',
-				description: 'Present while the active item is zoomed or being pulled; the scroller stops scrolling.'
+				description:
+					'Present while the active item is zoomed or being pulled; the scroller stops scrolling.'
 			},
 			{ name: 'data-scrolling', description: 'Present while the scroller is moving.' },
 			{
@@ -408,7 +444,8 @@ export const apiParts: ApiPart[] = [
 			{
 				name: '--lightbox-ssr-slide-gap',
 				type: '<length>',
-				description: 'Set it yourself to the track `gap` when using `ssrSlideShift`. Defaults to `0px`.'
+				description:
+					'Set it yourself to the track `gap` when using `ssrSlideShift`. Defaults to `0px`.'
 			},
 			{
 				name: '--lightbox-select-vt-duration',
@@ -466,7 +503,8 @@ export const apiParts: ApiPart[] = [
 			{ name: 'data-index', description: 'The item index.' },
 			{
 				name: 'data-skip-fade',
-				description: 'Set during the open morph; use it to suppress your own entrance fades on the destination item.'
+				description:
+					'Set during the open morph; use it to suppress your own entrance fades on the destination item.'
 			},
 			{
 				name: 'data-ssr-active',
@@ -494,14 +532,24 @@ export const apiParts: ApiPart[] = [
 				description:
 					'Maximum zoom level. When not set, computed from the first `<img>` child’s natural size against the container size. Falls back to 4 without image dimensions.'
 			},
-			{ name: 'zoomStep', type: 'number', default: '2', description: 'Multiplier for button and keyboard zoom steps.' },
+			{
+				name: 'zoomStep',
+				type: 'number',
+				default: '2',
+				description: 'Multiplier for button and keyboard zoom steps.'
+			},
 			{
 				name: 'scrollToZoom',
 				type: 'boolean',
 				default: 'false',
 				description: 'Enable zoom through bare scroll or trackpad without Ctrl.'
 			},
-			{ name: 'wheelSensitivity', type: 'number', default: '100', description: 'Wheel and trackpad zoom sensitivity factor.' },
+			{
+				name: 'wheelSensitivity',
+				type: 'number',
+				default: '100',
+				description: 'Wheel and trackpad zoom sensitivity factor.'
+			},
 			{
 				name: 'keyboardPanDistance',
 				type: 'number',
@@ -514,7 +562,11 @@ export const apiParts: ApiPart[] = [
 				default: '300',
 				description: 'Max delay between clicks for double click detection (ms).'
 			},
-			{ name: 'onZoomChange', type: '(zoom: number) => void', description: 'Callback when the zoom level changes.' },
+			{
+				name: 'onZoomChange',
+				type: '(zoom: number) => void',
+				description: 'Callback when the zoom level changes.'
+			},
 			restDiv('zoom `<div>`')
 		],
 		attributes: [
@@ -545,9 +597,18 @@ export const apiParts: ApiPart[] = [
 		],
 		attributes: [
 			{ name: 'data-ramka-media', description: 'Always present on the media host.' },
-			{ name: 'data-placeholder', description: 'Present while the open morph placeholder canvas is bridging.' },
-			{ name: 'data-width', description: 'The resolved fit box width, present when both dimensions are known.' },
-			{ name: 'data-height', description: 'The resolved fit box height, present when both dimensions are known.' }
+			{
+				name: 'data-placeholder',
+				description: 'Present while the open morph placeholder canvas is bridging.'
+			},
+			{
+				name: 'data-width',
+				description: 'The resolved fit box width, present when both dimensions are known.'
+			},
+			{
+				name: 'data-height',
+				description: 'The resolved fit box height, present when both dimensions are known.'
+			}
 		]
 	},
 	{
@@ -555,14 +616,20 @@ export const apiParts: ApiPart[] = [
 		name: 'Close',
 		description:
 			'Button that closes the lightbox. Ships no label: give it visible text or pass `aria-label` / `aria-labelledby` in your language (the library warns in development when it is nameless).',
-		props: [{ name: 'children', type: 'Snippet', description: 'Button content.' }, restButton('`<button>`')],
+		props: [
+			{ name: 'children', type: 'Snippet', description: 'Button content.' },
+			restButton('`<button>`')
+		],
 		attributes: [{ name: 'data-ramka-close', description: 'Always present on the close button.' }]
 	},
 	{
 		id: 'api-previous',
 		name: 'Previous',
 		description: 'Navigate to the previous item. Disabled at the start when `loop` is false.',
-		props: [{ name: 'children', type: 'Snippet', description: 'Button content.' }, restButton('`<button>`')],
+		props: [
+			{ name: 'children', type: 'Snippet', description: 'Button content.' },
+			restButton('`<button>`')
+		],
 		attributes: [
 			{ name: 'data-ramka-previous', description: 'Always present on the previous button.' },
 			{ name: 'data-disabled', description: 'Present when navigation is unavailable.' }
@@ -572,7 +639,10 @@ export const apiParts: ApiPart[] = [
 		id: 'api-next',
 		name: 'Next',
 		description: 'Navigate to the next item. Disabled at the end when `loop` is false.',
-		props: [{ name: 'children', type: 'Snippet', description: 'Button content.' }, restButton('`<button>`')],
+		props: [
+			{ name: 'children', type: 'Snippet', description: 'Button content.' },
+			restButton('`<button>`')
+		],
 		attributes: [
 			{ name: 'data-ramka-next', description: 'Always present on the next button.' },
 			{ name: 'data-disabled', description: 'Present when navigation is unavailable.' }
@@ -581,8 +651,12 @@ export const apiParts: ApiPart[] = [
 	{
 		id: 'api-zoom-in',
 		name: 'ZoomIn',
-		description: 'Increments zoom. Works inside Zoom, or as global chrome through the active slide zoom bridge.',
-		props: [{ name: 'children', type: 'Snippet', description: 'Button content.' }, restButton('`<button>`')],
+		description:
+			'Increments zoom. Works inside Zoom, or as global chrome through the active slide zoom bridge.',
+		props: [
+			{ name: 'children', type: 'Snippet', description: 'Button content.' },
+			restButton('`<button>`')
+		],
 		attributes: [
 			{ name: 'data-ramka-zoom-in', description: 'Always present on the zoom in button.' },
 			{ name: 'data-disabled', description: 'Present when zooming in is unavailable.' }
@@ -591,8 +665,12 @@ export const apiParts: ApiPart[] = [
 	{
 		id: 'api-zoom-out',
 		name: 'ZoomOut',
-		description: 'Decrements zoom. Works inside Zoom, or as global chrome through the active slide zoom bridge.',
-		props: [{ name: 'children', type: 'Snippet', description: 'Button content.' }, restButton('`<button>`')],
+		description:
+			'Decrements zoom. Works inside Zoom, or as global chrome through the active slide zoom bridge.',
+		props: [
+			{ name: 'children', type: 'Snippet', description: 'Button content.' },
+			restButton('`<button>`')
+		],
 		attributes: [
 			{ name: 'data-ramka-zoom-out', description: 'Always present on the zoom out button.' },
 			{ name: 'data-disabled', description: 'Present when zooming out is unavailable.' }
@@ -611,12 +689,15 @@ export const apiParts: ApiPart[] = [
 			},
 			restDiv('counter `<div>`')
 		],
-		attributes: [{ name: 'data-ramka-counter', description: 'Always present on the counter element.' }]
+		attributes: [
+			{ name: 'data-ramka-counter', description: 'Always present on the counter element.' }
+		]
 	},
 	{
 		id: 'api-caption',
 		name: 'Caption',
-		description: 'Renders the active item’s caption from the Item caption registry, in an `aria-live` region.',
+		description:
+			'Renders the active item’s caption from the Item caption registry, in an `aria-live` region.',
 		props: [
 			{
 				name: 'children',
@@ -636,9 +717,15 @@ export const apiParts: ApiPart[] = [
 		name: 'ThumbnailGroup',
 		description:
 			'Accessible tablist of thumbnails with arrow, Home and End keyboard support. Without a ThumbnailStrip, the active thumbnail scrolls itself to the center of its parent.',
-		props: [{ name: 'children', type: 'Snippet', description: 'The `Lightbox.Thumbnail`s.' }, restDiv('tablist `<div>`')],
+		props: [
+			{ name: 'children', type: 'Snippet', description: 'The `Lightbox.Thumbnail`s.' },
+			restDiv('tablist `<div>`')
+		],
 		attributes: [
-			{ name: 'data-ramka-thumbnail-group', description: 'Always present on the thumbnail group (tablist).' },
+			{
+				name: 'data-ramka-thumbnail-group',
+				description: 'Always present on the thumbnail group (tablist).'
+			},
 			{ name: 'data-focus-within', description: 'Present when focus is inside the group.' }
 		]
 	},
@@ -698,8 +785,14 @@ export const apiParts: ApiPart[] = [
 			restDiv('strip `<div>`')
 		],
 		attributes: [
-			{ name: 'data-ramka-thumbnail-strip', description: 'Always present on the thumbnail strip root.' },
-			{ name: 'data-scrubbing', description: 'Present while a discrete navigation scrub animation runs.' },
+			{
+				name: 'data-ramka-thumbnail-strip',
+				description: 'Always present on the thumbnail strip root.'
+			},
+			{
+				name: 'data-scrubbing',
+				description: 'Present while a discrete navigation scrub animation runs.'
+			},
 			{
 				name: 'data-positioned',
 				description:
@@ -720,10 +813,16 @@ export const apiParts: ApiPart[] = [
 		name: 'ThumbnailStripTrack',
 		description:
 			'Linked tablist track for ThumbnailStrip: a ThumbnailGroup that the strip moves (same keyboard and ARIA). The parent ThumbnailStrip writes the travel variable and the transform; flex, gap and thumbnail sizing are consumer CSS.',
-		props: [{ name: 'children', type: 'Snippet', description: 'The `Lightbox.Thumbnail`s.' }, restDiv('track `<div>`')],
+		props: [
+			{ name: 'children', type: 'Snippet', description: 'The `Lightbox.Thumbnail`s.' },
+			restDiv('track `<div>`')
+		],
 		attributes: [
 			{ name: 'data-ramka-thumbnail-strip-track', description: 'Always present on the track.' },
-			{ name: 'data-ramka-thumbnail-group', description: 'Always present, since the track is a ThumbnailGroup.' },
+			{
+				name: 'data-ramka-thumbnail-group',
+				description: 'Always present, since the track is a ThumbnailGroup.'
+			},
 			{ name: 'data-focus-within', description: 'Present when focus is inside the track.' }
 		]
 	},
@@ -739,7 +838,11 @@ export const apiParts: ApiPart[] = [
 				description:
 					'The per request CSP nonce. Stamped on the `<style>` tag the lightbox inserts, so strict CSP pages keep the first paint rules.'
 			},
-			{ name: 'children', type: 'Snippet', description: 'The part of the app that renders lightbox parts.' }
+			{
+				name: 'children',
+				type: 'Snippet',
+				description: 'The part of the app that renders lightbox parts.'
+			}
 		]
 	}
 ];
@@ -751,7 +854,10 @@ export const documentViewTransition: ApiPart = {
 	description:
 		'While a morph runs, ramka sets attributes on `<html>` and CSS variables on `::view-transition` so you can style the `::view-transition-*` pseudo elements. Cleared when the transition finishes.',
 	attributes: [
-		{ name: 'data-ramka-view-transition', description: 'Present during a morph. Value is `opening` or `closing`.' },
+		{
+			name: 'data-ramka-view-transition',
+			description: 'Present during a morph. Value is `opening` or `closing`.'
+		},
 		{
 			name: 'data-ramka-crossfade',
 			description:
@@ -790,7 +896,8 @@ export const documentViewTransition: ApiPart = {
 		{
 			name: '--lightbox-morph-border-radius-to',
 			type: '<length>',
-			description: 'End border radius for the morph group clip, derived like `--lightbox-morph-border-radius-from`.'
+			description:
+				'End border radius for the morph group clip, derived like `--lightbox-morph-border-radius-from`.'
 		},
 		{
 			name: '--lightbox-morph-old-opacity',
@@ -823,7 +930,8 @@ export const documentViewTransition: ApiPart = {
 		{
 			name: '--lightbox-vt-root-easing',
 			type: '<easing-function>',
-			description: 'Easing for the root snapshot fade (`::view-transition-old(root)` / `::view-transition-new(root)`).'
+			description:
+				'Easing for the root snapshot fade (`::view-transition-old(root)` / `::view-transition-new(root)`).'
 		}
 	]
 };
@@ -840,7 +948,7 @@ export const contextApi: ApiPart[] = [
 				name: '(return)',
 				type: 'LightboxState',
 				description:
-					'Reactive state of the Root: `open`, `index`, `count`, `loop`, `dir`, `caption`, `canPrev`, `canNext`, `zoomed`, `pulling`, plus `show(index)`, `close()` and `go(index, source)`.'
+					'Read-only reactive state of the Root: `open`, `index`, `count`, `loop`, `dir`, `caption`, `canPrev`, `canNext`, `zoomed`, `pulling`, `pullDismissing`, plus `show(index)`, `close()` and `go(index, source?)`.'
 			}
 		]
 	},
@@ -848,7 +956,7 @@ export const contextApi: ApiPart[] = [
 		id: 'api-get-trigger',
 		name: 'getTrigger',
 		description:
-			'Context from the enclosing Trigger. Use it in nested wrappers (e.g. a shared `TriggerImage` component) to attach `imageRef` / `morphRef` without threading the snippet argument. Throws outside a Trigger, unlike React’s hook which returns `null`.',
+			'Context from the enclosing Trigger. Use it in nested wrappers (e.g. a shared `TriggerImage` component) to attach `imageRef` / `morphRef` without threading the snippet argument. Returns `null` outside a Trigger.',
 		props: [
 			{
 				name: '(return)',
@@ -861,12 +969,12 @@ export const contextApi: ApiPart[] = [
 		id: 'api-get-item',
 		name: 'getItem',
 		description:
-			'Context from the enclosing Item. Use it in nested wrappers to attach `imageRef` / `morphRef` or read `active` and `index`. Prefer `Lightbox.Media` for the common morph and placeholder host. Throws outside an Item.',
+			'Context from the enclosing Item. Use it in nested wrappers to attach `imageRef` / `morphRef` or read `active` and `index`. Prefer `Lightbox.Media` for the common morph and placeholder host. Returns `null` outside an Item.',
 		props: [
 			{
 				name: '(return)',
 				type: 'ItemContext',
-				description: 'Returns `{ index, active, imageRef, morphRef, setMedia }`.'
+				description: 'Returns `{ index, active, imageRef, morphRef }`.'
 			}
 		]
 	},
@@ -874,12 +982,25 @@ export const contextApi: ApiPart[] = [
 		id: 'api-get-stage',
 		name: 'getStage',
 		description:
-			'Context from the enclosing Stage. Use it in nested wrappers to attach `morphRef` without threading the snippet argument. Throws outside a Stage.',
+			'Context from the enclosing Stage. Use it in nested wrappers to attach `morphRef` without threading the snippet argument. Returns `null` outside a Stage.',
 		props: [
 			{
 				name: '(return)',
 				type: 'StageContext',
 				description: 'Returns `{ morphRef }`.'
+			}
+		]
+	},
+	{
+		id: 'api-get-media',
+		name: 'getMedia',
+		description:
+			'Context from the enclosing Media. Use it in nested wrappers that need the morph and placeholder host element. Returns `null` outside a Media.',
+		props: [
+			{
+				name: '(return)',
+				type: 'MediaContext',
+				description: 'Returns `{ element }`, the Media host element or `null` before mount.'
 			}
 		]
 	}
@@ -912,19 +1033,35 @@ export const imperativeApi: ApiPart[] = [
 		id: 'api-zoom-ref',
 		name: 'Zoom instance',
 		description:
-			'Methods on the Zoom component instance from `bind:this`. Current zoom, max zoom and pan offsets are not on the instance; read them from the `children` snippet or `onZoomChange`.',
+			'State and methods on the Zoom component instance from `bind:this`. The getters are reactive.',
 		props: [
+			{ name: 'zoom', type: 'number', description: 'Current zoom level, `1` at rest.' },
+			{ name: 'maxZoom', type: 'number', description: 'Upper zoom limit for the current media.' },
+			{ name: 'offsetX', type: 'number', description: 'Horizontal pan offset in content pixels.' },
+			{ name: 'offsetY', type: 'number', description: 'Vertical pan offset in content pixels.' },
+			{
+				name: 'canZoomIn',
+				type: 'boolean',
+				description: 'Whether `zoomIn` would change anything.'
+			},
+			{ name: 'canZoomOut', type: 'boolean', description: 'Whether the item is zoomed.' },
 			{ name: 'zoomIn', type: '() => void', description: 'Step zoom in by `zoomStep`.' },
 			{ name: 'zoomOut', type: '() => void', description: 'Step zoom out by `zoomStep`.' },
 			{
 				name: 'zoomTo',
 				type: '(target: number, options?: { rapid?: boolean; dx?: number; dy?: number }) => void',
-				description: 'Zoom to an absolute level, optionally recentering on an offset from the center.'
+				description:
+					'Zoom to an absolute level, optionally recentering on an offset from the center.'
 			},
 			{
 				name: 'reset',
 				type: '(rapid?: boolean) => void',
 				description: 'Reset zoom and pan to the resting state.'
+			},
+			{
+				name: 'changeOffsets',
+				type: '(dx: number, dy: number) => void',
+				description: 'Pan by content pixels; positive values move the content left and up.'
 			}
 		]
 	}

@@ -13,10 +13,12 @@
 
 <ExampleShell title="Film trailers">
 	{#snippet description()}
-		Each poster is its own <code class="film-trailers-code">Lightbox.Root</code> with a single-item gallery and a
+		Each poster is its own <code class="film-trailers-code">Lightbox.Root</code> with a single-item
+		gallery and a
 		<code class="film-trailers-code">Lightbox.Item</code> snippet for the video.
-		<code class="film-trailers-code">crossfade="close"</code> hard-cuts the open morph into the video and dissolves the
-		live frame back into the poster on close. Video autoplays (muted) only after
+		<code class="film-trailers-code">crossfade="close"</code> hard-cuts the open morph into the
+		video and dissolves the live frame back into the poster on close. Video autoplays (muted) only
+		after
 		<code class="film-trailers-code">onOpenChangeComplete</code>.
 	{/snippet}
 	<Demo />

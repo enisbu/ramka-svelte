@@ -32,7 +32,8 @@ function declaresName(rules: CSSRuleList): boolean {
 	for (const rule of rules) {
 		const name = (rule as CSSStyleRule).style?.getPropertyValue('view-transition-name').trim();
 		if (name && name !== 'none') return true;
-		const nested = (rule as CSSGroupingRule).cssRules ?? (rule as CSSImportRule).styleSheet?.cssRules;
+		const nested =
+			(rule as CSSGroupingRule).cssRules ?? (rule as CSSImportRule).styleSheet?.cssRules;
 		if (nested && declaresName(nested)) return true;
 	}
 	return false;
@@ -65,11 +66,20 @@ function cornerPx(token: string, width: number) {
 /** Border radius in used px after the corner-overlap rule, so pill and infinite radii interpolate. */
 export function usedRadius(el: HTMLElement) {
 	const { width, height } = el.getBoundingClientRect();
-	const tokens = getComputedStyle(el).borderRadius.split('/')[0].match(/[^\s(]+(\([^)]*\))?/g) ?? [];
+	const tokens =
+		getComputedStyle(el)
+			.borderRadius.split('/')[0]
+			.match(/[^\s(]+(\([^)]*\))?/g) ?? [];
 	if (!width || !height || !tokens.length) return '0px';
 	const [a, b = a, c = a, d = b] = tokens as [string, ...string[]];
 	const [tl, tr, br, bl] = [a, b, c, d].map((t) => cornerPx(t, width));
-	const f = Math.min(1, width / (tl + tr), width / (bl + br), height / (tr + br), height / (tl + bl));
+	const f = Math.min(
+		1,
+		width / (tl + tr),
+		width / (bl + br),
+		height / (tr + br),
+		height / (tl + bl)
+	);
 	return [tl, tr, br, bl].map((r) => `${Math.round(r * f * 100) / 100}px`).join(' ');
 }
 
@@ -283,13 +293,23 @@ let adopted = false;
 
 /** Inserts the stylesheet once, ahead of consumer CSS; falls back to a constructed sheet when CSP refuses the tag. */
 export function ensureStyles(nonce?: string) {
-	if (typeof document === 'undefined' || adopted || document.querySelector('style[data-ramka-runtime]')) return;
+	if (
+		typeof document === 'undefined' ||
+		adopted ||
+		document.querySelector('style[data-ramka-runtime]')
+	)
+		return;
 	const style = document.createElement('style');
 	style.setAttribute('data-ramka-runtime', '');
 	if (nonce) style.nonce = nonce;
 	style.textContent = CSS;
 	document.head.prepend(style);
-	if (style.sheet || typeof CSSStyleSheet === 'undefined' || !('replaceSync' in CSSStyleSheet.prototype)) return;
+	if (
+		style.sheet ||
+		typeof CSSStyleSheet === 'undefined' ||
+		!('replaceSync' in CSSStyleSheet.prototype)
+	)
+		return;
 	style.remove();
 	const sheet = new CSSStyleSheet();
 	sheet.replaceSync(CSS);

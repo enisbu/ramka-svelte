@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { Lightbox } from '@ramka/svelte';
 
-	let { items }: { items: { id: string; src: string; thumb: string; alt: string; caption?: string }[] } = $props();
+	let {
+		items
+	}: { items: { id: string; src: string; thumb: string; alt: string; caption?: string }[] } =
+		$props();
 </script>
 
 <Lightbox.Root>
@@ -17,7 +20,11 @@
 			<Lightbox.Slides aria-label="Photos" aria-roledescription="carousel">
 				{#each items as item, i (item.id)}
 					<Lightbox.Slide>
-						<Lightbox.Item index={i} caption={item.caption ?? item.alt} aria-label="{i + 1} of {items.length}">
+						<Lightbox.Item
+							index={i}
+							caption={item.caption ?? item.alt}
+							aria-label="{i + 1} of {items.length}"
+						>
 							<Lightbox.Zoom>
 								<Lightbox.Media>
 									<img src={item.src} alt={item.alt} />

@@ -11,7 +11,11 @@
 <div class="space-y-4">
 	<div class="flex flex-wrap items-center justify-between gap-3">
 		<p class="text-sm text-neutral-600 dark:text-neutral-400">Product photos</p>
-		<button type="button" onclick={() => lightbox.open(0, { triggerId: 'photo-0' })} class={demoButton}>
+		<button
+			type="button"
+			onclick={() => lightbox.open(0, { triggerId: 'photo-0' })}
+			class={demoButton}
+		>
 			View gallery
 		</button>
 	</div>

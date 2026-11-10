@@ -1,0 +1,8 @@
+pnpm-lock.yaml
+.changeset/*.md
+CHANGELOG.md
+**/static/
+**/build/
+**/dist/
+**/.svelte-kit/
+**/.vitest/

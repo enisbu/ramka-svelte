@@ -4,7 +4,11 @@
 	import type { GalleryItem } from '#lib/gallery/items.js';
 	import { lqip } from './images/lqip.js';
 
-	let { items, visible, blur = false }: { items: GalleryItem[]; visible: number; blur?: boolean } = $props();
+	let {
+		items,
+		visible,
+		blur = false
+	}: { items: GalleryItem[]; visible: number; blur?: boolean } = $props();
 </script>
 
 <div class="grid max-w-sm grid-cols-2 gap-0.5">
@@ -13,7 +17,9 @@
 		<Lightbox.Trigger
 			index={i}
 			crossfade={overlay ? 'both' : undefined}
-			class="block overflow-hidden bg-transparent p-0 {triggerFocus} {i === 0 ? 'rounded-l-xl' : 'rounded-r-xl'}"
+			class="block overflow-hidden bg-transparent p-0 {triggerFocus} {i === 0
+				? 'rounded-l-xl'
+				: 'rounded-r-xl'}"
 		>
 			{#snippet children({ imageRef })}
 				<div class="relative overflow-hidden">
@@ -25,7 +31,9 @@
 						style={blur ? lqip(item) : undefined}
 					/>
 					{#if overlay}
-						<div class="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/50">
+						<div
+							class="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/50"
+						>
 							<span class="text-2xl font-bold text-white">+{items.length - visible}</span>
 						</div>
 					{/if}

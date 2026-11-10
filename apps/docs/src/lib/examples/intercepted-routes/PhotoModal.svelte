@@ -15,7 +15,7 @@
 
 	function onValueChange(next: number) {
 		const photo = interceptedPhotos[next];
-		goto(photoHref(photo), { shallow: true, replace: true, state: { photo: photo.id } as App.PageState });
+		goto(photoHref(photo), { shallow: true, replace: true, state: { photo: photo.id } });
 	}
 
 	function onOpenChangeComplete(isOpen: boolean) {
@@ -23,6 +23,17 @@
 	}
 </script>
 
-<Lightbox.Root bind:open bind:index {onValueChange} {onOpenChangeComplete} count={interceptedPhotos.length} loop>
-	<Gallery items={interceptedPhotos} ariaLabel="Gallery photos" captionFallback={interceptedPhotos[index].caption} />
+<Lightbox.Root
+	bind:open
+	bind:index
+	{onValueChange}
+	{onOpenChangeComplete}
+	count={interceptedPhotos.length}
+	loop
+>
+	<Gallery
+		items={interceptedPhotos}
+		ariaLabel="Gallery photos"
+		captionFallback={interceptedPhotos[index].caption}
+	/>
 </Lightbox.Root>

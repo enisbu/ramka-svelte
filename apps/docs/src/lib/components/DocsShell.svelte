@@ -27,9 +27,15 @@
 <div class="mx-auto flex w-full max-w-6xl gap-12 px-6 py-14 md:px-10 md:py-16">
 	<div class="min-w-0 flex-1">
 		<header class="mb-12">
-			<h1 class="text-4xl font-semibold tracking-tight text-balance text-neutral-900 dark:text-neutral-50">{title}</h1>
+			<h1
+				class="text-4xl font-semibold tracking-tight text-balance text-neutral-900 dark:text-neutral-50"
+			>
+				{title}
+			</h1>
 			{#if description}
-				<div class="mt-4 max-w-2xl text-[17px] leading-7 text-pretty text-neutral-500 dark:text-neutral-400">
+				<div
+					class="mt-4 max-w-2xl text-[17px] leading-7 text-pretty text-neutral-500 dark:text-neutral-400"
+				>
 					{@render description()}
 				</div>
 			{/if}
@@ -39,7 +45,9 @@
 	</div>
 	{#if toc?.length}
 		<aside class="sticky top-12 hidden h-[calc(100vh-6rem)] w-56 shrink-0 overflow-y-auto xl:block">
-			<div class="text-[11px] font-semibold tracking-[0.1em] text-neutral-400 uppercase dark:text-neutral-600">
+			<div
+				class="text-[11px] font-semibold tracking-[0.1em] text-neutral-400 uppercase dark:text-neutral-600"
+			>
 				On this page
 			</div>
 			<ul class="mt-4 space-y-0.5 border-l border-neutral-200 dark:border-neutral-800">

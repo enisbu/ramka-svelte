@@ -92,7 +92,12 @@
 			</div>
 		</div>
 
-		<div class={['photos-app-lb-bottom photos-app-lb-chrome-hide', !showStrip && 'photos-app-lb-bottom-solo']}>
+		<div
+			class={[
+				'photos-app-lb-bottom photos-app-lb-chrome-hide',
+				!showStrip && 'photos-app-lb-bottom-solo'
+			]}
+		>
 			<div class="photos-app-lb-placard">
 				<Lightbox.Caption class="photos-app-lb-caption" />
 				{#if items.length > 1}

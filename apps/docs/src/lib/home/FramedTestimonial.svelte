@@ -25,10 +25,13 @@
 				<h2 class="text-2xl font-semibold tracking-tight text-balance text-[#f5f3ec] md:text-4xl">
 					&ldquo;I&rsquo;d rather eat glass than build this again.&rdquo;
 				</h2>
-				<p class="mt-3 text-xs text-[#7c7a70] md:mt-4 md:text-sm">{upstream.author} &middot; creator of ramka</p>
+				<p class="mt-3 text-xs text-[#7c7a70] md:mt-4 md:text-sm">
+					{upstream.author} &middot; creator of ramka
+				</p>
 				<p class="mx-auto mt-6 max-w-xl text-sm text-pretty text-[#a8a69d] md:mt-10 md:text-base">
-					Exhibit A: what building a lightbox does to a person. <span class="font-medium text-[#e9e7de]">ramka</span> exists
-					so it never has to happen to you, now in Svelte too.
+					Exhibit A: what building a lightbox does to a person. <span
+						class="font-medium text-[#e9e7de]">ramka</span
+					> exists so it never has to happen to you, now in Svelte too.
 				</p>
 				<div class="mt-6 flex flex-wrap items-center justify-center gap-2.5 md:mt-8 md:gap-3">
 					<a

@@ -25,7 +25,10 @@
 
 	function readLayout(): Layout {
 		try {
-			return (typeof window !== 'undefined' && (localStorage.getItem(LAYOUT_KEY) as Layout | null)) || 'snug';
+			return (
+				(typeof window !== 'undefined' && (localStorage.getItem(LAYOUT_KEY) as Layout | null)) ||
+				'snug'
+			);
 		} catch {
 			return 'snug';
 		}
@@ -62,7 +65,10 @@
 
 <main>
 	<h1>ramka-svelte</h1>
-	<p>Svelte-5-Port von <a href="https://ramka.dev">ramka</a>. Bild antippen: Morph, wischen, runterziehen, pinchen.</p>
+	<p>
+		Svelte-5-Port von <a href="https://ramka.dev">ramka</a>. Bild antippen: Morph, wischen,
+		runterziehen, pinchen.
+	</p>
 
 	<Lightbox.Root bind:this={root} bind:open bind:index {onOpenChange}>
 		<div class="grid">
@@ -105,21 +111,31 @@
 						type="button"
 						class="control desktop"
 						aria-pressed={layout === 'snug'}
-						aria-label={layout === 'snug' ? 'Zur Kinoansicht wechseln' : 'Zur Vorschauansicht wechseln'}
+						aria-label={layout === 'snug'
+							? 'Zur Kinoansicht wechseln'
+							: 'Zur Vorschauansicht wechseln'}
 						onclick={toggleLayout}
 					>
 						{#if layout === 'snug'}
-							<svg viewBox="0 0 24 24" class="lg"><path d="M2 3v18M22 3v18" /><rect width="12" height="18" x="6" y="3" rx="2" /></svg>
+							<svg viewBox="0 0 24 24" class="lg"
+								><path d="M2 3v18M22 3v18" /><rect width="12" height="18" x="6" y="3" rx="2" /></svg
+							>
 						{:else}
-							<svg viewBox="0 0 24 24" class="lg"><rect width="20" height="12" x="2" y="6" rx="2" /></svg>
+							<svg viewBox="0 0 24 24" class="lg"
+								><rect width="20" height="12" x="2" y="6" rx="2" /></svg
+							>
 						{/if}
 					</button>
 					<div class="group desktop">
 						<Lightbox.ZoomOut class="control" aria-label="Herauszoomen">
-							<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3M8 11h6" /></svg>
+							<svg viewBox="0 0 24 24"
+								><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3M8 11h6" /></svg
+							>
 						</Lightbox.ZoomOut>
 						<Lightbox.ZoomIn class="control" aria-label="Hineinzoomen">
-							<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3M11 8v6M8 11h6" /></svg>
+							<svg viewBox="0 0 24 24"
+								><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3M11 8v6M8 11h6" /></svg
+							>
 						</Lightbox.ZoomIn>
 					</div>
 					<Lightbox.Close class="control" aria-label="Schließen">

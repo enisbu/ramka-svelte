@@ -11,7 +11,9 @@
 		'inline-flex h-8 w-8 items-center justify-center rounded-md border border-neutral-200 bg-white text-neutral-700 transition hover:bg-neutral-100 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800';
 </script>
 
-<header class="sticky top-0 z-40 border-b border-neutral-200 bg-white md:hidden dark:border-neutral-800 dark:bg-black">
+<header
+	class="sticky top-0 z-40 border-b border-neutral-200 bg-white md:hidden dark:border-neutral-800 dark:bg-black"
+>
 	<div class="relative flex h-14 items-center justify-between gap-2 px-6">
 		<a
 			href="/"
@@ -20,11 +22,23 @@
 			ramka
 		</a>
 		<div class="flex items-center gap-2">
-			<a href={githubUrl} target="_blank" rel="noreferrer" aria-label="ramka for Svelte on GitHub" class={button}>
+			<a
+				href={githubUrl}
+				target="_blank"
+				rel="noreferrer"
+				aria-label="ramka for Svelte on GitHub"
+				class={button}
+			>
 				<GitHubIcon class="h-4 w-4" />
 			</a>
 			<ThemeToggle />
-			<button type="button" aria-label="Open navigation" aria-expanded={open} class={button} onclick={() => (open = true)}>
+			<button
+				type="button"
+				aria-label="Open navigation"
+				aria-expanded={open}
+				class={button}
+				onclick={() => (open = true)}
+			>
 				<Menu class="h-4 w-4" />
 			</button>
 		</div>

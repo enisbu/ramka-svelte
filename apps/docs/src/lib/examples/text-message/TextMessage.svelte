@@ -25,7 +25,11 @@
 			<span class="text-message-time">Today at 11:11 AM</span>
 			<div class="text-message-bubble">some imgs</div>
 
-			<Lightbox.Trigger index={0} crossfade="close" class="photos-app-lb-trigger text-message-trigger">
+			<Lightbox.Trigger
+				index={0}
+				crossfade="close"
+				class="photos-app-lb-trigger text-message-trigger"
+			>
 				{#snippet children({ morphRef, imageRef })}
 					<div class="text-message-stack">
 						{#each messageImages as image, i (image.alt)}
@@ -38,7 +42,9 @@
 								width={image.width}
 								height={image.height}
 								class="text-message-attachment"
-								style:transform="translate(-50%, -50%) translate({offset.x}px, {offset.y}px) rotate({stackRotations[i]}deg)"
+								style:transform="translate(-50%, -50%) translate({offset.x}px, {offset.y}px) rotate({stackRotations[
+									i
+								]}deg)"
 								style:z-index={messageImages.length - i}
 							/>
 						{/each}
@@ -51,7 +57,15 @@
 					<rect x="1" y="3" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.2" />
 					<rect x="5" y="1" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.2" />
 					<rect x="9" y="3" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.2" />
-					<rect x="3" y="8" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.2" />
+					<rect
+						x="3"
+						y="8"
+						width="10"
+						height="7"
+						rx="1.5"
+						stroke="currentColor"
+						stroke-width="1.2"
+					/>
 				</svg>
 				<span>{messageImages.length} attachments</span>
 			</div>

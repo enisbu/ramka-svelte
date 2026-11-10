@@ -18,7 +18,13 @@
 				index={i}
 				class="block aspect-square overflow-hidden rounded-lg bg-transparent p-0 {triggerFocus}"
 			>
-				<img src={item.thumb} alt={item.alt} width={item.width} height={item.height} class="block size-full object-cover" />
+				<img
+					src={item.thumb}
+					alt={item.alt}
+					width={item.width}
+					height={item.height}
+					class="block size-full object-cover"
+				/>
 			</Lightbox.Trigger>
 		{/each}
 	</div>

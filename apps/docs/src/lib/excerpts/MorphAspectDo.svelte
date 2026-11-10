@@ -7,7 +7,12 @@
 <Lightbox.Root>
 	<Lightbox.Trigger index={0}>
 		{#snippet children({ imageRef })}
-			<img {@attach imageRef} src={photo.src} alt="Mountain lake" class="aspect-square size-full object-cover" />
+			<img
+				{@attach imageRef}
+				src={photo.src}
+				alt="Mountain lake"
+				class="aspect-square size-full object-cover"
+			/>
 		{/snippet}
 	</Lightbox.Trigger>
 	<Lightbox.Portal>
@@ -18,7 +23,12 @@
 					<Lightbox.Item index={0}>
 						<Lightbox.Zoom>
 							<Lightbox.Media width={photo.width} height={photo.height}>
-								<img src={photo.src} width={photo.width} height={photo.height} alt="Mountain lake" />
+								<img
+									src={photo.src}
+									width={photo.width}
+									height={photo.height}
+									alt="Mountain lake"
+								/>
 							</Lightbox.Media>
 						</Lightbox.Zoom>
 					</Lightbox.Item>

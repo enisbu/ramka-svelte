@@ -24,7 +24,9 @@ export function pullToDismiss(lb: LightboxModel) {
 		const host = () => lb.portal ?? content;
 		const blocked = () => !lb.open || lb.zoomed || lb.zooming || lb.scrolling || lb.pullDismissing;
 		const outside = (target: EventTarget | null) =>
-			!(target instanceof Element) || !!target.closest(IGNORED) || (!!lb.stageEl && !lb.stageEl.contains(target));
+			!(target instanceof Element) ||
+			!!target.closest(IGNORED) ||
+			(!!lb.stageEl && !lb.stageEl.contains(target));
 		let snapTimer = 0;
 
 		function apply(dx: number, dy: number) {
@@ -92,7 +94,10 @@ export function pullToDismiss(lb: LightboxModel) {
 			if (axis === 'vertical') {
 				const [a, b] = [samples[0], samples[samples.length - 1]];
 				const velocity = b.t > a.t ? ((b.y - a.y) / (b.t - a.t)) * 1000 : 0;
-				release(e.type === 'pointercancel' ? 0 : e.clientY - start.y, e.type === 'pointercancel' ? 0 : velocity);
+				release(
+					e.type === 'pointercancel' ? 0 : e.clientY - start.y,
+					e.type === 'pointercancel' ? 0 : velocity
+				);
 			}
 			samples = [];
 			axis = 'none';

@@ -12,7 +12,13 @@
 	const caption = $derived(lb.caption);
 </script>
 
-<div data-ramka-caption data-has-caption={!!caption || undefined} aria-live="polite" aria-atomic="true" {...rest}>
+<div
+	data-ramka-caption
+	data-has-caption={!!caption || undefined}
+	aria-live="polite"
+	aria-atomic="true"
+	{...rest}
+>
 	{#if typeof caption === 'string'}
 		{caption}
 	{:else if caption}

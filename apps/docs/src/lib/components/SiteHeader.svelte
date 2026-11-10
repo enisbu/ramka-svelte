@@ -9,7 +9,11 @@
 
 <header class="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-3 md:py-5">
 	{#if home}
-		<a href="/" class="{wordmark} transition-colors hover:text-neutral-600 dark:hover:text-neutral-300">ramka</a>
+		<a
+			href="/"
+			class="{wordmark} transition-colors hover:text-neutral-600 dark:hover:text-neutral-300"
+			>ramka</a
+		>
 	{:else}
 		<span class={wordmark}>ramka</span>
 	{/if}

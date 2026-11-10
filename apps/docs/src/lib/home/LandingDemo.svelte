@@ -5,18 +5,98 @@
 	import { photo } from '#lib/gallery/items.js';
 
 	const tiles = [
-		{ ...photo('ramka-a', 'Person standing in a sunlit meadow at golden hour', 'Golden hour in the meadow'), tile: 'aspect-[3/2]', split: '' },
-		{ ...photo('ramka-b', 'Seashells scattered along the shoreline', 'Seashells on the shore'), tile: 'aspect-[4/5]', split: '' },
-		{ ...photo('ramka-j', 'Father carrying a child along a sandy beach', 'Beach walk, kid in tow'), tile: 'aspect-[12/7]', split: '' },
-		{ ...photo('ramka-c', 'Curved building facade in black and white', 'Curved facade, in monochrome'), tile: 'aspect-square', split: 'md:break-before-column' },
-		{ ...photo('ramka-d', 'Airplane crossing a purple sky above the clouds', 'Above the clouds at dusk'), tile: 'aspect-video', split: 'break-before-column md:break-before-auto' },
-		{ ...photo('ramka-k', 'Brutalist concrete tower against a pale sky', 'Concrete against a pale sky'), tile: 'aspect-square md:aspect-[16/15]', split: '' },
-		{ ...photo('ramka-e', 'Fog rolling over dark hills', 'Fog rolling over the valley'), tile: 'aspect-[16/11] md:aspect-[5/3]', split: 'md:break-before-column' },
-		{ ...photo('ramka-f', 'Aerial view of a road entering twin forest tunnels', 'Twin tunnels from above'), tile: 'aspect-[4/5] md:aspect-[5/6]', split: '' },
-		{ ...photo('ramka-g', 'Bride seen through the windows of a vintage car', 'Through the wedding car window'), tile: 'aspect-[4/3] md:aspect-[10/7]', split: 'break-before-column md:break-before-auto' },
-		{ ...photo('ramka-l', 'Out-of-focus city lights glowing at dusk', 'City lights, out of focus'), tile: 'aspect-video', split: 'md:break-before-column' },
-		{ ...photo('ramka-n', 'Husky dog in a harness looking into the distance', 'Husky on the lookout'), tile: 'aspect-[4/5]', split: '' },
-		{ ...photo('ramka-h', 'Sandstone hoodoos under a summer sky', 'Hoodoos under a summer sky, Bryce Canyon'), tile: 'aspect-[16/15] md:aspect-[16/11]', split: '' }
+		{
+			...photo(
+				'ramka-a',
+				'Person standing in a sunlit meadow at golden hour',
+				'Golden hour in the meadow'
+			),
+			tile: 'aspect-[3/2]',
+			split: ''
+		},
+		{
+			...photo('ramka-b', 'Seashells scattered along the shoreline', 'Seashells on the shore'),
+			tile: 'aspect-[4/5]',
+			split: ''
+		},
+		{
+			...photo('ramka-j', 'Father carrying a child along a sandy beach', 'Beach walk, kid in tow'),
+			tile: 'aspect-[12/7]',
+			split: ''
+		},
+		{
+			...photo(
+				'ramka-c',
+				'Curved building facade in black and white',
+				'Curved facade, in monochrome'
+			),
+			tile: 'aspect-square',
+			split: 'md:break-before-column'
+		},
+		{
+			...photo(
+				'ramka-d',
+				'Airplane crossing a purple sky above the clouds',
+				'Above the clouds at dusk'
+			),
+			tile: 'aspect-video',
+			split: 'break-before-column md:break-before-auto'
+		},
+		{
+			...photo(
+				'ramka-k',
+				'Brutalist concrete tower against a pale sky',
+				'Concrete against a pale sky'
+			),
+			tile: 'aspect-square md:aspect-[16/15]',
+			split: ''
+		},
+		{
+			...photo('ramka-e', 'Fog rolling over dark hills', 'Fog rolling over the valley'),
+			tile: 'aspect-[16/11] md:aspect-[5/3]',
+			split: 'md:break-before-column'
+		},
+		{
+			...photo(
+				'ramka-f',
+				'Aerial view of a road entering twin forest tunnels',
+				'Twin tunnels from above'
+			),
+			tile: 'aspect-[4/5] md:aspect-[5/6]',
+			split: ''
+		},
+		{
+			...photo(
+				'ramka-g',
+				'Bride seen through the windows of a vintage car',
+				'Through the wedding car window'
+			),
+			tile: 'aspect-[4/3] md:aspect-[10/7]',
+			split: 'break-before-column md:break-before-auto'
+		},
+		{
+			...photo('ramka-l', 'Out-of-focus city lights glowing at dusk', 'City lights, out of focus'),
+			tile: 'aspect-video',
+			split: 'md:break-before-column'
+		},
+		{
+			...photo(
+				'ramka-n',
+				'Husky dog in a harness looking into the distance',
+				'Husky on the lookout'
+			),
+			tile: 'aspect-[4/5]',
+			split: ''
+		},
+		{
+			...photo(
+				'ramka-h',
+				'Sandstone hoodoos under a summer sky',
+				'Hoodoos under a summer sky, Bryce Canyon'
+			),
+			tile: 'aspect-[16/15] md:aspect-[16/11]',
+			split: ''
+		}
 	];
 	const hidden = [
 		photo('ramka-m', 'Patches of snow on a mossy forest floor', 'First snow in the forest'),
@@ -59,5 +139,11 @@
 			</Lightbox.Trigger>
 		{/each}
 	</div>
-	<LightboxGallery {items} ariaLabel="ramka demo gallery" backdrop="solid" slidesLayout="snug" layoutToggle />
+	<LightboxGallery
+		{items}
+		ariaLabel="ramka demo gallery"
+		backdrop="solid"
+		slidesLayout="snug"
+		layoutToggle
+	/>
 </Lightbox.Root>

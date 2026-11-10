@@ -12,8 +12,13 @@ export function objectPositionOffset(objectPosition: string, freeX: number, free
 }
 
 /** Paints the decoded trigger image under a still loading destination image; returns a remover, or null when it cannot. */
-export function paintPlaceholder(img: HTMLImageElement, source: HTMLImageElement | null | undefined, host: HTMLElement) {
-	if (!source?.complete || !source.naturalWidth || !source.naturalHeight || host === img) return null;
+export function paintPlaceholder(
+	img: HTMLImageElement,
+	source: HTMLImageElement | null | undefined,
+	host: HTMLElement
+) {
+	if (!source?.complete || !source.naturalWidth || !source.naturalHeight || host === img)
+		return null;
 	const boxW = img.clientWidth || host.clientWidth;
 	const boxH = img.clientHeight || host.clientHeight;
 	const ctx = boxW && boxH ? document.createElement('canvas').getContext('2d') : null;
@@ -23,7 +28,8 @@ export function paintPlaceholder(img: HTMLImageElement, source: HTMLImageElement
 	canvas.width = Math.max(1, Math.round(boxW * dpr));
 	canvas.height = Math.max(1, Math.round(boxH * dpr));
 	canvas.setAttribute('data-ramka-placeholder', '');
-	canvas.style.cssText = 'position:absolute;top:0;inset-inline-start:0;width:100%;height:100%;z-index:-1;pointer-events:none';
+	canvas.style.cssText =
+		'position:absolute;top:0;inset-inline-start:0;width:100%;height:100%;z-index:-1;pointer-events:none';
 	const { objectFit, objectPosition } = getComputedStyle(img);
 	const [natW, natH] = [source.naturalWidth, source.naturalHeight];
 	const scale = (objectFit === 'cover' ? Math.max : Math.min)(boxW / natW, boxH / natH);

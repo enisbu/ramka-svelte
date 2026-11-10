@@ -14,14 +14,17 @@
 <ExampleShell title="Text message">
 	{#snippet description()}
 		A single <code>Lightbox.Trigger</code> wraps an entire stack of attachments. Paired with
-		<code>morphTo="origin"</code>, the close animation always returns to the stack no matter which attachment is active.
+		<code>morphTo="origin"</code>, the close animation always returns to the stack no matter which
+		attachment is active.
 	{/snippet}
 	<TextMessage />
 </ExampleShell>
 
 <style>
 	code {
-		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+		font-family:
+			ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+			monospace;
 		line-height: 1rem;
 		border-radius: 0.25rem;
 		background-color: #f5f5f5;

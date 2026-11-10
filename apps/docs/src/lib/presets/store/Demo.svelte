@@ -17,14 +17,22 @@
 		stockNote: 'In stock — ships in 2 days'
 	};
 
-	const photo = (id: string) => ({ src: `/examples/store/store-pack-${id}.jpg`, thumb: `/examples/store/store-pack-${id}-thumb.jpg` });
+	const photo = (id: string) => ({
+		src: `/examples/store/store-pack-${id}.jpg`,
+		thumb: `/examples/store/store-pack-${id}-thumb.jpg`
+	});
 
 	const images: LightboxItem[] = [
 		{ ...photo('a'), alt: 'Terra 27L backpack, front view', width: 1200, height: 1500 },
 		{ ...photo('b'), alt: 'Terra 27L backpack, side profile', width: 1200, height: 1500 },
 		{ ...photo('c'), alt: 'Detail of the waxed canvas and zippers', width: 1200, height: 1200 },
 		{ ...photo('d'), alt: 'The backpack on a trail at golden hour', width: 1600, height: 1000 },
-		{ ...photo('e'), alt: 'Interior compartments, laptop sleeve visible', width: 1200, height: 1500 }
+		{
+			...photo('e'),
+			alt: 'Interior compartments, laptop sleeve visible',
+			width: 1200,
+			height: 1500
+		}
 	];
 
 	let selected = $state(0);
@@ -137,7 +145,8 @@
 		border: 1px solid #e5e5e5;
 		background: transparent;
 		opacity: 0.7;
-		transition-property: color, background-color, border-color, outline-color, opacity, box-shadow, transform;
+		transition-property:
+			color, background-color, border-color, outline-color, opacity, box-shadow, transform;
 		transition-duration: 150ms;
 		transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 	}
@@ -206,7 +215,8 @@
 		font-weight: 500;
 		background-color: #171717;
 		color: #fff;
-		transition-property: color, background-color, border-color, outline-color, opacity, box-shadow, transform;
+		transition-property:
+			color, background-color, border-color, outline-color, opacity, box-shadow, transform;
 		transition-duration: 150ms;
 		transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 	}

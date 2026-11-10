@@ -7,7 +7,13 @@
 	import ZoomInIcon from '@lucide/svelte/icons/zoom-in';
 	import ZoomOutIcon from '@lucide/svelte/icons/zoom-out';
 	import type { Snippet } from 'svelte';
-	import { chromeButton, chromeButtonGroup, chromeButtonMd, chromeButtonSegment, chromeSegmentDivider } from './chrome.js';
+	import {
+		chromeButton,
+		chromeButtonGroup,
+		chromeButtonMd,
+		chromeButtonSegment,
+		chromeSegmentDivider
+	} from './chrome.js';
 	import { ratio, type GalleryItem } from './items.js';
 
 	interface Props {
@@ -63,7 +69,8 @@
 				localStorage.setItem(storageKey, chosen);
 			} catch {}
 		};
-		if (matchMedia('(prefers-reduced-motion: reduce)').matches || !document.startViewTransition) return flip();
+		if (matchMedia('(prefers-reduced-motion: reduce)').matches || !document.startViewTransition)
+			return flip();
 		document.startViewTransition(flip);
 	}
 </script>
@@ -91,17 +98,23 @@
 				{preload}
 				class={snug
 					? 'lightbox-demo-slides lightbox-demo-slides-snug flex-1 [&::-webkit-scrollbar]:hidden'
-					: 'lightbox-demo-slides flex-1 gap-5 [&::-webkit-scrollbar]:hidden md:gap-0'}
+					: 'lightbox-demo-slides flex-1 gap-5 md:gap-0 [&::-webkit-scrollbar]:hidden'}
 				style={snug && items.length
 					? `--lightbox-snug-ratio-start: ${ratio(items[0])}; --lightbox-snug-ratio-end: ${ratio(items[items.length - 1])}`
 					: undefined}
 			>
 				{#each items as entry, i (entry.src)}
 					<Lightbox.Slide
-						class={snug ? 'lightbox-demo-slide-snug lightbox-demo-slide-pad z-0 h-full' : 'lightbox-demo-slide-pad h-full'}
+						class={snug
+							? 'lightbox-demo-slide-snug lightbox-demo-slide-pad z-0 h-full'
+							: 'lightbox-demo-slide-pad h-full'}
 						style={snug ? `--lightbox-snug-ratio: ${ratio(entry)}` : undefined}
 					>
-						<Lightbox.Item index={i} caption={entry.caption ?? entry.alt}>
+						<Lightbox.Item
+							index={i}
+							caption={entry.caption ?? entry.alt}
+							aria-label="{i + 1} of {items.length}"
+						>
 							{#if item}
 								{@render item(entry, i)}
 							{:else}
@@ -155,7 +168,11 @@
 					<Lightbox.ZoomOut class={chromeButtonSegment} aria-label="Zoom out" title="Zoom out">
 						<ZoomOutIcon aria-hidden="true" class="h-4 w-4" strokeWidth={2.25} />
 					</Lightbox.ZoomOut>
-					<Lightbox.ZoomIn class="{chromeButtonSegment} {chromeSegmentDivider}" aria-label="Zoom in" title="Zoom in">
+					<Lightbox.ZoomIn
+						class="{chromeButtonSegment} {chromeSegmentDivider}"
+						aria-label="Zoom in"
+						title="Zoom in"
+					>
 						<ZoomInIcon aria-hidden="true" class="h-4 w-4" strokeWidth={2.25} />
 					</Lightbox.ZoomIn>
 				</div>
@@ -176,7 +193,9 @@
 					class="block max-w-full truncate text-[13px] leading-tight font-medium text-neutral-900 dark:text-neutral-50"
 				/>
 				{#if items.length > 1}
-					<Lightbox.Counter class="text-[11px] leading-tight text-neutral-500 tabular-nums md:sr-only dark:text-neutral-400">
+					<Lightbox.Counter
+						class="text-[11px] leading-tight text-neutral-500 tabular-nums md:sr-only dark:text-neutral-400"
+					>
 						{#snippet children({ current, total })}{current} of {total}{/snippet}
 					</Lightbox.Counter>
 				{/if}

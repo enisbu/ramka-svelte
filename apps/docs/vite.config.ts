@@ -48,7 +48,9 @@ function highlight(): Plugin {
 		async resolveId(source, importer) {
 			const suffix = suffixes.find((s) => source.endsWith(s));
 			if (!suffix) return;
-			const resolved = await this.resolve(source.slice(0, -suffix.length), importer, { skipSelf: true });
+			const resolved = await this.resolve(source.slice(0, -suffix.length), importer, {
+				skipSelf: true
+			});
 			return resolved && `${prefix}${resolved.id}::${suffix.slice(1)}`;
 		},
 		async load(id) {
@@ -80,7 +82,8 @@ export default defineConfig({
 		tailwindcss(),
 		sveltekit({
 			compilerOptions: {
-				runes: ({ filename }) => (filename.split(/[/\\]/).includes('node_modules') ? undefined : true)
+				runes: ({ filename }) =>
+					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
 			adapter: adapter()
 		})

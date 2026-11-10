@@ -60,17 +60,25 @@ describe('zoom math', () => {
 	});
 
 	it('holds zoom inside the pinch dead zone', () => {
-		const [a0, b0] = [{ x: 0, y: 0 }, { x: 200, y: 0 }];
+		const [a0, b0] = [
+			{ x: 0, y: 0 },
+			{ x: 200, y: 0 }
+		];
 		const wobble = resolvePinchZoom(2, 200, false, a0, { x: -4, y: 1 }, b0, { x: 204, y: -1 });
 		expect(wobble).toEqual({ zoom: 2, engaged: false, baseline: 200 });
 		const spread = resolvePinchZoom(2, 200, false, a0, { x: -20, y: 0 }, b0, { x: 220, y: 0 });
 		expect(spread.engaged).toBe(true);
 		expect(spread.zoom).toBeCloseTo(2.4);
-		expect(resolvePinchZoom(2, 200, true, a0, { x: 0, y: 0 }, b0, { x: 300, y: 0 }).zoom).toBeCloseTo(3);
+		expect(
+			resolvePinchZoom(2, 200, true, a0, { x: 0, y: 0 }, b0, { x: 300, y: 0 }).zoom
+		).toBeCloseTo(3);
 	});
 
 	it('needs more spread while both fingers slide together and eats the slop', () => {
-		const [a0, b0] = [{ x: 0, y: 0 }, { x: 200, y: 0 }];
+		const [a0, b0] = [
+			{ x: 0, y: 0 },
+			{ x: 200, y: 0 }
+		];
 		const slide = resolvePinchZoom(1, 200, false, a0, { x: 0, y: 60 }, b0, { x: 220, y: 60 });
 		expect(slide.engaged).toBe(false);
 		const engaged = resolvePinchZoom(1, 200, false, a0, { x: 0, y: 60 }, b0, { x: 240, y: 60 });
@@ -82,8 +90,18 @@ describe('zoom math', () => {
 	it('measures release velocity over the window above the flick threshold', () => {
 		expect(momentumVelocity([])).toBeNull();
 		expect(momentumVelocity([{ x: 0, y: 0, t: 0 }])).toBeNull();
-		expect(momentumVelocity([{ x: 0, y: 0, t: 0 }, { x: 2, y: 0, t: 100 }])).toBeNull();
-		expect(momentumVelocity([{ x: 0, y: 0, t: 0 }, { x: 50, y: -20, t: 50 }])).toEqual({ x: 1000, y: -400 });
+		expect(
+			momentumVelocity([
+				{ x: 0, y: 0, t: 0 },
+				{ x: 2, y: 0, t: 100 }
+			])
+		).toBeNull();
+		expect(
+			momentumVelocity([
+				{ x: 0, y: 0, t: 0 },
+				{ x: 50, y: -20, t: 50 }
+			])
+		).toEqual({ x: 1000, y: -400 });
 	});
 
 	it('caps wheel zoom at 2x per event', () => {
@@ -159,7 +177,11 @@ describe('options', () => {
 
 	it('picks scrollTriggerIntoView entries by moment with defaults', () => {
 		expect(scrollOption(null, 'onClose')).toBeUndefined();
-		expect(scrollOption({ type: 'onClose' }, 'onClose')).toEqual({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+		expect(scrollOption({ type: 'onClose' }, 'onClose')).toEqual({
+			behavior: 'smooth',
+			block: 'nearest',
+			inline: 'nearest'
+		});
 		expect(scrollOption([{ type: 'onChange', block: 'center' }], 'onChange')?.block).toBe('center');
 		expect(scrollOption([{ type: 'onChange' }], 'onClose')).toBeUndefined();
 	});

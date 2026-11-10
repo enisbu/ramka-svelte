@@ -69,11 +69,31 @@ export const apiHref = {
 
 /** Preset demos built by the presets pages. */
 export const presets: NavLink[] = [
-	{ href: '/presets/default', title: 'Default', description: 'Docs-demo chrome as a copy-paste design-system Lightbox' },
-	{ href: '/presets/twitter', title: 'Twitter', description: 'Split media + thread sidebar with translucent backdrop and edge nav' },
-	{ href: '/presets/store', title: 'Store', description: 'Commerce viewer: thumbnail rail + buy panel with price, highlights, and CTA' },
-	{ href: '/presets/editorial', title: 'Editorial', description: 'Newsroom article-figure viewer: near-black surface, caption + credit block' },
-	{ href: '/presets/stories', title: 'Stories', description: 'Avatar tray that crossfades into 9:16 video with a scroll-driven 3D page-turn' }
+	{
+		href: '/presets/default',
+		title: 'Default',
+		description: 'Docs-demo chrome as a copy-paste design-system Lightbox'
+	},
+	{
+		href: '/presets/twitter',
+		title: 'Twitter',
+		description: 'Split media + thread sidebar with translucent backdrop and edge nav'
+	},
+	{
+		href: '/presets/store',
+		title: 'Store',
+		description: 'Commerce viewer: thumbnail rail + buy panel with price, highlights, and CTA'
+	},
+	{
+		href: '/presets/editorial',
+		title: 'Editorial',
+		description: 'Newsroom article-figure viewer: near-black surface, caption + credit block'
+	},
+	{
+		href: '/presets/stories',
+		title: 'Stories',
+		description: 'Avatar tray that crossfades into 9:16 video with a scroll-driven 3D page-turn'
+	}
 ];
 
 /** Example pages, same slugs as ramka.dev. */

@@ -11,6 +11,11 @@
 	let { tone, children }: { tone: keyof typeof tones; children: Snippet } = $props();
 </script>
 
-<div class={['inline-flex items-center rounded-md px-2 py-0.5 text-xs font-semibold tracking-wide uppercase', tones[tone]]}>
+<div
+	class={[
+		'inline-flex items-center rounded-md px-2 py-0.5 text-xs font-semibold tracking-wide uppercase',
+		tones[tone]
+	]}
+>
 	{@render children()}
 </div>

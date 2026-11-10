@@ -39,7 +39,13 @@
 	<figure>
 		<Lightbox.Trigger {index} class="editorial-demo-trigger">
 			<span class="morph" data-ramka-morph>
-				<img src={item.thumb} alt={item.alt} width={item.width} height={item.height} draggable="false" />
+				<img
+					src={item.thumb}
+					alt={item.alt}
+					width={item.width}
+					height={item.height}
+					draggable="false"
+				/>
 			</span>
 		</Lightbox.Trigger>
 		<figcaption>
@@ -62,15 +68,16 @@
 		<p class="byline">By Anna Beck · 8 min read</p>
 
 		<p class="body first">
-			The village wakes before the light does. For sixty years the boats went out whatever the weather; now, on most
-			mornings, only three engines cough to life along the whole quay.
+			The village wakes before the light does. For sixty years the boats went out whatever the
+			weather; now, on most mornings, only three engines cough to life along the whole quay.
 		</p>
 
 		<div class="spaced">{@render figure(0)}</div>
 
 		<p class="body spaced">
-			Ask anyone here when it changed and they will not name a year. The harbor emptied the way harbors do — one
-			retirement at a time, one son who moved to the city, one quota that made a small boat pointless.
+			Ask anyone here when it changed and they will not name a year. The harbor emptied the way
+			harbors do — one retirement at a time, one son who moved to the city, one quota that made a
+			small boat pointless.
 		</p>
 
 		<div class="pair spaced">

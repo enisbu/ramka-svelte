@@ -1,7 +1,11 @@
 <script lang="ts">
 	import { Lightbox } from '@ramka/svelte';
 	import Icon from './Icon.svelte';
-	import ThreadPanel, { formatCount, type LightboxItem, type ThreadPost } from './ThreadPanel.svelte';
+	import ThreadPanel, {
+		formatCount,
+		type LightboxItem,
+		type ThreadPost
+	} from './ThreadPanel.svelte';
 	import './lightbox.css';
 
 	interface Props {
@@ -19,16 +23,28 @@
 
 <Lightbox.Portal class="xlb-portal">
 	<Lightbox.Backdrop class="xlb-backdrop" />
-	<Lightbox.Content aria-label={ariaLabel} class={['xlb-content', threadOpen && 'xlb-content-thread-open']}>
+	<Lightbox.Content
+		aria-label={ariaLabel}
+		class={['xlb-content', threadOpen && 'xlb-content-thread-open']}
+	>
 		<div class="xlb-media-pane">
 			<Lightbox.Close class="xlb-control xlb-close xlb-chrome-pull-hide" aria-label="Close">
 				<Icon name="x" />
 			</Lightbox.Close>
 
-			<Lightbox.Slides aria-label="Post media" aria-roledescription="carousel" preload={1} class="xlb-slides">
+			<Lightbox.Slides
+				aria-label="Post media"
+				aria-roledescription="carousel"
+				preload={1}
+				class="xlb-slides"
+			>
 				{#each items as item, i (item.id ?? i)}
 					<Lightbox.Slide class="xlb-slide">
-						<Lightbox.Item index={i} aria-roledescription="slide" aria-label="{i + 1} of {items.length}">
+						<Lightbox.Item
+							index={i}
+							aria-roledescription="slide"
+							aria-label="{i + 1} of {items.length}"
+						>
 							<Lightbox.Zoom>
 								<Lightbox.Media width={item.width} height={item.height} class="xlb-media">
 									<img
@@ -47,17 +63,28 @@
 			</Lightbox.Slides>
 
 			{#if showNav}
-				<Lightbox.Previous class="xlb-control xlb-nav xlb-nav-prev xlb-chrome-pull-hide" aria-label="Previous">
+				<Lightbox.Previous
+					class="xlb-control xlb-nav xlb-nav-prev xlb-chrome-pull-hide"
+					aria-label="Previous"
+				>
 					<Icon name="chevron-left" />
 				</Lightbox.Previous>
-				<Lightbox.Next class="xlb-control xlb-nav xlb-nav-next xlb-chrome-pull-hide" aria-label="Next">
+				<Lightbox.Next
+					class="xlb-control xlb-nav xlb-nav-next xlb-chrome-pull-hide"
+					aria-label="Next"
+				>
 					<Icon name="chevron-right" />
 				</Lightbox.Next>
 				<Lightbox.Counter class="xlb-counter xlb-chrome-pull-hide" />
 			{/if}
 
 			<div class="xlb-mobile-bar xlb-chrome-pull-hide" aria-label="Post actions">
-				<button type="button" class="xlb-mobile-action" aria-label="View comments" onclick={() => (threadOpen = true)}>
+				<button
+					type="button"
+					class="xlb-mobile-action"
+					aria-label="View comments"
+					onclick={() => (threadOpen = true)}
+				>
 					<Icon name="reply" />
 					<span>{formatCount(stats?.replies)}</span>
 				</button>

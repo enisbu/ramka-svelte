@@ -12,8 +12,14 @@
 		indicator?: Snippet;
 	}
 
-	let { scrubOnSelect = true, selectViewTransition = true, wrapSelectCommit, children, indicator, ...rest }: Props =
-		$props();
+	let {
+		scrubOnSelect = true,
+		selectViewTransition = true,
+		wrapSelectCommit,
+		children,
+		indicator,
+		...rest
+	}: Props = $props();
 	const lb = getModel();
 	let root = $state<HTMLElement>();
 	let track = $state<HTMLElement>();
@@ -61,11 +67,14 @@
 		const to = travel(el, i);
 		if (Math.abs(from - to) < 0.5) return;
 		scrub?.cancel();
-		const anim = (scrub = el.animate([{ transform: translate(from) }, { transform: translate(to) }], {
-			duration: SCRUB_DURATION,
-			easing: SCRUB_EASING,
-			fill: 'forwards'
-		}));
+		const anim = (scrub = el.animate(
+			[{ transform: translate(from) }, { transform: translate(to) }],
+			{
+				duration: SCRUB_DURATION,
+				easing: SCRUB_EASING,
+				fill: 'forwards'
+			}
+		));
 		scrubbing = true;
 		anim.finished.then(
 			() => {
@@ -85,7 +94,8 @@
 			if (i === lb.index || lb.scrolling) return;
 			scrubTo(i);
 			const slides = lb.slidesEl ?? null;
-			const host = slides as (HTMLElement & { startViewTransition?: (cb: () => void) => unknown }) | null;
+			const host = slides as
+				(HTMLElement & { startViewTransition?: (cb: () => void) => unknown }) | null;
 			const apply = () => flushSync(() => lb.go(i, 'thumbnail', true));
 			const commit = () => {
 				if (viewTransition && selectViewTransition && !reduced() && host?.startViewTransition)

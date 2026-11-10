@@ -5,5 +5,6 @@
 </script>
 
 <code class={['font-mono text-[13px] leading-snug', className]}
-	>{#each typeTokens(code) as token, i (i)}<span class={token.class}>{token.value}</span>{/each}</code
+	>{#each typeTokens(code) as token, i (i)}<span class={token.class}>{token.value}</span
+		>{/each}</code
 >

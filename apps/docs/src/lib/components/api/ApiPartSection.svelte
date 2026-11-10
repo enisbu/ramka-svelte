@@ -15,7 +15,8 @@
 	const propsGrid = `${row} grid-cols-[13rem_minmax(0,1.25fr)_8rem_1.5rem]`;
 	const attrsGrid = `${row} grid-cols-[13rem_minmax(0,1fr)]`;
 	const varsGrid = `${row} grid-cols-[13rem_8rem_minmax(0,1fr)]`;
-	const name = 'min-w-0 font-mono text-[13px] font-medium break-all text-neutral-900 dark:text-neutral-50';
+	const name =
+		'min-w-0 font-mono text-[13px] font-medium break-all text-neutral-900 dark:text-neutral-50';
 	const body = 'min-w-0 text-[13px] leading-6 text-neutral-700 dark:text-neutral-200';
 	const heading = 'text-xs font-semibold tracking-wider text-neutral-500 uppercase';
 	const detail = 'grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4 px-4';
@@ -36,17 +37,24 @@
 					<div>Default</div>
 				</div>
 				{#each part.props as prop (prop.name)}
-					<details class="group border-b border-neutral-200 last:border-b-0 dark:border-neutral-800">
+					<details
+						class="group border-b border-neutral-200 last:border-b-0 dark:border-neutral-800"
+					>
 						<summary
 							id={anchor(prop.name)}
 							class="{propsGrid} cursor-pointer list-none items-center py-3 transition-colors outline-none hover:bg-neutral-50 focus-visible:bg-neutral-50 focus-visible:ring-2 focus-visible:ring-neutral-400/40 focus-visible:ring-inset dark:hover:bg-neutral-900/60 dark:focus-visible:bg-neutral-900/60 [&::-webkit-details-marker]:hidden"
 						>
 							<span class="truncate {name}">
-								{prop.name}{#if prop.required}<span class="ml-0.5 font-normal text-red-500" title="Required">*</span>{/if}
+								{prop.name}{#if prop.required}<span
+										class="ml-0.5 font-normal text-red-500"
+										title="Required">*</span
+									>{/if}
 							</span>
 							<span class="min-w-0 truncate"><TypeCode code={shortType(prop.type)} /></span>
 							<span class="min-w-0 truncate">
-								{#if prop.default == null}<span class="text-neutral-400">n/a</span>{:else}<TypeCode code={prop.default} />{/if}
+								{#if prop.default == null}<span class="text-neutral-400">n/a</span>{:else}<TypeCode
+										code={prop.default}
+									/>{/if}
 							</span>
 							<ChevronDown
 								aria-hidden="true"
@@ -102,7 +110,10 @@
 					<div role="columnheader">Description</div>
 				</div>
 				{#each part.attributes as attr (attr.name)}
-					<div role="row" class="{attrsGrid} border-b border-neutral-200 py-3 last:border-b-0 dark:border-neutral-800">
+					<div
+						role="row"
+						class="{attrsGrid} border-b border-neutral-200 py-3 last:border-b-0 dark:border-neutral-800"
+					>
 						<div role="cell" class={name}><code>{attr.name}</code></div>
 						<div role="cell" class={body}><Description text={attr.description} /></div>
 					</div>
@@ -121,7 +132,10 @@
 					<div role="columnheader">Description</div>
 				</div>
 				{#each part.cssVariables as cssVar (cssVar.name)}
-					<div role="row" class="{varsGrid} border-b border-neutral-200 py-3 last:border-b-0 dark:border-neutral-800">
+					<div
+						role="row"
+						class="{varsGrid} border-b border-neutral-200 py-3 last:border-b-0 dark:border-neutral-800"
+					>
 						<div role="cell" class={name}><code>{cssVar.name}</code></div>
 						<div role="cell" class="min-w-0">
 							{#if cssVar.type}<TypeCode code={cssVar.type} />{/if}

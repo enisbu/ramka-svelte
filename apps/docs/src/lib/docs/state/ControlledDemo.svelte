@@ -17,7 +17,9 @@
 				type="number"
 				min="0"
 				max={docsImages.length - 1}
-				bind:value={() => index, (v) => (index = Math.max(0, Math.min(docsImages.length - 1, Number(v) || 0)))}
+				bind:value={
+					() => index, (v) => (index = Math.max(0, Math.min(docsImages.length - 1, Number(v) || 0)))
+				}
 				class="w-16 rounded-md border border-neutral-300 bg-white px-2 py-1 text-sm dark:border-neutral-700 dark:bg-neutral-900"
 			/>
 		</label>

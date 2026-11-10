@@ -17,9 +17,12 @@
 			<a href={githubUrl} target="_blank" rel="noreferrer" class={link}>GitHub</a>
 		</nav>
 		<p class="w-full text-[13px] text-neutral-400 dark:text-neutral-500">
-			Svelte port of <a href={upstream.site} target="_blank" rel="noreferrer" class={link}>ramka</a> by
-			<a href={upstream.authorUrl} target="_blank" rel="noreferrer" class={link}>{upstream.author}</a>. The React
-			original is <a href={upstream.npm} target="_blank" rel="noreferrer" class={link}>@ramka/react</a>.
+			Svelte port of <a href={upstream.site} target="_blank" rel="noreferrer" class={link}>ramka</a>
+			by
+			<a href={upstream.authorUrl} target="_blank" rel="noreferrer" class={link}
+				>{upstream.author}</a
+			>. The React original is
+			<a href={upstream.npm} target="_blank" rel="noreferrer" class={link}>@ramka/react</a>.
 		</p>
 	</div>
 </footer>

@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { Lightbox } from '@ramka/svelte';
 
-	let { items }: { items: { id: string; src: string; thumb: string; alt: string; caption: string }[] } = $props();
+	let {
+		items
+	}: { items: { id: string; src: string; thumb: string; alt: string; caption: string }[] } =
+		$props();
 </script>
 
 <Lightbox.Root>

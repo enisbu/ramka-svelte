@@ -3,7 +3,8 @@
 
 	let { report }: { report: (zoom: ReturnType<typeof Lightbox.Zoom>) => void } = $props();
 	let zoom = $state<ReturnType<typeof Lightbox.Zoom>>();
-	const image = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="4000" height="3000"/>';
+	const image =
+		'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="4000" height="3000"/>';
 	$effect(() => {
 		if (zoom) report(zoom);
 	});

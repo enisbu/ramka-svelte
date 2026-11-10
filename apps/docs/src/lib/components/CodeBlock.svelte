@@ -22,7 +22,9 @@
 <div
 	class={[
 		'code-block overflow-hidden',
-		embedded ? 'rounded-none border-0' : 'rounded-lg border border-neutral-200 dark:border-neutral-800',
+		embedded
+			? 'rounded-none border-0'
+			: 'rounded-lg border border-neutral-200 dark:border-neutral-800',
 		className
 	]}
 >
@@ -38,7 +40,8 @@
 	<div class="code-block-pre overflow-x-auto bg-neutral-50 dark:bg-neutral-950">
 		<pre class="shiki"><code
 				>{#each code.lines as line, i (i)}<span class="line"
-						>{#each line as token, j (j)}<span style={token.style}>{token.content}</span>{/each}</span
+						>{#each line as token, j (j)}<span style={token.style}>{token.content}</span
+							>{/each}</span
 					>{/each}</code
 			></pre>
 	</div>

@@ -17,10 +17,12 @@
 	docsLabel="State & lifecycle · onBeforeOpen"
 >
 	{#snippet description()}
-		Each tile is its own <code class="models-3d-code">Lightbox.Root</code> with a single-item gallery, Three.js canvases
-		in the trigger and <code class="models-3d-code">Lightbox.Media</code>.
-		<code class="models-3d-code">onBeforeOpen</code> waits for the prepared lightbox canvas to paint a synced frame before
-		the morph (spin stays live, like close). Rotate only (no zoom); orbit stays in sync with the grid tile.
+		Each tile is its own <code class="models-3d-code">Lightbox.Root</code> with a single-item
+		gallery, Three.js canvases in the trigger and
+		<code class="models-3d-code">Lightbox.Media</code>.
+		<code class="models-3d-code">onBeforeOpen</code> waits for the prepared lightbox canvas to paint
+		a synced frame before the morph (spin stays live, like close). Rotate only (no zoom); orbit
+		stays in sync with the grid tile.
 		<code class="models-3d-code">pullToClose={'{false}'}</code> so vertical drag stays with orbit.
 	{/snippet}
 	<Demo />

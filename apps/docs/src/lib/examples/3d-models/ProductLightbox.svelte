@@ -24,7 +24,12 @@
 			<div
 				class="trigger-scene"
 				{@attach (host) =>
-					mountScene(host, { product, role: 'trigger', interactive: () => false, autoRotate: () => !open })}
+					mountScene(host, {
+						product,
+						role: 'trigger',
+						interactive: () => false,
+						autoRotate: () => !open
+					})}
 			></div>
 		</div>
 		<div class="meta">
@@ -33,7 +38,9 @@
 		</div>
 	</Lightbox.Trigger>
 
-	<SoloViewer ariaLabel={product.name} caption="{product.name} · {product.material}"
+	<SoloViewer
+		ariaLabel={product.name}
+		caption="{product.name} · {product.material}"
 		preload={0}
 		pullToClose={false}
 	>

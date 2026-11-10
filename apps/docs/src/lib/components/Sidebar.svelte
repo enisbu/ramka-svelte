@@ -30,9 +30,13 @@
 					<ThemeToggle variant="ghost" />
 				</div>
 			</div>
-			<p class="mt-1.5 text-[13px] leading-relaxed text-pretty text-neutral-500 dark:text-neutral-400">The lightbox for Svelte.</p>
+			<p
+				class="mt-1.5 text-[13px] leading-relaxed text-pretty text-neutral-500 dark:text-neutral-400"
+			>
+				The lightbox for Svelte.
+			</p>
 		</div>
-		<div class="scrollbar-thin min-h-0 flex-1 overflow-y-auto px-2.5 pt-1 pb-5">
+		<div class="min-h-0 flex-1 scrollbar-thin overflow-y-auto px-2.5 pt-1 pb-5">
 			<SidebarNav />
 		</div>
 	</div>

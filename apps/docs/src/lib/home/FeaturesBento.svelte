@@ -70,19 +70,36 @@
 </script>
 
 <section id="features" class="mx-auto w-full max-w-5xl px-6 pb-24 md:pb-32">
-	<h2 class="text-center text-3xl font-semibold tracking-tight text-balance text-neutral-950 md:text-4xl dark:text-neutral-50">
+	<h2
+		class="text-center text-3xl font-semibold tracking-tight text-balance text-neutral-950 md:text-4xl dark:text-neutral-50"
+	>
 		Everything a lightbox should do.
 	</h2>
 	<p class="mx-auto mt-4 max-w-xl text-center text-pretty text-neutral-500 dark:text-neutral-400">
-		An image viewer that feels like the native photos app, from gestures to keyboard and screen-reader support. Zero
-		opinions about how your gallery looks.
+		An image viewer that feels like the native photos app, from gestures to keyboard and
+		screen-reader support. Zero opinions about how your gallery looks.
 	</p>
 	<div class="mt-12 grid gap-4 md:grid-cols-3 md:gap-5">
 		{#each features as feature (feature.title)}
-			<div class={['rounded-3xl border border-neutral-200 p-7 dark:border-neutral-800', feature.wide && 'md:col-span-2']}>
-				<feature.icon aria-hidden="true" class="size-5 text-neutral-400 dark:text-neutral-500" strokeWidth={1.75} />
-				<h3 class="mt-4 text-[15px] font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">{feature.title}</h3>
-				<p class="mt-2 text-[14px] leading-6 text-pretty text-neutral-500 dark:text-neutral-400">{feature.description}</p>
+			<div
+				class={[
+					'rounded-3xl border border-neutral-200 p-7 dark:border-neutral-800',
+					feature.wide && 'md:col-span-2'
+				]}
+			>
+				<feature.icon
+					aria-hidden="true"
+					class="size-5 text-neutral-400 dark:text-neutral-500"
+					strokeWidth={1.75}
+				/>
+				<h3
+					class="mt-4 text-[15px] font-semibold tracking-tight text-neutral-900 dark:text-neutral-50"
+				>
+					{feature.title}
+				</h3>
+				<p class="mt-2 text-[14px] leading-6 text-pretty text-neutral-500 dark:text-neutral-400">
+					{feature.description}
+				</p>
 			</div>
 		{/each}
 	</div>

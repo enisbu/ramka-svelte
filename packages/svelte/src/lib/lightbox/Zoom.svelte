@@ -43,7 +43,8 @@
 	}: Props = $props();
 	const lb = getModel();
 	const item = getItem();
-	const safariPinch = typeof window !== 'undefined' && 'GestureEvent' in window && navigator.maxTouchPoints === 0;
+	const safariPinch =
+		typeof window !== 'undefined' && 'GestureEvent' in window && navigator.maxTouchPoints === 0;
 	let scale = $state(untrack(() => minZoom));
 	let offset = $state({ x: 0, y: 0 });
 	let dragging = $state(false);
@@ -132,7 +133,14 @@
 			const img = content.querySelector('img');
 			const box = viewport.getBoundingClientRect();
 			measured = img?.naturalWidth
-				? computeMaxZoom(img.naturalWidth, img.naturalHeight, box.width, box.height, minZoom, FALLBACK_MAX)
+				? computeMaxZoom(
+						img.naturalWidth,
+						img.naturalHeight,
+						box.width,
+						box.height,
+						minZoom,
+						FALLBACK_MAX
+					)
 				: undefined;
 		};
 		measure();
@@ -169,7 +177,13 @@
 	}
 </script>
 
-<div data-ramka-zoom data-zoom={zoomed || undefined} data-dragging={dragging || undefined} {...rest} {@attach surface}>
+<div
+	data-ramka-zoom
+	data-zoom={zoomed || undefined}
+	data-dragging={dragging || undefined}
+	{...rest}
+	{@attach surface}
+>
 	<div data-ramka-zoom-content>
 		{@render children?.({
 			zoom: scale,

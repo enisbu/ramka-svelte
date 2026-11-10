@@ -14,7 +14,8 @@
 		onOpenChange?: (open: boolean) => void;
 		photos?: string[];
 	} = $props();
-	const pixel = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"/>';
+	const pixel =
+		'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"/>';
 </script>
 
 <Lightbox.Root {dir} {viewTransition} {onBeforeOpen} {onOpenChange}>
@@ -26,12 +27,17 @@
 	<Lightbox.Portal>
 		<Lightbox.Backdrop />
 		<Lightbox.Content aria-label="Viewer" style="position:fixed;inset:0">
-			<Lightbox.Slides aria-roledescription="carousel" style="display:flex;width:400px;height:300px">
+			<Lightbox.Slides
+				aria-roledescription="carousel"
+				style="display:flex;width:400px;height:300px"
+			>
 				{#each photos as name, i (name)}
 					<Lightbox.Slide style="flex:0 0 100%">
 						<Lightbox.Item index={i} caption={name} aria-label={name}>
 							<Lightbox.Zoom maxZoom={4}>
-								<Lightbox.Media width={400} height={300}><img src={pixel} alt={name} /></Lightbox.Media>
+								<Lightbox.Media width={400} height={300}
+									><img src={pixel} alt={name} /></Lightbox.Media
+								>
 							</Lightbox.Zoom>
 						</Lightbox.Item>
 					</Lightbox.Slide>

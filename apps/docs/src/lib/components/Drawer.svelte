@@ -15,7 +15,11 @@
 	let start = $state<number | null>(null);
 
 	function sheet(_node: Element, { duration = 450 } = {}) {
-		return { duration, easing: cubicOut, css: (t: number) => `transform: translate3d(0, ${(1 - t) * 100}%, 0)` };
+		return {
+			duration,
+			easing: cubicOut,
+			css: (t: number) => `transform: translate3d(0, ${(1 - t) * 100}%, 0)`
+		};
 	}
 
 	function trap(node: HTMLElement) {
@@ -67,13 +71,21 @@
 		{@attach trap}
 	>
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<div class="touch-none" {onpointerdown} {onpointermove} {onpointerup} onpointercancel={onpointerup}>
+		<div
+			class="touch-none"
+			{onpointerdown}
+			{onpointermove}
+			{onpointerup}
+			onpointercancel={onpointerup}
+		>
 			<div class="flex h-3 w-full cursor-grab items-end justify-center">
 				<span class="block h-1 w-24 rounded-full bg-muted"></span>
 			</div>
 			<div class="flex flex-col gap-0.5 p-4 pb-0 text-left">
 				<h2 class="text-base font-medium text-foreground">{title}</h2>
-				{#if description}<p class="text-sm text-balance text-muted-foreground">{description}</p>{/if}
+				{#if description}<p class="text-sm text-balance text-muted-foreground">
+						{description}
+					</p>{/if}
 			</div>
 		</div>
 		{@render children()}

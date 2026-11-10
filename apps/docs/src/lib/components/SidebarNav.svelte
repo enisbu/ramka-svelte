@@ -6,14 +6,18 @@
 
 	function isActive(link: NavLink) {
 		const path = page.url.pathname;
-		return link.match === 'prefix' ? path === link.href || path.startsWith(`${link.href}/`) : path === link.href;
+		return link.match === 'prefix'
+			? path === link.href || path.startsWith(`${link.href}/`)
+			: path === link.href;
 	}
 </script>
 
 <nav class="space-y-6">
 	{#each navSections as section (section.title)}
 		<div>
-			<div class="px-2.5 pb-1.5 text-[11px] font-semibold text-neutral-400 dark:text-neutral-500">{section.title}</div>
+			<div class="px-2.5 pb-1.5 text-[11px] font-semibold text-neutral-400 dark:text-neutral-500">
+				{section.title}
+			</div>
 			<ul class="flex flex-col gap-0.5">
 				{#each section.links as link (link.href)}
 					{@const active = isActive(link)}

@@ -27,8 +27,14 @@
 		if (entry) entry.media = el;
 		const img = el.querySelector('img, video') as HTMLImageElement | HTMLVideoElement | null;
 		const read = () => {
-			const w = img instanceof HTMLImageElement ? Number(img.getAttribute('width')) || img.naturalWidth : img?.videoWidth;
-			const h = img instanceof HTMLImageElement ? Number(img.getAttribute('height')) || img.naturalHeight : img?.videoHeight;
+			const w =
+				img instanceof HTMLImageElement
+					? Number(img.getAttribute('width')) || img.naturalWidth
+					: img?.videoWidth;
+			const h =
+				img instanceof HTMLImageElement
+					? Number(img.getAttribute('height')) || img.naturalHeight
+					: img?.videoHeight;
 			if (w && h) auto = { w, h };
 		};
 		read();

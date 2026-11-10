@@ -7,7 +7,8 @@ import { paintPlaceholder } from './placeholder.js';
 export type { TextDirection };
 export type MorphTo = 'active' | 'origin' | 'closest';
 export type Crossfade = 'open' | 'close' | 'both';
-export type NavigationSource = 'trigger' | 'keyboard' | 'thumbnail' | 'button' | 'scroll' | 'imperative';
+export type NavigationSource =
+	'trigger' | 'keyboard' | 'thumbnail' | 'button' | 'scroll' | 'imperative';
 export type Caption = string | Snippet;
 
 export interface ScrollTriggerOption {
@@ -97,9 +98,18 @@ export interface ItemEntry {
 }
 
 /** `scrollIntoView` options for one moment of `scrollTriggerIntoView`, or undefined when it is off. */
-export function scrollOption(config: ScrollTriggerIntoView | undefined, type: ScrollTriggerOption['type']) {
+export function scrollOption(
+	config: ScrollTriggerIntoView | undefined,
+	type: ScrollTriggerOption['type']
+) {
 	const match = [config ?? []].flat().find((o) => o.type === type);
-	return match && { behavior: match.behavior ?? 'smooth', block: match.block ?? 'nearest', inline: match.inline ?? 'nearest' };
+	return (
+		match && {
+			behavior: match.behavior ?? 'smooth',
+			block: match.block ?? 'nearest',
+			inline: match.inline ?? 'nearest'
+		}
+	);
 }
 
 /** The element whose pixels bridge the morph for a trigger. */
@@ -274,10 +284,15 @@ export class LightboxModel implements LightboxState {
 		flushSync(() => (this.preparing = false));
 	}
 
-	async show(index = this.index, via?: TriggerEntry | string, source: NavigationSource = 'imperative') {
+	async show(
+		index = this.index,
+		via?: TriggerEntry | string,
+		source: NavigationSource = 'imperative'
+	) {
 		if (this.open || this.preparing || this.#busy) return;
 		const trigger =
-			(typeof via === 'string' ? [...this.triggers].find((t) => t.id === via) : via) || this.triggerAt(index);
+			(typeof via === 'string' ? [...this.triggers].find((t) => t.id === via) : via) ||
+			this.triggerAt(index);
 		const morphs = this.#morphs(trigger);
 		this.#abort.abort();
 		const { signal } = (this.#abort = new AbortController());

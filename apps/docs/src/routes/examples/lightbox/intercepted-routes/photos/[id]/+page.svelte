@@ -1,5 +1,8 @@
 <script lang="ts">
-	import { EXAMPLE_BASE_PATH, interceptedPhotoTitle } from '#lib/examples/intercepted-routes/photos.js';
+	import {
+		EXAMPLE_BASE_PATH,
+		interceptedPhotoTitle
+	} from '#lib/examples/intercepted-routes/photos.js';
 
 	let { data } = $props();
 	const title = $derived(interceptedPhotoTitle(data.photo));
@@ -23,13 +26,18 @@
 <div class="page">
 	<a class="back" href={EXAMPLE_BASE_PATH}>← Back to the gallery</a>
 	<figure>
-		<img src={data.photo.src} alt={data.photo.alt} width={data.photo.width} height={data.photo.height} />
+		<img
+			src={data.photo.src}
+			alt={data.photo.alt}
+			width={data.photo.width}
+			height={data.photo.height}
+		/>
 		<figcaption>{data.photo.caption}</figcaption>
 	</figure>
 	<p>
-		You hard-loaded this photo URL, so the shallow-routing modal did not apply and you got this standalone page instead
-		of the lightbox over the grid: one URL, two presentations. Navigate back to the gallery and click the same photo to
-		see the modal presentation.
+		You hard-loaded this photo URL, so the shallow-routing modal did not apply and you got this
+		standalone page instead of the lightbox over the grid: one URL, two presentations. Navigate back
+		to the gallery and click the same photo to see the modal presentation.
 	</p>
 </div>
 

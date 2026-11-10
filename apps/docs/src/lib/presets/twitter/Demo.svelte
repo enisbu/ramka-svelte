@@ -23,7 +23,12 @@
 			id: 'post-road-trip',
 			time: '2d',
 			thread: {
-				author: { name: 'Tomás Rivera', handle: 'tomasrivera', avatar: avatar('tomas'), verified: true },
+				author: {
+					name: 'Tomás Rivera',
+					handle: 'tomasrivera',
+					avatar: avatar('tomas'),
+					verified: true
+				},
 				text: 'Week-long road trip along the coast is done. Seven stops, seven completely different landscapes.',
 				time: 'Aug 9, 2026 · 6:41 PM',
 				stats: { replies: 97, reposts: 514, likes: 3842, views: '212K' },
@@ -96,7 +101,7 @@
 		}
 	];
 
-	const roots: { show: (i?: number) => Promise<void> }[] = [];
+	const roots = $state<{ show: (i?: number) => Promise<void> }[]>([]);
 
 	function formatCount(n: number): string {
 		if (n >= 1000) return `${(n / 1000).toFixed(1).replace(/\.0$/, '')}K`;
@@ -113,7 +118,14 @@
 
 {#snippet tile(img: LightboxItem, i: number, count: number, cls: string)}
 	<Lightbox.Trigger index={i} class={['tile', corner(i, count), cls]}>
-		<img src={img.thumb} alt={img.alt} width={img.width} height={img.height} class={['tile-img', corner(i, count), cls]} draggable="false" />
+		<img
+			src={img.thumb}
+			alt={img.alt}
+			width={img.width}
+			height={img.height}
+			class={['tile-img', corner(i, count), cls]}
+			draggable="false"
+		/>
 	</Lightbox.Trigger>
 {/snippet}
 
@@ -137,19 +149,19 @@
 					{#if count === 1}
 						{@render tile(post.images[0], 0, 1, 'single')}
 					{:else if count === 2}
-						<div class="grid pair">
+						<div class="pair grid">
 							{#each post.images as img, i (img.src)}
 								{@render tile(img, i, 2, 'portrait')}
 							{/each}
 						</div>
 					{:else if count === 3}
-						<div class="grid quad">
+						<div class="quad grid">
 							{#each post.images.slice(0, 3) as img, i (img.src)}
 								{@render tile(img, i, 3, i === 0 ? 'tall' : 'fill')}
 							{/each}
 						</div>
 					{:else}
-						<div class="grid quad">
+						<div class="quad grid">
 							{#each post.images.slice(0, 4) as img, i (img.src)}
 								{@const overlay = i === 3 && count > 4}
 								<Lightbox.Trigger
@@ -158,7 +170,13 @@
 									class={['tile', 'fill', corner(i, 4)]}
 								>
 									<span class="morph {corner(i, 4)}" data-ramka-morph>
-										<img src={img.thumb} alt={img.alt} width={img.width} height={img.height} draggable="false" />
+										<img
+											src={img.thumb}
+											alt={img.alt}
+											width={img.width}
+											height={img.height}
+											draggable="false"
+										/>
 										{#if overlay}
 											<span class="more"><span>+{count - 4}</span></span>
 										{/if}
@@ -169,7 +187,12 @@
 					{/if}
 
 					<div class="actions">
-						<button type="button" class="action" aria-label="View replies" onclick={() => roots[p]?.show(0)}>
+						<button
+							type="button"
+							class="action"
+							aria-label="View replies"
+							onclick={() => roots[p]?.show(0)}
+						>
 							<MessageCircle aria-hidden="true" />
 							<span>{formatCount(stats?.replies ?? 0)}</span>
 						</button>
@@ -188,7 +211,11 @@
 				</div>
 			</article>
 
-			<Lightbox.Gallery items={post.images} thread={post.thread} ariaLabel="Photos by {author.name}" />
+			<Lightbox.Gallery
+				items={post.images}
+				thread={post.thread}
+				ariaLabel="Photos by {author.name}"
+			/>
 		</Lightbox.Root>
 	{/each}
 </div>

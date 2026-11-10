@@ -4,7 +4,13 @@
 	import { goto } from '$app/navigation';
 	import { untrack } from 'svelte';
 	import Gallery from './Gallery.svelte';
-	import { BASE_PATH, GALLERY_PAGE_TITLE, galleryPhotos, photoIndexFromPathname, photoPageTitle } from './photos.js';
+	import {
+		BASE_PATH,
+		GALLERY_PAGE_TITLE,
+		galleryPhotos,
+		photoIndexFromPathname,
+		photoPageTitle
+	} from './photos.js';
 
 	const COLUMN_UNITS = 120;
 	const GAP_UNITS = 9;
@@ -63,10 +69,18 @@
 				<Lightbox.Trigger
 					index={i}
 					class="tile"
-					style="grid-row-end: span {span(photo)}; margin-bottom: calc(var(--masonry-unit) * {GAP_UNITS})"
+					style="grid-row-end: span {span(
+						photo
+					)}; margin-bottom: calc(var(--masonry-unit) * {GAP_UNITS})"
 					onclick={() => (opening = i)}
 				>
-					<img src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} loading="lazy" />
+					<img
+						src={photo.src}
+						alt={photo.alt}
+						width={photo.width}
+						height={photo.height}
+						loading="lazy"
+					/>
 				</Lightbox.Trigger>
 			{/each}
 		</div>
@@ -78,7 +92,9 @@
 		captionFallback={deepLinkVisit ? galleryPhotos[index].caption : undefined}
 		ssrSlideShift
 		inPlace={deepLinkVisit}
-		portalClass={deepLinkVisit ? ['url-synced-state-in-place', ssr && 'url-synced-state-ssr'] : undefined}
+		portalClass={deepLinkVisit
+			? ['url-synced-state-in-place', ssr && 'url-synced-state-ssr']
+			: undefined}
 	/>
 </Lightbox.Root>
 
@@ -128,7 +144,8 @@
 		border-radius: 0.75rem;
 		object-fit: cover;
 		background-color: #f5f5f5;
-		transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke,
+		transition-property:
+			color, background-color, border-color, outline-color, text-decoration-color, fill, stroke,
 			opacity, box-shadow, transform, translate, scale, rotate, filter, backdrop-filter;
 		transition-duration: 200ms;
 		transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);

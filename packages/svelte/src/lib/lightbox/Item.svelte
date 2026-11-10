@@ -18,7 +18,9 @@
 	interface Props extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
 		index: number;
 		caption?: Caption;
-		children?: Snippet<[{ index: number; active: boolean; visible: boolean; morphRef: MorphRef; imageRef: ImageRef }]>;
+		children?: Snippet<
+			[{ index: number; active: boolean; visible: boolean; morphRef: MorphRef; imageRef: ImageRef }]
+		>;
 	}
 
 	let { index, caption, children, ...rest }: Props = $props();

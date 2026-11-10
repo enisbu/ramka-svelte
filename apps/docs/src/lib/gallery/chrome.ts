@@ -18,4 +18,5 @@ export const chromeSegmentDivider =
 	"before:absolute before:inset-y-[22%] before:start-0 before:w-px before:bg-black/15 before:content-[''] dark:before:bg-white/20";
 
 /** Focus ring for Trigger buttons on the page. */
-export const triggerFocus = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500';
+export const triggerFocus =
+	'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500';

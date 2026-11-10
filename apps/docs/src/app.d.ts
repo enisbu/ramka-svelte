@@ -7,6 +7,7 @@ declare global {
 		// interface PageData {}
 		interface PageState {
 			lightbox?: true;
+			photo?: string;
 		}
 		// interface Platform {}
 	}

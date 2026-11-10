@@ -59,7 +59,10 @@
 	<div class="intro">
 		<div class="eyebrow">Now Streaming</div>
 		<h2>Blender Open Movies</h2>
-		<p>Four Creative Commons shorts from the Blender Foundation. Click any poster to watch fullscreen.</p>
+		<p>
+			Four Creative Commons shorts from the Blender Foundation. Click any poster to watch
+			fullscreen.
+		</p>
 	</div>
 
 	<div class="grid">
