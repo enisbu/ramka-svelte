@@ -71,14 +71,14 @@ The parts are also exported from `@ramka/svelte/lightbox` for `import * as Light
 | `Backdrop`, `Content` | Scrim and dialog. `Content` owns focus trap, scroll lock, keyboard, pull to dismiss (`pullToClose`). |
 | `Stage` | Optional region that scopes gallery keys and pan bounds, and can be the morph target. |
 | `Slides`, `Slide`, `Item` | Scroll snap track, slide wrapper, item with `index`, `caption` (string or snippet) and `preload` gating. |
-| `Zoom`, `Media` | Pinch, wheel, double tap and keyboard zoom (`minZoom`, `maxZoom`, `zoomStep`, `scrollToZoom`, `wheelSensitivity`, `keyboardPanDistance`, `doubleClickDelay`, `onZoomChange`); `bind:this` exposes `zoomIn`, `zoomOut`, `zoomTo`, `reset`. `Media` sizes the image box from `width` and `height`. |
+| `Zoom`, `Media` | Pinch, wheel, double tap and keyboard zoom (`minZoom`, `maxZoom`, `zoomStep`, `scrollToZoom`, `wheelSensitivity`, `keyboardPanDistance`, `doubleClickDelay`, `onZoomChange`); `bind:this` exposes `zoomIn`, `zoomOut`, `zoomTo`, `reset`, `changeOffsets(dx, dy)` and the read only `zoom`, `maxZoom`, `offsetX`, `offsetY` (content pixels), `canZoomIn`, `canZoomOut`. A bare wheel pans when zoomed, Ctrl or Command plus wheel and trackpad pinch zoom. `Media` sizes the image box from `width` and `height`. |
 | `Close`, `Previous`, `Next`, `ZoomIn`, `ZoomOut` | Buttons with `data-disabled` at their bounds. |
 | `Counter`, `Caption` | Live regions. `Counter` snippet args: `{ current, total }`. `Caption` children are the fallback before items register. |
 | `ThumbnailGroup`, `Thumbnail` | Tablist with roving focus, arrow keys, Home and End. |
 | `ThumbnailStrip`, `ThumbnailStripTrack` | Photos style strip that centers the active thumbnail and follows the swipe. `scrubOnSelect`, `selectViewTransition`, `wrapSelectCommit`, `indicator` snippet. |
 | `CSPProvider` | Passes a `nonce` to the injected `<style>` tag. |
 
-`createHandle()` returns a `LightboxHandle` with `open(index, { triggerId })`, `close()`, `goTo(index)` and `isOpen` for opening from anywhere. `getLightbox`, `getItem`, `getTrigger` and `getStage` read the part contexts in custom parts.
+`createHandle()` returns a `LightboxHandle` with `open(index, { triggerId })`, `close()`, `goTo(index)` and `isOpen` for opening from anywhere. `getLightbox`, `getItem`, `getTrigger`, `getStage` and `getMedia` read the part contexts in custom parts. `getLightbox` throws outside a Root, the others return `null` outside their part.
 
 ## Styling
 

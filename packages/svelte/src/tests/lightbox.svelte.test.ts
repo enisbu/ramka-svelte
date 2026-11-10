@@ -2,6 +2,8 @@ import { expect, test } from 'vitest';
 import { page, userEvent } from 'vitest/browser';
 import { render } from 'vitest-browser-svelte';
 import Gallery from './Gallery.svelte';
+import ZoomProbe from './ZoomProbe.svelte';
+import type { Lightbox } from '#lib';
 
 const counter = () => document.querySelector('[data-ramka-counter]')?.textContent?.trim();
 
@@ -58,4 +60,20 @@ test('zoom buttons step and report their bounds', async () => {
 	await expect.element(zoomOut).toBeEnabled();
 	await userEvent.keyboard('0');
 	await expect.poll(() => document.querySelector('[data-ramka-content]')?.hasAttribute('data-zoomed')).toBe(false);
+});
+
+test('exposes zoom state on the instance and nullable part contexts', async () => {
+	const seen: Record<string, unknown> = {};
+	render(ZoomProbe, { report: (name: string, value: unknown) => (seen[name] = value) });
+	await expect.poll(() => seen.outside).toEqual({ item: null, trigger: null, stage: null, media: null });
+	await expect.poll(() => seen.media).toEqual({ element: true, index: 0 });
+	await expect.poll(() => seen.zoom).toBeTruthy();
+	const zoom = seen.zoom as ReturnType<typeof Lightbox.Zoom>;
+	expect([zoom.zoom, zoom.maxZoom, zoom.offsetX, zoom.offsetY, zoom.canZoomOut]).toEqual([1, 4, 0, 0, false]);
+	zoom.zoomTo(2, { rapid: true, dx: 100, dy: 0 });
+	await expect.poll(() => zoom.zoom).toBe(2);
+	expect(zoom.canZoomOut).toBe(true);
+	expect(zoom.offsetX).toBeCloseTo(-50);
+	zoom.changeOffsets(-20, 0);
+	await expect.poll(() => zoom.offsetX).toBeCloseTo(-30);
 });

@@ -1,6 +1,22 @@
-import { clamp, haptic, isPerceptibleSnapback, panRange, rubberBand, scaleZoom, tween } from './gestures.js';
+import {
+	clamp,
+	elasticClamp,
+	haptic,
+	invertElasticClamp,
+	isPerceptibleSnapback,
+	momentumVelocity,
+	PAN_FRICTION,
+	panRange,
+	resolvePinchZoom,
+	RUBBER_BAND_MOUSE,
+	RUBBER_BAND_TOUCH,
+	rubberBandClamp,
+	scaleZoom,
+	tween
+} from './gestures.js';
 
 type Point = { x: number; y: number };
+type GestureEvent = Event & { scale: number; clientX: number; clientY: number };
 
 export interface ZoomOptions {
 	min: number;
@@ -19,18 +35,31 @@ export interface ZoomEvents {
 	onpinch(pinching: boolean): void;
 }
 
+interface Gesture {
+	scale: number;
+	x: number;
+	y: number;
+	mid: Point;
+	a: Point;
+	b?: Point;
+	baseline: number;
+	engaged: boolean;
+}
+
 const DOUBLE_TAP_DISTANCE = 50;
 const TAP_MOVE = 10;
-const WHEEL_IDLE = 150;
+const WHEEL_PINCH_END = 120;
+const VELOCITY_WINDOW = 100;
 
-/** Pinch, pan, double tap, ctrl+wheel and discrete zoom for one media box. */
+/** Pinch, pan, double tap, wheel, trackpad pinch and discrete zoom for one media box. */
 export class ZoomController {
 	scale: number;
 	x = 0;
 	y = 0;
 	#pointers = new Map<number, Point>();
-	#gesture: { scale: number; x: number; y: number; mid: Point; distance: number } | null = null;
-	#velocity: Point & { t: number } = { x: 0, y: 0, t: 0 };
+	#gesture: Gesture | null = null;
+	#samples: (Point & { t: number })[] = [];
+	#focal: Point = { x: 0, y: 0 };
 	#lastTap = { t: 0, x: 0, y: 0 };
 	#downAt: Point = { x: 0, y: 0 };
 	#cancel = () => {};
@@ -38,6 +67,9 @@ export class ZoomController {
 	#dragging = false;
 	#pinched = false;
 	#wheelTimer = 0;
+	#wheelZoom: number | undefined;
+	#gestureZoom: number | undefined;
+	#physicalCtrl = false;
 	viewport: HTMLElement;
 	content: HTMLElement;
 	options: () => ZoomOptions;
@@ -90,12 +122,52 @@ export class ZoomController {
 		return [s, clamp(x, ...b.x), clamp(y, ...b.y)] as const;
 	}
 
+	#elastic(scale: number, x: number, y: number, touch: boolean) {
+		const b = this.#bounds(scale);
+		const v = this.#view();
+		const factor = touch ? RUBBER_BAND_TOUCH : RUBBER_BAND_MOUSE;
+		const axis = (value: number, [lo, hi]: readonly [number, number], size: number) =>
+			touch && lo === hi ? lo : rubberBandClamp(value, lo, hi, size * factor);
+		this.#set(scale, axis(x, b.x, v.width), axis(y, b.y, v.height));
+	}
+
+	#zoomAround(scale: number, focal: Point) {
+		const ratio = scale / this.scale;
+		const b = this.#bounds(scale);
+		this.#focal = focal;
+		this.#set(
+			scale,
+			clamp(focal.x - (focal.x - this.x) * ratio, ...b.x),
+			clamp(focal.y - (focal.y - this.y) * ratio, ...b.y)
+		);
+	}
+
 	#drag(on: boolean) {
 		if (this.#dragging !== on) this.events.ondrag((this.#dragging = on));
 	}
 
 	#pinch(on: boolean) {
 		if (this.#pinched !== on) this.events.onpinch((this.#pinched = on));
+	}
+
+	#sample(p: Point, t: number) {
+		this.#samples.push({ ...p, t });
+		while (t - this.#samples[0].t > VELOCITY_WINDOW) this.#samples.shift();
+	}
+
+	#settle(velocity: Point | null = null) {
+		const { min, max } = this.options();
+		const bound = clamp(this.scale, min, max);
+		if (isPerceptibleSnapback(this.scale, min, max)) haptic();
+		const ratio = bound / this.scale;
+		const f = this.#focal;
+		const coast = velocity ? { x: velocity.x / PAN_FRICTION, y: velocity.y / PAN_FRICTION } : { x: 0, y: 0 };
+		this.animateTo(
+			bound,
+			f.x - (f.x - this.x) * ratio + coast.x,
+			f.y - (f.y - this.y) * ratio + coast.y,
+			velocity ? 3000 / PAN_FRICTION : 300
+		);
 	}
 
 	animateTo(scale: number, x: number, y: number, duration = 300) {
@@ -119,16 +191,24 @@ export class ZoomController {
 	zoomTo = (target: number, { rapid = false, dx = 0, dy = 0 } = {}) =>
 		this.zoomAt(target, { x: dx, y: dy }, rapid ? 0 : undefined);
 	reset = (rapid = false) => this.animateTo(this.options().min, 0, 0, rapid ? 0 : 300);
-	pan = (dx: number, dy: number) => this.animateTo(this.scale, this.x + dx, this.y + dy, 200);
+	pan = (dx: number, dy: number) => this.animateTo(this.scale, this.x + dx * this.scale, this.y + dy * this.scale, 200);
+	changeOffsets = (dx: number, dy: number) => {
+		this.#cancel();
+		this.#set(...this.#clamped(this.scale, this.x - dx * this.scale, this.y - dy * this.scale));
+	};
 
 	#startGesture() {
 		const [a, b] = [...this.#pointers.values()];
+		this.#samples = [];
 		this.#gesture = {
 			scale: this.scale,
 			x: this.x,
 			y: this.y,
 			mid: b ? { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 } : a,
-			distance: b ? Math.hypot(a.x - b.x, a.y - b.y) : 0
+			a,
+			b,
+			baseline: b ? Math.max(Math.hypot(a.x - b.x, a.y - b.y), 1) : 0,
+			engaged: false
 		};
 	}
 
@@ -146,7 +226,6 @@ export class ZoomController {
 		if (this.#pointers.size === 2) this.#pinch(true);
 		this.#cancel();
 		this.#downAt = this.#local(e);
-		this.#velocity = { x: 0, y: 0, t: e.timeStamp };
 		this.#startGesture();
 	};
 
@@ -155,47 +234,42 @@ export class ZoomController {
 		this.#pointers.set(e.pointerId, this.#local(e));
 		const { min, max } = this.options();
 		const g = this.#gesture;
+		const touch = e.pointerType === 'touch';
 		const [a, b] = [...this.#pointers.values()];
-		if (b) {
+		if (b && g.b) {
 			e.stopPropagation();
 			const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
-			const raw = (g.scale * Math.hypot(a.x - b.x, a.y - b.y)) / (g.distance || 1);
-			const scale = raw < min ? min - rubberBand(min - raw, min) : raw > max ? max + rubberBand(raw - max, max) : raw;
+			const pinch = resolvePinchZoom(g.scale, g.baseline, g.engaged, g.a, a, g.b, b);
+			[g.engaged, g.baseline] = [pinch.engaged, pinch.baseline];
+			const scale = elasticClamp(pinch.zoom, min, max);
 			const ratio = scale / g.scale;
-			this.#set(scale, mid.x - (g.mid.x - g.x) * ratio, mid.y - (g.mid.y - g.y) * ratio);
+			this.#focal = mid;
+			this.#sample(mid, e.timeStamp);
+			this.#elastic(scale, mid.x - (g.mid.x - g.x) * ratio, mid.y - (g.mid.y - g.y) * ratio, touch);
 			return;
 		}
 		if (this.scale <= min) return;
 		e.stopPropagation();
 		this.#drag(true);
-		const v = this.#view();
-		const bounds = this.#bounds();
-		const tx = g.x + a.x - g.mid.x;
-		const ty = g.y + a.y - g.mid.y;
-		const dt = Math.max(e.timeStamp - this.#velocity.t, 1);
-		this.#velocity = { x: ((tx - this.x) / dt) * 1000, y: ((ty - this.y) / dt) * 1000, t: e.timeStamp };
-		const soft = (value: number, [lo, hi]: readonly [number, number], dim: number) =>
-			value < lo ? lo + rubberBand(value - lo, dim) : value > hi ? hi + rubberBand(value - hi, dim) : value;
-		this.#set(this.scale, soft(tx, bounds.x, v.width), soft(ty, bounds.y, v.height));
+		this.#sample(a, e.timeStamp);
+		this.#elastic(this.scale, g.x + a.x - g.mid.x, g.y + a.y - g.mid.y, touch);
 	};
 
 	onpointerup = (e: PointerEvent) => {
 		if (!this.#pointers.delete(e.pointerId)) return;
 		const point = this.#local(e);
 		if (this.#pointers.size === 1) return this.#startGesture();
-		const { min, max } = this.options();
-		const pinched = this.#pinched;
+		const { min } = this.options();
+		const last = this.#samples.at(-1);
+		const velocity = last && e.timeStamp - last.t <= VELOCITY_WINDOW ? momentumVelocity(this.#samples) : null;
 		this.#gesture = null;
+		this.#samples = [];
 		this.#drag(false);
 		this.#pinch(false);
-		if (pinched && isPerceptibleSnapback(this.scale, min, max)) haptic();
 		if (this.scale === min && this.x === 0 && this.y === 0) return;
 		const moved = Math.hypot(point.x - this.#downAt.x, point.y - this.#downAt.y) > TAP_MOVE;
 		if (e.pointerType !== 'mouse' && !moved && e.type === 'pointerup') return this.#tap(e, point);
-		const fresh = e.timeStamp - this.#velocity.t < 100;
-		const vx = fresh ? this.#velocity.x : 0;
-		const vy = fresh ? this.#velocity.y : 0;
-		this.animateTo(this.scale, this.x + vx * 0.25, this.y + vy * 0.25, 400);
+		this.#settle(this.scale > min ? velocity : null);
 	};
 
 	#tap(e: PointerEvent, point: Point) {
@@ -205,7 +279,7 @@ export class ZoomController {
 			e.timeStamp - last.t < doubleClickDelay && Math.hypot(point.x - last.x, point.y - last.y) < DOUBLE_TAP_DISTANCE;
 		this.#lastTap = double ? { t: 0, x: 0, y: 0 } : { t: e.timeStamp, ...point };
 		if (double) this.toggle(point);
-		else if (this.scale !== clamp(this.scale, min, max)) this.animateTo(this.scale, this.x, this.y);
+		else if (this.scale !== clamp(this.scale, min, max)) this.#settle();
 	}
 
 	/** Double tap: zoom to one step at `point`, or back to rest when already zoomed. */
@@ -221,18 +295,60 @@ export class ZoomController {
 
 	onwheel = (e: WheelEvent) => {
 		const { min, max, scrollToZoom, wheelSensitivity } = this.options();
-		if (!e.ctrlKey && !e.metaKey && !scrollToZoom) return;
+		const zoomKey = (e.ctrlKey && this.#gestureZoom === undefined) || e.metaKey;
+		if ((zoomKey || scrollToZoom) && Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+			e.preventDefault();
+			e.stopPropagation();
+			this.#cancel();
+			this.#pinch(true);
+			clearTimeout(this.#wheelTimer);
+			const focal = this.#local(e);
+			if (e.ctrlKey && !this.#physicalCtrl) {
+				const from = this.#wheelZoom ?? invertElasticClamp(this.scale, min, max);
+				this.#wheelZoom = scaleZoom(from, -e.deltaY, wheelSensitivity);
+				this.#zoomAround(elasticClamp(this.#wheelZoom, min, max), focal);
+			} else {
+				this.#wheelZoom = undefined;
+				this.#zoomAround(clamp(scaleZoom(this.scale, -e.deltaY, wheelSensitivity), min, max), focal);
+			}
+			this.#wheelTimer = window.setTimeout(() => {
+				this.#pinch(false);
+				if (this.#wheelZoom === undefined) return;
+				this.#wheelZoom = undefined;
+				this.#settle();
+			}, WHEEL_PINCH_END);
+			return;
+		}
+		if (this.scale <= min) return;
 		e.preventDefault();
 		e.stopPropagation();
-		this.#cancel();
-		this.#pinch(true);
-		clearTimeout(this.#wheelTimer);
-		this.#wheelTimer = window.setTimeout(() => this.#pinch(false), WHEEL_IDLE);
-		const focal = this.#local(e);
-		const scale = clamp(scaleZoom(this.scale, -e.deltaY, wheelSensitivity), min, max);
-		const ratio = scale / this.scale;
-		const [s, x, y] = this.#clamped(scale, focal.x - (focal.x - this.x) * ratio, focal.y - (focal.y - this.y) * ratio);
-		this.#set(s, x, y);
+		if (!scrollToZoom) this.changeOffsets(e.deltaX / this.scale, e.deltaY / this.scale);
+	};
+
+	/** Safari trackpad pinch through `gesturestart`, `gesturechange` and `gestureend`. */
+	ongesture = (event: Event) => {
+		const e = event as GestureEvent;
+		e.preventDefault();
+		const { min, max } = this.options();
+		if (e.type === 'gesturestart') {
+			this.#cancel();
+			this.#gestureZoom = invertElasticClamp(this.scale, min, max);
+			this.#pinch(true);
+			return;
+		}
+		if (this.#gestureZoom === undefined) return;
+		if (e.type === 'gestureend') {
+			this.#gestureZoom = undefined;
+			this.#pinch(false);
+			return this.#settle();
+		}
+		this.#zoomAround(elasticClamp(this.#gestureZoom * e.scale, min, max), this.#local(e));
+	};
+
+	/** Tracks a physical Control key, which tells a real ctrl+wheel from a trackpad pinch. */
+	onkey = (e: Event) => {
+		if (e.type === 'blur') this.#physicalCtrl = false;
+		else if ((e as KeyboardEvent).key === 'Control') this.#physicalCtrl = e.type === 'keydown';
 	};
 
 	destroy() {

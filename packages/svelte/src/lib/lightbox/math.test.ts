@@ -3,11 +3,15 @@ import { nearestIndex, progressAt } from './geometry.js';
 import {
 	arrowKeyDelta,
 	computeMaxZoom,
+	elasticClamp,
+	invertElasticClamp,
 	isPerceptibleSnapback,
+	momentumVelocity,
 	panRange,
 	pullTransform,
 	resolveIndex,
-	rubberBand,
+	resolvePinchZoom,
+	rubberBandClamp,
 	scaleZoom,
 	shouldDismiss,
 	springEasing,
@@ -39,11 +43,47 @@ describe('pull', () => {
 });
 
 describe('zoom math', () => {
-	it('rubber bands with diminishing returns', () => {
-		expect(rubberBand(0, 100)).toBe(0);
-		expect(rubberBand(1000, 100)).toBeLessThan(100);
-		expect(rubberBand(-50, 100)).toBeLessThan(0);
-		expect(rubberBand(50, 0)).toBe(0);
+	it('rubber bands past an edge toward the dimension', () => {
+		expect(rubberBandClamp(50, 0, 100, 80)).toBe(50);
+		expect(rubberBandClamp(110, 0, 100, 80)).toBeCloseTo(100 + (10 * 80 * 0.28) / (80 + 2.8));
+		expect(rubberBandClamp(1e6, 0, 100, 80)).toBeLessThan(180);
+		expect(rubberBandClamp(-1e6, 0, 100, 80)).toBeGreaterThan(-80);
+		expect(rubberBandClamp(150, 0, 100, 0)).toBe(100);
+	});
+
+	it('resists pinch overshoot linearly and inverts it', () => {
+		expect(elasticClamp(2, 1, 4)).toBe(2);
+		expect(elasticClamp(6, 1, 4)).toBeCloseTo(4.4);
+		expect(elasticClamp(0.5, 1, 4)).toBeCloseTo(0.9);
+		expect(invertElasticClamp(elasticClamp(6, 1, 4), 1, 4)).toBeCloseTo(6);
+		expect(invertElasticClamp(0.9, 1, 4)).toBeCloseTo(0.5);
+	});
+
+	it('holds zoom inside the pinch dead zone', () => {
+		const [a0, b0] = [{ x: 0, y: 0 }, { x: 200, y: 0 }];
+		const wobble = resolvePinchZoom(2, 200, false, a0, { x: -4, y: 1 }, b0, { x: 204, y: -1 });
+		expect(wobble).toEqual({ zoom: 2, engaged: false, baseline: 200 });
+		const spread = resolvePinchZoom(2, 200, false, a0, { x: -20, y: 0 }, b0, { x: 220, y: 0 });
+		expect(spread.engaged).toBe(true);
+		expect(spread.zoom).toBeCloseTo(2.4);
+		expect(resolvePinchZoom(2, 200, true, a0, { x: 0, y: 0 }, b0, { x: 300, y: 0 }).zoom).toBeCloseTo(3);
+	});
+
+	it('needs more spread while both fingers slide together and eats the slop', () => {
+		const [a0, b0] = [{ x: 0, y: 0 }, { x: 200, y: 0 }];
+		const slide = resolvePinchZoom(1, 200, false, a0, { x: 0, y: 60 }, b0, { x: 220, y: 60 });
+		expect(slide.engaged).toBe(false);
+		const engaged = resolvePinchZoom(1, 200, false, a0, { x: 0, y: 60 }, b0, { x: 240, y: 60 });
+		expect(engaged.engaged).toBe(true);
+		expect(engaged.baseline).toBe(228);
+		expect(engaged.zoom).toBeCloseTo(240 / 228);
+	});
+
+	it('measures release velocity over the window above the flick threshold', () => {
+		expect(momentumVelocity([])).toBeNull();
+		expect(momentumVelocity([{ x: 0, y: 0, t: 0 }])).toBeNull();
+		expect(momentumVelocity([{ x: 0, y: 0, t: 0 }, { x: 2, y: 0, t: 100 }])).toBeNull();
+		expect(momentumVelocity([{ x: 0, y: 0, t: 0 }, { x: 50, y: -20, t: 50 }])).toEqual({ x: 1000, y: -400 });
 	});
 
 	it('caps wheel zoom at 2x per event', () => {

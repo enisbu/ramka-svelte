@@ -4,6 +4,21 @@ export const DIRECTION_LOCK_DISTANCE = 6;
 export const SNAP_DURATION = 270;
 const MIN_SCALE = 0.85;
 const SNAPBACK_HAPTIC_OVERSHOOT = 0.01;
+const ELASTIC_FACTOR = 0.2;
+const RUBBER_BAND_CONSTANT = 0.28;
+export const RUBBER_BAND_TOUCH = 0.16;
+export const RUBBER_BAND_MOUSE = 0.09;
+export const PAN_FRICTION = 3.2;
+const MOMENTUM_THRESHOLD = 50;
+const PINCH_ENGAGE_SPREAD = 10;
+const PINCH_ENGAGE_SPREAD_PAN = 28;
+const PINCH_ENGAGE_SPREAD_PAN_RATIO = 0.14;
+const PINCH_PAN_ALIGNMENT = 0.6;
+const PINCH_ALIGNMENT_MIN_TRAVEL = 10;
+const PINCH_PAN_TRAVEL = 14;
+const PINCH_PAN_DOMINANCE = 1.35;
+
+type Point = { x: number; y: number };
 
 export type TextDirection = 'ltr' | 'rtl';
 
@@ -36,10 +51,49 @@ export function springEasing(velocity = 0, settle = 7.5, samples = 40) {
 	return `linear(${points.join(', ')})`;
 }
 
-/** iOS-style rubber band for an overflow past a bound. */
-export function rubberBand(overflow: number, dimension: number) {
-	if (dimension <= 0) return 0;
-	return Math.sign(overflow) * (1 - 1 / ((Math.abs(overflow) * 0.55) / dimension + 1)) * dimension;
+/** UIScrollView rubber band: in range passes through, past an edge the overflow approaches `dimension`. */
+export function rubberBandClamp(value: number, min: number, max: number, dimension: number) {
+	const band = (x: number) => (dimension > 0 ? (x * dimension * RUBBER_BAND_CONSTANT) / (dimension + RUBBER_BAND_CONSTANT * x) : 0);
+	return value < min ? min - band(min - value) : value > max ? max + band(value - max) : value;
+}
+
+/** Linear resistance past the zoom bounds, used for pinch overshoot. */
+export function elasticClamp(value: number, min: number, max: number) {
+	return value < min ? min - (min - value) * ELASTIC_FACTOR : value > max ? max + (value - max) * ELASTIC_FACTOR : value;
+}
+
+/** Inverse of `elasticClamp`, so a new pinch continues from a displayed overshoot without a jump. */
+export function invertElasticClamp(displayed: number, min: number, max: number) {
+	return displayed < min
+		? min - (min - displayed) / ELASTIC_FACTOR
+		: displayed > max
+			? max + (displayed - max) / ELASTIC_FACTOR
+			: displayed;
+}
+
+/** Pinch zoom with iOS-style begin slop: zoom holds until the fingers spread, a two-finger slide needs more spread. */
+export function resolvePinchZoom(zoom: number, baseline: number, engaged: boolean, a0: Point, a1: Point, b0: Point, b1: Point) {
+	const current = Math.hypot(a1.x - b1.x, a1.y - b1.y);
+	if (engaged) return { zoom: (zoom * current) / baseline, engaged, baseline };
+	const [ax, ay, bx, by] = [a1.x - a0.x, a1.y - a0.y, b1.x - b0.x, b1.y - b0.y];
+	const [la, lb] = [Math.hypot(ax, ay), Math.hypot(bx, by)];
+	const aligned = la >= PINCH_ALIGNMENT_MIN_TRAVEL && lb >= PINCH_ALIGNMENT_MIN_TRAVEL && (ax * bx + ay * by) / (la * lb) >= PINCH_PAN_ALIGNMENT;
+	const pan = Math.hypot((ax + bx) / 2, (ay + by) / 2);
+	const spread = current - baseline;
+	const panIntent = aligned || (pan >= PINCH_PAN_TRAVEL && pan > Math.abs(spread) * PINCH_PAN_DOMINANCE);
+	const gate = panIntent ? Math.max(PINCH_ENGAGE_SPREAD_PAN, baseline * PINCH_ENGAGE_SPREAD_PAN_RATIO) : PINCH_ENGAGE_SPREAD;
+	if (Math.abs(spread) <= gate) return { zoom, engaged: false, baseline };
+	const next = panIntent ? baseline + Math.sign(spread) * gate : baseline;
+	return { zoom: (zoom * current) / next, engaged: true, baseline: next };
+}
+
+/** Release velocity in px/s over the sampled window, or null below the flick threshold. */
+export function momentumVelocity(samples: readonly (Point & { t: number })[]) {
+	const [first, last] = [samples[0], samples[samples.length - 1]];
+	const dt = last && last.t - first.t;
+	if (!dt || dt <= 0) return null;
+	const v = { x: ((last.x - first.x) / dt) * 1000, y: ((last.y - first.y) / dt) * 1000 };
+	return Math.hypot(v.x, v.y) > MOMENTUM_THRESHOLD ? v : null;
 }
 
 /** Wheel delta to zoom factor, capped at 2x per event (ramka's scaleZoom). */

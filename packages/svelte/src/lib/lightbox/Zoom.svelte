@@ -43,6 +43,7 @@
 	}: Props = $props();
 	const lb = getLightbox();
 	const item = getItem();
+	const safariPinch = typeof window !== 'undefined' && 'GestureEvent' in window && navigator.maxTouchPoints === 0;
 	let scale = $state(untrack(() => minZoom));
 	let offset = $state({ x: 0, y: 0 });
 	let dragging = $state(false);
@@ -52,6 +53,11 @@
 	const max = $derived(maxZoom ?? measured ?? FALLBACK_MAX);
 	const zoomed = $derived(scale > minZoom + 0.01);
 	const canZoomIn = $derived(scale < max - 0.01);
+	const zoom = $derived(scale);
+	const offsetX = $derived(offset.x);
+	const offsetY = $derived(offset.y);
+
+	export { zoom, max as maxZoom, offsetX, offsetY, canZoomIn, zoomed as canZoomOut };
 
 	/** Steps zoom in by `zoomStep`. */
 	export const zoomIn = () => controller?.zoomIn();
@@ -62,6 +68,8 @@
 		controller?.zoomTo(target, options);
 	/** Resets zoom and pan to rest. */
 	export const reset = (rapid = false) => controller?.reset(rapid);
+	/** Pans by content-space pixels, positive moves the content left and up. */
+	export const changeOffsets = (dx: number, dy: number) => controller?.changeOffsets(dx, dy);
 
 	const api: ZoomApi = {
 		get zoom() {
@@ -86,7 +94,7 @@
 	};
 	setZoom(api);
 
-	function zoom(viewport: HTMLElement) {
+	function surface(viewport: HTMLElement) {
 		const content = viewport.firstElementChild as HTMLElement;
 		const c = (controller = new ZoomController(
 			viewport,
@@ -105,7 +113,7 @@
 				onchange: (s) => {
 					if (s !== scale) onZoomChange?.(s);
 					scale = s;
-					offset = { x: c.x, y: c.y };
+					offset = { x: c.x / s, y: c.y / s };
 				},
 				ondrag: (on) => (dragging = on),
 				onpinch: (on) => (pinching = on)
@@ -122,8 +130,8 @@
 		const observer = new ResizeObserver(measure);
 		observer.observe(viewport);
 		viewport.addEventListener('load', measure, true);
-		const index = item.index;
-		lb.zooms.set(index, api);
+		const index = item?.index;
+		if (index !== undefined) lb.zooms.set(index, api);
 		const handlers = {
 			pointerdown: c.onpointerdown,
 			pointermove: c.onpointermove,
@@ -134,22 +142,28 @@
 		const types = Object.keys(handlers) as (keyof typeof handlers)[];
 		for (const type of types) viewport.addEventListener(type, handlers[type] as EventListener);
 		viewport.addEventListener('wheel', c.onwheel, { passive: false });
+		const gestures = safariPinch ? ['gesturestart', 'gesturechange', 'gestureend'] : [];
+		for (const type of gestures) viewport.addEventListener(type, c.ongesture);
+		const keys = ['keydown', 'keyup', 'blur'];
+		for (const type of keys) window.addEventListener(type, c.onkey, true);
 		$effect(() => {
-			if (!item.active && c.scale !== minZoom) c.reset(true);
+			if (item && !item.active && c.scale !== minZoom) c.reset(true);
 		});
 		return () => {
 			for (const type of types) viewport.removeEventListener(type, handlers[type] as EventListener);
+			for (const type of gestures) viewport.removeEventListener(type, c.ongesture);
+			for (const type of keys) window.removeEventListener(type, c.onkey, true);
 			viewport.removeEventListener('wheel', c.onwheel);
 			viewport.removeEventListener('load', measure, true);
 			observer.disconnect();
 			c.destroy();
-			if (lb.zooms.get(index) === api) lb.zooms.delete(index);
+			if (index !== undefined && lb.zooms.get(index) === api) lb.zooms.delete(index);
 			controller = undefined;
 		};
 	}
 </script>
 
-<div data-ramka-zoom data-zoom={zoomed || undefined} data-dragging={dragging || undefined} {...rest} {@attach zoom}>
+<div data-ramka-zoom data-zoom={zoomed || undefined} data-dragging={dragging || undefined} {...rest} {@attach surface}>
 	<div data-ramka-zoom-content>
 		{@render children?.({
 			zoom: scale,

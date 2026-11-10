@@ -379,7 +379,10 @@ export interface ItemContext {
 	setMedia(el: HTMLElement | null): void;
 }
 
-export const [getItem, setItem] = createContext<ItemContext>();
+const ITEM = Symbol('ramka-item');
+export const setItem = (item: ItemContext) => setContext(ITEM, item);
+/** Context of the enclosing `Item`, or null outside one. */
+export const getItem = () => getContext<ItemContext | undefined>(ITEM) ?? null;
 
 export interface TriggerContext {
 	readonly open: boolean;
@@ -388,13 +391,29 @@ export interface TriggerContext {
 	imageRef: ImageRef;
 }
 
-export const [getTrigger, setTrigger] = createContext<TriggerContext>();
+const TRIGGER = Symbol('ramka-trigger');
+export const setTrigger = (trigger: TriggerContext) => setContext(TRIGGER, trigger);
+/** Context of the enclosing `Trigger`, or null outside one. */
+export const getTrigger = () => getContext<TriggerContext | undefined>(TRIGGER) ?? null;
 
 export interface StageContext {
 	morphRef: MorphRef;
 }
 
-export const [getStage, setStage] = createContext<StageContext>();
+const STAGE = Symbol('ramka-stage');
+export const setStage = (stage: StageContext) => setContext(STAGE, stage);
+/** Context of the enclosing `Stage`, or null outside one. */
+export const getStage = () => getContext<StageContext | undefined>(STAGE) ?? null;
+
+export interface MediaContext {
+	/** The Media host element, the morph and placeholder target. */
+	readonly element: HTMLElement | null;
+}
+
+const MEDIA = Symbol('ramka-media');
+export const setMedia = (media: MediaContext) => setContext(MEDIA, media);
+/** Context of the enclosing `Media`, or null outside one. */
+export const getMedia = () => getContext<MediaContext | undefined>(MEDIA) ?? null;
 
 /** Thumbnail strip API: selecting a thumb scrubs the strip and crossfades the slides. */
 export interface StripContext {
