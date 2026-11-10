@@ -2,7 +2,7 @@
 	import { flushSync, untrack } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { Lightbox } from 'ramka-svelte';
+	import { Lightbox } from '@ramka/svelte';
 
 	const photos = [
 		{ id: 1015, w: 1600, h: 1067, caption: 'Fjord am Morgen' },

@@ -172,9 +172,9 @@ importers:
 
   apps/docs:
     dependencies:
-      ramka-svelte:
+      '@ramka/svelte':
         specifier: workspace:*
-        version: link:../../packages/ramka-svelte
+        version: link:../../packages/svelte
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^8.0.0
@@ -198,7 +198,7 @@ importers:
         specifier: ^8.3.0
         version: 8.3.7
 
-  packages/ramka-svelte:
+  packages/svelte:
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^8.0.0
