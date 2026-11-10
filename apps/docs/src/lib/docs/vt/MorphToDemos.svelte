@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Separator } from '#lib/components/ui/separator/index.js';
 	import MorphToDemo from './MorphToDemo.svelte';
 
 	const heading = 'text-sm font-semibold tracking-tight text-neutral-900 dark:text-neutral-50';
@@ -13,7 +14,7 @@
 		</p>
 		<MorphToDemo morphTo="active" ariaLabel={'morphTo="active" demo'} />
 	</section>
-	<hr class="border-neutral-200 dark:border-neutral-800" />
+	<Separator />
 	<section class="space-y-3">
 		<h4 class={heading}>morphTo="origin"</h4>
 		<p class={text}>
@@ -26,7 +27,7 @@
 			ariaLabel={'morphTo="origin" demo'}
 		/>
 	</section>
-	<hr class="border-neutral-200 dark:border-neutral-800" />
+	<Separator />
 	<section class="space-y-3">
 		<h4 class={heading}>morphTo="closest"</h4>
 		<p class={text}>

@@ -1,5 +1,8 @@
 <script lang="ts">
+	import Check from '@lucide/svelte/icons/check';
+	import Copy from '@lucide/svelte/icons/copy';
 	import type { Snippet } from 'svelte';
+	import * as Tabs from '#lib/components/ui/tabs/index.js';
 	import type { SourceFile } from './source.js';
 
 	interface Props {
@@ -10,16 +13,14 @@
 
 	let { files, frame = false, children }: Props = $props();
 
-	let active = $state(0);
+	let active = $state<string>();
 	let copied = $state(false);
 	let copiedTimer = 0;
-	const current = $derived(files[active] ?? files[0]);
+	const current = $derived(files.find((file) => file.name === active) ?? files[0]);
 	const groups = $derived.by(() => {
 		const order = ['package', 'example', undefined] as const;
 		return order
-			.map((group) =>
-				files.map((file, i) => ({ file, i })).filter(({ file }) => file.group === group)
-			)
+			.map((group) => files.filter((file) => file.group === group))
 			.filter((list) => list.length);
 	});
 
@@ -36,218 +37,86 @@
 	}
 </script>
 
-<div class="preview">
+<div class="flex flex-col gap-4">
 	{#if frame}
-		<div class="frame"><div class="stage">{@render children()}</div></div>
+		<div class="overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-800">
+			<div
+				class="flex min-h-70 items-center justify-center bg-white p-6 sm:p-10 dark:bg-neutral-950"
+			>
+				{@render children()}
+			</div>
+		</div>
 	{:else}
-		<div class="bare">{@render children()}</div>
+		<div class="py-4">{@render children()}</div>
 	{/if}
 
-	<div class="source">
-		<div class="bar">
-			<div class="row">
-				{#if files.length > 1}
-					<div class="tabs" role="tablist">
-						{#each groups as list, g (g)}
-							{#if g > 0}<span class="divider" aria-hidden="true"></span>{/if}
-							{#each list as { file, i } (file.name)}
-								<button
-									type="button"
-									role="tab"
-									class="tab"
-									aria-selected={i === active}
-									data-active={i === active || undefined}
-									onclick={() => {
-										active = i;
-										copied = false;
-									}}
-								>
-									{file.name}
-								</button>
-							{/each}
-						{/each}
-					</div>
-				{:else}
-					<span class="single">{current?.name}</span>
-				{/if}
-				<button
-					type="button"
-					class="copy"
-					onclick={copy}
-					aria-label="Copy {current?.name ?? 'code'}"
-				>
-					{#if copied}
-						<svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></svg>
-					{:else}
-						<svg viewBox="0 0 24 24"
-							><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path
-								d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"
-							/></svg
+	<div class="overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-800">
+		<Tabs.Root
+			value={current?.name}
+			onValueChange={(value) => {
+				active = value;
+				copied = false;
+			}}
+			class="gap-0"
+		>
+			<div
+				class="flex flex-col gap-2 border-b border-neutral-200 bg-neutral-50 px-3 py-2 dark:border-neutral-800 dark:bg-neutral-900"
+			>
+				<div class="flex items-center justify-between gap-3">
+					{#if files.length > 1}
+						<Tabs.List
+							class="min-h-8 max-w-full flex-wrap justify-start group-data-horizontal/tabs:h-auto"
 						>
+							{#each groups as list, g (g)}
+								{#if g > 0}
+									<span
+										aria-hidden="true"
+										class="mx-1 h-4 w-px shrink-0 self-center bg-neutral-300 dark:bg-neutral-600"
+									></span>
+								{/if}
+								{#each list as file (file.name)}
+									<Tabs.Trigger
+										value={file.name}
+										class="h-[calc(2rem-7px)] flex-none px-2.5 text-xs">{file.name}</Tabs.Trigger
+									>
+								{/each}
+							{/each}
+						</Tabs.List>
+					{:else}
+						<span class="text-xs font-medium text-neutral-500">{current?.name}</span>
 					{/if}
-					<span class="copy-label">{copied ? 'Copied' : 'Copy'}</span>
-				</button>
+					<button
+						type="button"
+						onclick={copy}
+						class="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md px-2 text-xs font-medium text-neutral-500 transition hover:bg-neutral-200/70 hover:text-neutral-900 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
+						aria-label={current ? `Copy ${current.name}` : 'Copy code'}
+					>
+						{#if copied}<Check class="size-3.5" />{:else}<Copy class="size-3.5" />{/if}
+						<span class="hidden sm:inline">{copied ? 'Copied' : 'Copy'}</span>
+					</button>
+				</div>
+				{#if current?.note}
+					<p class="text-[11px] leading-snug text-neutral-500 dark:text-neutral-400">
+						{current.note}
+					</p>
+				{/if}
 			</div>
-			{#if current?.note}
-				<p class="note">{current.note}</p>
-			{/if}
-		</div>
-		<div class="code" role="tabpanel">
-			{@html current?.html}
-		</div>
+			{#each files as file (file.name)}
+				<Tabs.Content value={file.name} class="mt-0">
+					{#if file === current}
+						<div
+							class="code max-h-[min(32rem,70vh)] overflow-auto bg-neutral-50 dark:bg-neutral-950"
+						>
+							{@html file.html}
+						</div>
+					{/if}
+				</Tabs.Content>
+			{/each}
+		</Tabs.Root>
 	</div>
 </div>
 
 <style>
-	.preview {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-	}
-	.bare {
-		padding-block: 1rem;
-	}
-	.frame {
-		overflow: hidden;
-		border: 1px solid #e5e5e5;
-		border-radius: 0.75rem;
-	}
-	.stage {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		min-height: 17.5rem;
-		padding: 1.5rem;
-		background: #fff;
-	}
-	@media (min-width: 640px) {
-		.stage {
-			padding: 2.5rem;
-		}
-	}
-	.source {
-		overflow: hidden;
-		border: 1px solid #e5e5e5;
-		border-radius: 0.75rem;
-	}
-	.bar {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		padding: 0.5rem 0.75rem;
-		border-bottom: 1px solid #e5e5e5;
-		background: #fafafa;
-	}
-	.row {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.75rem;
-	}
-	.tabs {
-		display: inline-flex;
-		flex-wrap: wrap;
-		align-items: center;
-		max-width: 100%;
-		min-height: 2rem;
-		box-sizing: border-box;
-		padding: 3px;
-		border-radius: 0.5rem;
-		background: #f5f5f5;
-	}
-	.tab {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		height: calc(2rem - 7px);
-		padding: 0.125rem 0.625rem;
-		border: 1px solid transparent;
-		border-radius: 0.375rem;
-		background: transparent;
-		font: inherit;
-		font-size: 0.75rem;
-		font-weight: 500;
-		line-height: 1rem;
-		white-space: nowrap;
-		color: rgb(10 10 10 / 0.6);
-		cursor: pointer;
-		transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
-	}
-	.tab:hover {
-		color: #0a0a0a;
-	}
-	.tab[data-active] {
-		background: #fff;
-		color: #0a0a0a;
-		box-shadow:
-			0 1px 3px 0 rgb(0 0 0 / 0.1),
-			0 1px 2px -1px rgb(0 0 0 / 0.1);
-	}
-	.tab:focus-visible {
-		outline: 1px solid #a1a1a1;
-		box-shadow: 0 0 0 3px rgb(161 161 161 / 0.5);
-	}
-	.divider {
-		flex-shrink: 0;
-		width: 1px;
-		height: 1rem;
-		margin-inline: 0.25rem;
-		background: #d4d4d4;
-	}
-	.single {
-		font-size: 0.75rem;
-		font-weight: 500;
-		color: #737373;
-	}
-	.copy {
-		display: inline-flex;
-		flex-shrink: 0;
-		align-items: center;
-		gap: 0.375rem;
-		height: 2rem;
-		padding: 0 0.5rem;
-		border: 0;
-		border-radius: 0.375rem;
-		background: transparent;
-		font: inherit;
-		font-size: 0.75rem;
-		font-weight: 500;
-		color: #737373;
-		cursor: pointer;
-		transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
-	}
-	.copy:hover {
-		background: rgb(229 229 229 / 0.7);
-		color: #171717;
-	}
-	.copy svg {
-		width: 0.875rem;
-		height: 0.875rem;
-		fill: none;
-		stroke: currentColor;
-		stroke-width: 2;
-		stroke-linecap: round;
-		stroke-linejoin: round;
-	}
-	.copy-label {
-		display: none;
-	}
-	@media (min-width: 640px) {
-		.copy-label {
-			display: inline;
-		}
-	}
-	.note {
-		margin: 0;
-		font-size: 11px;
-		line-height: 1.375;
-		color: #737373;
-	}
-	.code {
-		max-height: min(32rem, 70vh);
-		overflow: auto;
-		background: #fafafa;
-	}
 	.code :global(.shiki) {
 		margin: 0;
 		padding: 1rem;
@@ -270,43 +139,6 @@
 		display: block;
 		width: fit-content;
 		min-width: 100%;
-	}
-
-	:global(.dark) .frame,
-	:global(.dark) .source {
-		border-color: #262626;
-	}
-	:global(.dark) .stage,
-	:global(.dark) .code {
-		background: #0a0a0a;
-	}
-	:global(.dark) .bar {
-		border-color: #262626;
-		background: #171717;
-	}
-	:global(.dark) .tabs {
-		background: #262626;
-	}
-	:global(.dark) .tab {
-		color: #a1a1a1;
-	}
-	:global(.dark) .tab:hover,
-	:global(.dark) .tab[data-active] {
-		color: #fafafa;
-	}
-	:global(.dark) .tab[data-active] {
-		border-color: rgb(255 255 255 / 0.15);
-		background: rgb(255 255 255 / 0.045);
-	}
-	:global(.dark) .divider {
-		background: #525252;
-	}
-	:global(.dark) .copy:hover {
-		background: #262626;
-		color: #f5f5f5;
-	}
-	:global(.dark) .note {
-		color: #a3a3a3;
 	}
 	:global(.dark) .code :global(.shiki),
 	:global(.dark) .code :global(.shiki span) {

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Menu from '@lucide/svelte/icons/menu';
 	import { githubUrl } from '#lib/content/site.js';
-	import Drawer from './Drawer.svelte';
+	import * as Drawer from '#lib/components/ui/drawer/index.js';
 	import GitHubIcon from './GitHubIcon.svelte';
 	import SidebarNav from './SidebarNav.svelte';
 	import ThemeToggle from './ThemeToggle.svelte';
@@ -32,21 +32,20 @@
 				<GitHubIcon class="h-4 w-4" />
 			</a>
 			<ThemeToggle />
-			<button
-				type="button"
-				aria-label="Open navigation"
-				aria-expanded={open}
-				class={button}
-				onclick={() => (open = true)}
-			>
-				<Menu class="h-4 w-4" />
-			</button>
+			<Drawer.Root bind:open shouldScaleBackground={false}>
+				<Drawer.Trigger aria-label="Open navigation" class={button}>
+					<Menu class="h-4 w-4" />
+				</Drawer.Trigger>
+				<Drawer.Content class="max-h-[85dvh]">
+					<Drawer.Header class="pb-0 text-left">
+						<Drawer.Title>ramka</Drawer.Title>
+						<Drawer.Description>The lightbox for Svelte.</Drawer.Description>
+					</Drawer.Header>
+					<div class="min-h-0 flex-1 overflow-y-auto px-4 pt-2 pb-6">
+						<SidebarNav onnavigate={() => (open = false)} />
+					</div>
+				</Drawer.Content>
+			</Drawer.Root>
 		</div>
 	</div>
 </header>
-
-<Drawer bind:open title="ramka" description="The lightbox for Svelte.">
-	<div class="min-h-0 flex-1 overflow-y-auto px-4 pt-2 pb-6">
-		<SidebarNav onnavigate={() => (open = false)} />
-	</div>
-</Drawer>

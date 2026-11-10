@@ -11,7 +11,7 @@
 	import { docsLink } from '#lib/components/docs-link.js';
 	import DocsSection from '#lib/components/DocsSection.svelte';
 	import DocsShell from '#lib/components/DocsShell.svelte';
-	import Kbd from '#lib/components/Kbd.svelte';
+	import { Kbd, KbdGroup, KbdIcon } from '#lib/components/ui/kbd/index.js';
 	import PropSectionTitle from '#lib/components/PropSectionTitle.svelte';
 	import { apiHref, docsPages } from '#lib/content/nav.js';
 	import zoomBridge from '#lib/excerpts/ZoomBridge.svelte?highlight';
@@ -137,22 +137,30 @@
 		<ul class="list-disc space-y-2 pl-5">
 			<li><Kbd>Esc</Kbd>: close</li>
 			<li>
-				<Kbd label="Left arrow"><ArrowLeft /></Kbd>
-				<Kbd label="Right arrow"><ArrowRight /></Kbd>
-				<Kbd label="Up arrow"><ArrowUp /></Kbd>
-				<Kbd label="Down arrow"><ArrowDown /></Kbd>: pan when zoomed, otherwise previous and next
+				<KbdGroup>
+					<KbdIcon label="Left arrow"><ArrowLeft /></KbdIcon>
+					<KbdIcon label="Right arrow"><ArrowRight /></KbdIcon>
+					<KbdIcon label="Up arrow"><ArrowUp /></KbdIcon>
+					<KbdIcon label="Down arrow"><ArrowDown /></KbdIcon>
+				</KbdGroup>: pan when zoomed, otherwise previous and next
 			</li>
 			<li>
-				<Kbd label="Plus"><Plus /></Kbd> / <Kbd label="Minus"><Minus /></Kbd> / <Kbd>0</Kbd>: zoom
-				in, out, reset (active Zoom)
+				<KbdIcon label="Plus"><Plus /></KbdIcon> / <KbdIcon label="Minus"><Minus /></KbdIcon> /
+				<Kbd>0</Kbd>: zoom in, out, reset (active Zoom)
 			</li>
 		</ul>
 		<p>
-			Image zoom uses unmodified keys only: <Kbd label="Command"><Command /></Kbd><Kbd label="Plus"
-				><Plus /></Kbd
-			> /
-			<Kbd>Ctrl</Kbd><Kbd label="Plus"><Plus /></Kbd> and the other modified combos are left to the browser,
-			so page zoom (WCAG 1.4.4 text resize) keeps working while the dialog is open.
+			Image zoom uses unmodified keys only:
+			<KbdGroup>
+				<KbdIcon label="Command"><Command /></KbdIcon>
+				<KbdIcon label="Plus"><Plus /></KbdIcon>
+			</KbdGroup>
+			/
+			<KbdGroup>
+				<Kbd>Ctrl</Kbd>
+				<KbdIcon label="Plus"><Plus /></KbdIcon>
+			</KbdGroup> and the other modified combos are left to the browser, so page zoom (WCAG 1.4.4 text
+			resize) keeps working while the dialog is open.
 		</p>
 		<p>
 			Focus is trapped in the dialog; closing restores focus to the opening Trigger. Native page

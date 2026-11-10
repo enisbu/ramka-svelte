@@ -1,4 +1,6 @@
 @import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn-svelte/tailwind.css';
 @import '@fontsource-variable/inter';
 @import './lib/styles/lightbox-demo.css';
 

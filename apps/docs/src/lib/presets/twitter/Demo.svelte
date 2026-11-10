@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Heart, MessageCircle, Repeat2, Share } from '@lucide/svelte';
 	import { Lightbox, type LightboxItem, type ThreadPost } from './index.js';
+	import CloseOnBack from '#lib/gallery/CloseOnBack.svelte';
 
 	interface FeedPost {
 		id: string;
@@ -211,6 +212,7 @@
 				</div>
 			</article>
 
+			<CloseOnBack />
 			<Lightbox.Gallery
 				items={post.images}
 				thread={post.thread}

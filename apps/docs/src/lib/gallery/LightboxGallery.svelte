@@ -14,6 +14,7 @@
 		chromeButtonSegment,
 		chromeSegmentDivider
 	} from './chrome.js';
+	import CloseOnBack from './CloseOnBack.svelte';
 	import { ratio, type GalleryItem } from './items.js';
 
 	interface Props {
@@ -75,6 +76,7 @@
 	}
 </script>
 
+<CloseOnBack />
 <Lightbox.Portal>
 	<Lightbox.Backdrop
 		class={[

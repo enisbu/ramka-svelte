@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Lightbox, type LightboxItem } from './index.js';
+	import CloseOnBack from '#lib/gallery/CloseOnBack.svelte';
 
 	const photo = (name: string) => ({
 		src: `/examples/editorial/edit-${name}.jpg`,
@@ -85,6 +86,7 @@
 			{@render figure(2)}
 		</div>
 
+		<CloseOnBack />
 		<Lightbox.Gallery items={figures} ariaLabel="Article photographs" />
 	</Lightbox.Root>
 </article>

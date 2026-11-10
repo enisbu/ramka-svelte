@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Lightbox, type LightboxItem } from './index.js';
+	import CloseOnBack from '#lib/gallery/CloseOnBack.svelte';
 
 	const mixkit = (id: number) => `https://assets.mixkit.co/videos/${id}/${id}-720.mp4`;
 	const mixkitPoster = (id: number) =>
@@ -58,6 +59,7 @@
 				</li>
 			{/each}
 		</ul>
+		<CloseOnBack />
 		<Lightbox.Gallery items={stories} ariaLabel="Stories" />
 	</Lightbox.Root>
 </div>

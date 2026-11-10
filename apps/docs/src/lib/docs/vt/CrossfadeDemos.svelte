@@ -3,6 +3,7 @@
 	import { triggerFocus } from '#lib/gallery/chrome.js';
 	import Play from '@lucide/svelte/icons/play';
 	import DataTable from '#lib/components/DataTable.svelte';
+	import { Separator } from '#lib/components/ui/separator/index.js';
 	import LightboxGallery from '#lib/gallery/LightboxGallery.svelte';
 	import { photo } from '#lib/gallery/items.js';
 	import InitialsTriggers from '../InitialsTriggers.svelte';
@@ -101,7 +102,7 @@
 			<LightboxGallery items={photos} ariaLabel="Same-image morph" />
 		</Lightbox.Root>
 	</section>
-	<hr class="border-neutral-200 dark:border-neutral-800" />
+	<Separator />
 
 	<section class="space-y-3">
 		<h4 class={heading}><code class={code}>crossfade="both"</code>: +N tile</h4>
@@ -114,7 +115,7 @@
 			<LightboxGallery items={album} ariaLabel="Crossfade both demo" />
 		</Lightbox.Root>
 	</section>
-	<hr class="border-neutral-200 dark:border-neutral-800" />
+	<Separator />
 
 	<section class="space-y-3">
 		<h4 class={heading}><code class={code}>crossfade="both"</code>: any element</h4>
@@ -127,7 +128,7 @@
 			<LightboxGallery items={team} ariaLabel="Team portraits" />
 		</Lightbox.Root>
 	</section>
-	<hr class="border-neutral-200 dark:border-neutral-800" />
+	<Separator />
 
 	<section class="space-y-3">
 		<h4 class={heading}><code class={code}>crossfade="close"</code>: poster → video</h4>

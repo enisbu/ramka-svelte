@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Lightbox, type LightboxItem } from './index.js';
+	import CloseOnBack from '#lib/gallery/CloseOnBack.svelte';
 
 	const photo = (id: string) => ({
 		src: `/examples/default/preset-trip-${id}.jpg`,
@@ -116,6 +117,7 @@
 				</Lightbox.Trigger>
 			{/each}
 		</div>
+		<CloseOnBack />
 		<Lightbox.Gallery items={trip} ariaLabel="Trip photos" />
 	</Lightbox.Root>
 
@@ -139,6 +141,7 @@
 				</span>
 			{/snippet}
 		</Lightbox.Trigger>
+		<CloseOnBack />
 		<Lightbox.Gallery
 			items={[{ ...listing, caption: 'Cliffside cottage · Big Sur' }]}
 			ariaLabel="Cliffside cottage"
@@ -165,6 +168,7 @@
 				</span>
 			{/snippet}
 		</Lightbox.Trigger>
+		<CloseOnBack />
 		<Lightbox.Gallery items={[portrait]} ariaLabel="Maya Chen portrait" />
 	</Lightbox.Root>
 </div>

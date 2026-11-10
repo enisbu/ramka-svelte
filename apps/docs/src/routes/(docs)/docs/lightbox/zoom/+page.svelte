@@ -5,7 +5,7 @@
 	import { docsLink } from '#lib/components/docs-link.js';
 	import DocsSection from '#lib/components/DocsSection.svelte';
 	import DocsShell from '#lib/components/DocsShell.svelte';
-	import Kbd from '#lib/components/Kbd.svelte';
+	import { Kbd, KbdIcon } from '#lib/components/ui/kbd/index.js';
 	import { apiHref, docsPages } from '#lib/content/nav.js';
 	import { desktopApps, desktopRamka, mobileApps, mobileRamka, wcag } from '#lib/content/zoom.js';
 	import zoomCursor from '#lib/excerpts/zoom-cursor.css?highlight';
@@ -30,7 +30,7 @@
 	/>
 </svelte:head>
 
-{#snippet modifier()}<Kbd>Ctrl</Kbd>/<Kbd label="Command"><Command /></Kbd>{/snippet}
+{#snippet modifier()}<Kbd>Ctrl</Kbd>/<KbdIcon label="Command"><Command /></KbdIcon>{/snippet}
 
 <DocsShell title="Zoom & a11y" {toc}>
 	{#snippet description()}

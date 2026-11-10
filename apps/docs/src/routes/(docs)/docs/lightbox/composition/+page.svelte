@@ -5,7 +5,7 @@
 	import { docsLink } from '#lib/components/docs-link.js';
 	import DocsSection from '#lib/components/DocsSection.svelte';
 	import DocsShell from '#lib/components/DocsShell.svelte';
-	import Kbd from '#lib/components/Kbd.svelte';
+	import { Kbd, KbdGroup, KbdIcon } from '#lib/components/ui/kbd/index.js';
 	import { apiHref, docsPages } from '#lib/content/nav.js';
 	import chrome from '#lib/excerpts/ChromeComposition.svelte?highlight';
 	import fitBox from '#lib/excerpts/MediaFitBox.svelte?highlight';
@@ -160,12 +160,13 @@
 			Use <a href={apiHref.stage} class={docsLink}>Lightbox.Stage</a> when Content holds more than
 			the media pane, for example a thread sidebar beside the gallery. Stage is the media
 			interaction surface: trackpad wheel pull-to-dismiss, Zoom pan cover geometry, and
-			<Kbd label="Left arrow"><ArrowLeft /></Kbd>
-			<Kbd label="Right arrow"><ArrowRight /></Kbd> / <Kbd>Home</Kbd> / <Kbd>End</Kbd> gallery navigation
-			are scoped to it. Content remains the dialog shell (focus trap, <Kbd>Esc</Kbd>, zoom
-			shortcuts). Place side panels as siblings of Stage under Content so they keep native scroll
-			and their own keyboard behavior. Without a Stage, Content itself is the stage (default
-			full-bleed viewers need no change).
+			<KbdGroup>
+				<KbdIcon label="Left arrow"><ArrowLeft /></KbdIcon>
+				<KbdIcon label="Right arrow"><ArrowRight /></KbdIcon>
+			</KbdGroup> / <Kbd>Home</Kbd> / <Kbd>End</Kbd> gallery navigation are scoped to it. Content remains
+			the dialog shell (focus trap, <Kbd>Esc</Kbd>, zoom shortcuts). Place side panels as siblings
+			of Stage under Content so they keep native scroll and their own keyboard behavior. Without a
+			Stage, Content itself is the stage (default full-bleed viewers need no change).
 		</p>
 		<CodeBlock code={snippets.stage} title="Stage + side panel" />
 		<p>

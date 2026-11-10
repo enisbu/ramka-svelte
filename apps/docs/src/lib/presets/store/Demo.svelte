@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Lightbox, type LightboxItem, type ProductInfo } from './index.js';
+	import CloseOnBack from '#lib/gallery/CloseOnBack.svelte';
 
 	const product: ProductInfo = {
 		name: 'Terra 27L Backpack',
@@ -90,6 +91,7 @@
 			</div>
 		</div>
 
+		<CloseOnBack />
 		<Lightbox.Gallery
 			items={images}
 			{product}
