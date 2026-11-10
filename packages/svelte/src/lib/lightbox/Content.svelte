@@ -17,6 +17,7 @@
 		'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 	const EDITABLE = 'input, textarea, select, [contenteditable]:not([contenteditable="false"])';
 	const parked = $derived(!lb.present);
+	const locked = $derived(lb.present || lb.closing);
 	const progress = $derived(
 		lb.activeZoom
 			? zoomProgress(lb.activeZoom.zoom, lb.activeZoom.minZoom, lb.activeZoom.maxZoom)
@@ -30,7 +31,7 @@
 		dialogEl = el;
 		lb.contentEl = el;
 		$effect(() => {
-			if (!lb.present) return;
+			if (!locked) return;
 			const returnFocus = document.activeElement as HTMLElement | null;
 			const html = document.documentElement;
 			const { overflow, paddingRight } = html.style;

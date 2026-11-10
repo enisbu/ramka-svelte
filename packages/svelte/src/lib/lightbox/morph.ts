@@ -21,6 +21,49 @@ export function canMorph() {
 	);
 }
 
+/** True on mobile Blink, whose snapshot root includes the URL bar, so a moving bar aborts the morph. */
+export function snapshotRootMoves() {
+	if (typeof navigator === 'undefined' || 'GestureEvent' in window) return false;
+	if (/Firefox\//.test(navigator.userAgent)) return false;
+	const mobile =
+		(navigator as Navigator & { userAgentData?: { mobile?: boolean } }).userAgentData?.mobile ??
+		/Android/i.test(navigator.userAgent);
+	return mobile && ('chrome' in window || /Chrome\//.test(navigator.userAgent));
+}
+
+const STABLE_FRAMES = 8;
+const SETTLE_CAP = 1000;
+
+/** Resolves once layout and visual viewport agree and have held still for a few frames. */
+export function stableViewport() {
+	const read = () => {
+		const vv = window.visualViewport;
+		return {
+			key: `${innerWidth}x${innerHeight}|${vv?.height}|${Math.round(scrollX)},${Math.round(scrollY)}`,
+			aligned: !vv || Math.abs(innerHeight - vv.height) <= 1
+		};
+	};
+	return new Promise<void>((resolve) => {
+		const start = performance.now();
+		let last = read().key;
+		let still = 0;
+		const tick = () => {
+			const { key, aligned } = read();
+			const elapsed = performance.now() - start;
+			still = key === last && aligned ? still + 1 : 0;
+			last = key;
+			if (
+				still >= STABLE_FRAMES ||
+				(elapsed >= SETTLE_CAP && aligned) ||
+				elapsed >= SETTLE_CAP * 1.5
+			)
+				resolve();
+			else requestAnimationFrame(tick);
+		};
+		requestAnimationFrame(tick);
+	});
+}
+
 /** The element whose pixels bridge the morph inside a trigger or item. */
 export function morphSource(el: HTMLElement) {
 	return el.querySelector<HTMLElement>('[data-ramka-morph], [data-ramka-media], img, video') ?? el;

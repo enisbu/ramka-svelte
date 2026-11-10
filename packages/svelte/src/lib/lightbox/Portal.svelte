@@ -25,7 +25,7 @@
 	}
 </script>
 
-{#if lb.present || lb.preparing || keepMounted}
+{#if lb.present || lb.preparing || lb.held || keepMounted}
 	<div
 		data-ramka-portal
 		dir={lb.dirAttribute}

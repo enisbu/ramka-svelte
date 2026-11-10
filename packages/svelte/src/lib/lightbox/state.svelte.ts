@@ -1,7 +1,15 @@
 import { createContext, flushSync, getContext, setContext, type Snippet } from 'svelte';
 import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 import { resolveIndex, type TextDirection } from './gestures.js';
-import { canMorph, decoded, morph, morphSource, type MorphPreset } from './morph.js';
+import {
+	canMorph,
+	decoded,
+	morph,
+	morphSource,
+	snapshotRootMoves,
+	stableViewport,
+	type MorphPreset
+} from './morph.js';
 import { paintPlaceholder } from './placeholder.js';
 
 export type { TextDirection };
@@ -128,6 +136,7 @@ export class LightboxModel implements LightboxState {
 	pulling = $state(false);
 	pullSnapping = $state(false);
 	pullDismissing = $state(false);
+	closing = $state(false);
 	direction = $state<'forward' | 'backward'>('forward');
 	tablists = $state(0);
 	opener = $state.raw<TriggerEntry>();
@@ -194,6 +203,11 @@ export class LightboxModel implements LightboxState {
 	get preset(): MorphPreset {
 		const vt = this.#props.viewTransition;
 		return typeof vt === 'string' ? vt : 'default';
+	}
+
+	/** True while a close morph runs on mobile Blink, which aborts when the overlay unmounts mid-transition. */
+	get held() {
+		return this.closing && snapshotRootMoves();
 	}
 
 	get canPrev() {
@@ -326,6 +340,7 @@ export class LightboxModel implements LightboxState {
 		} catch {
 			if (!signal.aborted) this.#cancelPrepare();
 		}
+		if (!signal.aborted && snapshotRootMoves()) await stableViewport();
 		if (signal.aborted) return removePlaceholder?.();
 		this.#busy = true;
 		entry?.el.setAttribute('data-skip-fade', '');
@@ -364,6 +379,7 @@ export class LightboxModel implements LightboxState {
 		}
 		const to = triggerMorph(trigger);
 		this.#busy = true;
+		this.closing = true;
 		this.transition = morph({
 			phase: 'closing',
 			preset: this.preset,
@@ -379,6 +395,7 @@ export class LightboxModel implements LightboxState {
 		}).catch(() => {});
 		await this.transition;
 		this.#busy = false;
+		this.closing = false;
 		this.pullDismissing = false;
 		this.settle(false);
 	}
