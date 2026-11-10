@@ -1,0 +1,2 @@
+==> install.sh
+pnpm add @ramka/svelte
