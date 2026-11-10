@@ -1,33 +1,29 @@
 <script lang="ts">
+	import { BROWSER, DEV } from 'esm-env';
 	import type { Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
-	import { slideOffsets } from './geometry.js';
-	import { getLightbox } from './state.svelte.js';
+	import { nearestIndex, slideOffsets } from './geometry.js';
+	import { getLightbox, setSlides } from './state.svelte.js';
 
 	interface Props extends HTMLAttributes<HTMLDivElement> {
 		preload?: number;
+		ssrSlideShift?: boolean;
 		children?: Snippet;
 	}
 
-	let { preload = 1, children, ...rest }: Props = $props();
+	let { preload = 1, ssrSlideShift = false, children, ...rest }: Props = $props();
 	const lb = getLightbox();
+	setSlides({
+		get preload() {
+			return preload;
+		}
+	});
+	const shift = $derived(!BROWSER && ssrSlideShift);
 	let el: HTMLElement;
 	let programmatic = false;
 	let settleTimer = 0;
 
-	$effect.pre(() => {
-		lb.preload = preload;
-	});
-
-	function nearest() {
-		let best = -1;
-		let distance = Infinity;
-		for (const { index, offset } of slideOffsets(el)) {
-			const d = Math.abs(offset - el.scrollLeft);
-			if (d < distance) [best, distance] = [index, d];
-		}
-		return best;
-	}
+	const nearest = () => nearestIndex(slideOffsets(el), el.scrollLeft);
 
 	function scrollToIndex(i: number, behavior: ScrollBehavior) {
 		const target = slideOffsets(el).find((s) => s.index === i);
@@ -41,7 +37,7 @@
 		programmatic = false;
 		lb.scrolling = false;
 		const i = nearest();
-		if (i >= 0 && i !== lb.index) lb.index = i;
+		if (i >= 0) lb.setIndex(i, 'scroll');
 	}
 
 	function onscroll() {
@@ -50,13 +46,20 @@
 		settleTimer = window.setTimeout(settle, 150);
 		if (programmatic) return;
 		const i = nearest();
-		if (i >= 0 && i !== lb.index) lb.index = i;
+		if (i >= 0) lb.setIndex(i, 'scroll');
 	}
 
 	function track(node: HTMLElement) {
 		el = node;
 		lb.slidesEl = node;
 		let mounted = false;
+		if (DEV) {
+			const computed = getComputedStyle(node).direction === 'rtl' ? 'rtl' : 'ltr';
+			if (computed !== lb.dir)
+				console.warn(
+					`[ramka] Lightbox.Root resolves dir="${lb.dir}" but Lightbox.Slides renders with direction: ${computed}. Navigation will resolve the wrong slide. Pass dir="${computed}" to Lightbox.Root.`
+				);
+		}
 		$effect(() => {
 			const i = lb.index;
 			const instant = lb.instant;
@@ -90,9 +93,16 @@
 </script>
 
 <div
+	role="group"
 	data-ramka-slides
+	data-active-index={lb.index}
+	data-direction={lb.direction}
+	data-orientation="horizontal"
 	data-locked={lb.zoomed || lb.pulling || undefined}
 	data-scrolling={lb.scrolling || undefined}
+	data-ssr-shift={shift || undefined}
+	style:--lightbox-ssr-index={shift ? lb.index : undefined}
+	style:--lightbox-ssr-shift-sign={shift ? (lb.dir === 'rtl' ? 1 : -1) : undefined}
 	{...rest}
 	{onscroll}
 	onscrollend={settle}

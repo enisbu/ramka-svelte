@@ -78,12 +78,18 @@
 			<Lightbox.Content class="content {layout}" aria-label="Galerie">
 				<Lightbox.Slides
 					class="slides"
+					aria-roledescription="Karussell"
 					preload={2}
 					style="--ratio-start: {ratio(photos[0])}; --ratio-end: {ratio(photos[photos.length - 1])}"
 				>
 					{#each photos as photo, i (photo.id)}
 						<Lightbox.Slide class="slide" style="--ratio: {ratio(photo)}">
-							<Lightbox.Item index={i} caption={photo.caption}>
+							<Lightbox.Item
+								index={i}
+								caption={photo.caption}
+								aria-roledescription="Folie"
+								aria-label="{i + 1} von {photos.length}"
+							>
 								<Lightbox.Zoom>
 									<Lightbox.Media width={photo.w} height={photo.h} class="media">
 										<img src={photo.src} alt={photo.caption} width={photo.w} height={photo.h} />
@@ -126,11 +132,13 @@
 						<Lightbox.Counter class="counter" />
 					</div>
 					<Lightbox.ThumbnailStrip class="strip">
-						{#each photos as photo, i (photo.id)}
-							<Lightbox.Thumbnail index={i} class="thumb" aria-label="Foto {i + 1}">
-								<img src={photo.thumb} alt="" />
-							</Lightbox.Thumbnail>
-						{/each}
+						<Lightbox.ThumbnailStripTrack class="track" aria-label="Vorschaubilder">
+							{#each photos as photo, i (photo.id)}
+								<Lightbox.Thumbnail index={i} class="thumb" aria-label="Foto {i + 1}">
+									<img src={photo.thumb} alt="" />
+								</Lightbox.Thumbnail>
+							{/each}
+						</Lightbox.ThumbnailStripTrack>
 						{#snippet indicator()}
 							<span class="indicator"></span>
 						{/snippet}

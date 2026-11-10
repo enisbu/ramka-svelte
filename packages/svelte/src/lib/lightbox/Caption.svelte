@@ -3,16 +3,21 @@
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { getLightbox } from './state.svelte.js';
 
-	interface Props extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
-		children?: Snippet<[string]>;
+	interface Props extends HTMLAttributes<HTMLDivElement> {
+		children?: Snippet;
 	}
 
 	let { children, ...rest }: Props = $props();
 	const lb = getLightbox();
+	const caption = $derived(lb.caption);
 </script>
 
-{#if lb.caption}
-	<div data-ramka-caption aria-live="polite" {...rest}>
-		{#if children}{@render children(lb.caption)}{:else}{lb.caption}{/if}
-	</div>
-{/if}
+<div data-ramka-caption data-has-caption={!!caption || undefined} aria-live="polite" aria-atomic="true" {...rest}>
+	{#if typeof caption === 'string'}
+		{caption}
+	{:else if caption}
+		{@render caption()}
+	{:else if lb.items.size === 0}
+		{@render children?.()}
+	{/if}
+</div>

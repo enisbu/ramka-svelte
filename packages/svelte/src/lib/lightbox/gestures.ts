@@ -1,8 +1,11 @@
 export const DISMISS_DISTANCE = 100;
-export const DISMISS_VELOCITY = 400;
+const DISMISS_VELOCITY = 400;
 export const DIRECTION_LOCK_DISTANCE = 6;
 export const SNAP_DURATION = 270;
 const MIN_SCALE = 0.85;
+const SNAPBACK_HAPTIC_OVERSHOOT = 0.01;
+
+export type TextDirection = 'ltr' | 'rtl';
 
 export const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
 
@@ -37,6 +40,58 @@ export function springEasing(velocity = 0, settle = 7.5, samples = 40) {
 export function rubberBand(overflow: number, dimension: number) {
 	if (dimension <= 0) return 0;
 	return Math.sign(overflow) * (1 - 1 / ((Math.abs(overflow) * 0.55) / dimension + 1)) * dimension;
+}
+
+/** Wheel delta to zoom factor, capped at 2x per event (ramka's scaleZoom). */
+export function scaleZoom(zoom: number, delta: number, sensitivity: number) {
+	return zoom * Math.min(1 + Math.abs(delta / sensitivity), 2) ** Math.sign(delta);
+}
+
+/** Auto max zoom: the image at its natural pixel size, but at least one step above `min`. */
+export function computeMaxZoom(imageW: number, imageH: number, boxW: number, boxH: number, min: number, fallback: number) {
+	if (!imageW || !imageH || !boxW || !boxH) return fallback;
+	return Math.max(imageW / boxW, imageH / boxH, min + 1);
+}
+
+/** 0 at `min`, 1 once zoom rose one step above `min`; drives `--lightbox-zoom-progress`. */
+export function zoomProgress(scale: number, min: number, max: number) {
+	const range = Math.max(0.01, Math.min(max, min + 1) - min);
+	return clamp((scale - min) / range, 0, 1);
+}
+
+/** True when a released zoom overshot its bounds enough that the snap back is felt. */
+export function isPerceptibleSnapback(zoom: number, min: number, max: number) {
+	const bound = clamp(zoom, min, max);
+	return Math.abs(zoom - bound) > bound * SNAPBACK_HAPTIC_OVERSHOOT;
+}
+
+/** Pan range on one axis that keeps a scaled box covering the viewport, or pinned when it is smaller. */
+export function panRange(size: number, center: number, viewStart: number, viewEnd: number) {
+	const toStart = viewStart - center + size / 2;
+	const toEnd = viewEnd - center - size / 2;
+	if (size <= viewEnd - viewStart) {
+		const pinned = clamp(0, toStart, toEnd);
+		return [pinned, pinned] as const;
+	}
+	return [toEnd, toStart] as const;
+}
+
+/** Slide index step for an arrow key, mirrored horizontally in RTL. */
+export function arrowKeyDelta(key: string, dir: TextDirection) {
+	const rtl = dir === 'rtl' ? -1 : 1;
+	return ({ ArrowRight: rtl, ArrowLeft: -rtl, ArrowDown: 1, ArrowUp: -1 } as Record<string, number>)[key] ?? 0;
+}
+
+/** Clamps or wraps an index into `[0, count)`. */
+export function resolveIndex(i: number, count: number, loop: boolean) {
+	return loop ? ((i % count) + count) % count : clamp(i, 0, count - 1);
+}
+
+/** Short vibration on devices that support it. */
+export function haptic() {
+	try {
+		navigator.vibrate?.(10);
+	} catch {}
 }
 
 /** rAF tween from 0 to 1 with ease-out cubic; returns a cancel function. */

@@ -1,76 +1,104 @@
-# ramka-svelte
+# @ramka/svelte
 
-Svelte-5-Port von [ramka](https://ramka.dev) (React, MIT, Artur Bień): ungestylte, zugängliche Lightbox-Bausteine. Gleiche Compound-API, gleiche Gesten-Konstanten und Morph-Timings, rund 1.400 statt 19.500 Zeilen.
+Unstyled, accessible lightbox parts for Svelte 5: view transition morphs, native scroll snap swipe, pull to dismiss, pinch zoom, a scroll linked thumbnail strip, RTL and CSP support.
 
-## Anatomie
+This is a Svelte port of [ramka](https://ramka.dev) by Artur Bień. It keeps ramka's compound API, part names, data attributes, CSS variables, gesture constants and morph timings, so ramka's documentation applies with the differences listed below.
+
+```sh
+npm install @ramka/svelte
+```
+
+Requires `svelte` 5.40 or newer.
+
+## Anatomy
 
 ```svelte
 <script>
-  import * as Lightbox from 'ramka-svelte/lightbox';
+	import { Lightbox } from '@ramka/svelte';
 </script>
 
 <Lightbox.Root bind:open bind:index>
-  {#each photos as photo, i (photo.id)}
-    <Lightbox.Trigger index={i}>
-      <img src={photo.thumb} alt="" />
-    </Lightbox.Trigger>
-  {/each}
+	{#each photos as photo, i (photo.id)}
+		<Lightbox.Trigger index={i} aria-label="Open {photo.alt}">
+			<img src={photo.thumb} alt="" />
+		</Lightbox.Trigger>
+	{/each}
 
-  <Lightbox.Portal>
-    <Lightbox.Backdrop />
-    <Lightbox.Content aria-label="Galerie">
-      <Lightbox.Slides preload={1}>
-        {#each photos as photo, i (photo.id)}
-          <Lightbox.Slide>
-            <Lightbox.Item index={i} caption={photo.caption}>
-              <Lightbox.Zoom>
-                <Lightbox.Media width={photo.w} height={photo.h}>
-                  <img src={photo.src} alt={photo.alt} />
-                </Lightbox.Media>
-              </Lightbox.Zoom>
-            </Lightbox.Item>
-          </Lightbox.Slide>
-        {/each}
-      </Lightbox.Slides>
-      <Lightbox.Counter />
-      <Lightbox.Caption />
-      <Lightbox.ZoomOut aria-label="Herauszoomen" />
-      <Lightbox.ZoomIn aria-label="Hineinzoomen" />
-      <Lightbox.Close aria-label="Schließen" />
-      <Lightbox.Previous aria-label="Vorheriges" />
-      <Lightbox.Next aria-label="Nächstes" />
-      <Lightbox.Thumbnail index={0}>…</Lightbox.Thumbnail>
-    </Lightbox.Content>
-  </Lightbox.Portal>
+	<Lightbox.Portal>
+		<Lightbox.Backdrop />
+		<Lightbox.Content aria-label="Image viewer">
+			<Lightbox.Slides aria-roledescription="carousel">
+				{#each photos as photo, i (photo.id)}
+					<Lightbox.Slide>
+						<Lightbox.Item index={i} caption={photo.caption} aria-roledescription="slide" aria-label="{i + 1} of {photos.length}">
+							<Lightbox.Zoom>
+								<Lightbox.Media width={photo.w} height={photo.h}>
+									<img src={photo.src} alt={photo.alt} />
+								</Lightbox.Media>
+							</Lightbox.Zoom>
+						</Lightbox.Item>
+					</Lightbox.Slide>
+				{/each}
+			</Lightbox.Slides>
+			<Lightbox.Caption />
+			<Lightbox.Counter />
+			<Lightbox.Close aria-label="Close">×</Lightbox.Close>
+			<Lightbox.Previous aria-label="Previous">‹</Lightbox.Previous>
+			<Lightbox.Next aria-label="Next">›</Lightbox.Next>
+			<Lightbox.ZoomOut aria-label="Zoom out">−</Lightbox.ZoomOut>
+			<Lightbox.ZoomIn aria-label="Zoom in">+</Lightbox.ZoomIn>
+			<Lightbox.ThumbnailStrip>
+				<Lightbox.ThumbnailStripTrack aria-label="Thumbnails">
+					{#each photos as photo, i (photo.id)}
+						<Lightbox.Thumbnail index={i}><img src={photo.thumb} alt={photo.alt} /></Lightbox.Thumbnail>
+					{/each}
+				</Lightbox.ThumbnailStripTrack>
+			</Lightbox.ThumbnailStrip>
+		</Lightbox.Content>
+	</Lightbox.Portal>
 </Lightbox.Root>
 ```
 
-Vollständiges Beispiel mit Skin: `src/routes/+page.svelte`.
+The parts are also exported from `@ramka/svelte/lightbox` for `import * as Lightbox from '@ramka/svelte/lightbox'`. The library ships no visible text and no default labels: pass `aria-label` or content to every control, and dev builds warn when one is missing.
 
-## Verhalten
+## Parts
 
-- **Morph**: View Transitions API zwischen Trigger-Bild und `Media`. Fallback auf Fade bei fehlendem Support oder `prefers-reduced-motion`. `Root` `viewTransition`: `true | false | 'default' | 'snappy' | 'relaxed' | 'spring'`. `morphTo`: `'active' | 'origin' | 'closest'`. `Trigger` `crossfade`: `'open' | 'close' | 'both'`.
-- **Slides**: natives Scroll-Snap-Karussell, Index folgt dem Wischen live.
-- **Pull-to-dismiss**: Touch-Drag und Trackpad-Wheel, gedämpft wie im Original (100 px oder 400 px/s schließen, sonst Feder zurück).
-- **Zoom**: Pinch, Pan mit Rubberband und Schwung, Doppeltipp, Doppelklick, Ctrl/Cmd+Wheel.
-- **Tastatur**: Esc, Pfeile (blättern, gezoomt: verschieben), Home/End, `+` `-` `0`. Fokusfalle, Fokus zurück an den Auslöser, Scroll-Lock.
-- **Programmatisch**: `bind:open`, `bind:index`, oder `bind:this` auf `Root` und `show(i)` / `close()` (mit Morph).
-- **Zurück-Taste schließt** (SvelteKit-Shallow-Routing): `Root` meldet jedes Öffnen und Schließen über `onOpenChange`. Die Demo legt damit per `goto('', { shallow: true, state })` einen History-Eintrag an und schließt bei `page.state`-Verlust mit Morph, siehe `src/routes/+page.svelte`. Die Library selbst bleibt routerfrei.
+| Part | Purpose |
+| --- | --- |
+| `Root` | State owner. `bind:open`, `bind:index`, `loop`, `count`, `dir`, `viewTransition` (`true`, `false` or a preset: `default`, `snappy`, `relaxed`, `spring`), `morphTo` (`active`, `origin`, `closest`), `scrollTriggerIntoView`, `awaitImageDecode`, `handle`, and the callbacks `onOpenChange`, `onOpenChangeComplete`, `onValueChange(index, { source })`, `onBeforeOpen`, `onBeforeClose`. `bind:this` exposes `show(index)` and `close()`. |
+| `Trigger` | Opens the lightbox at `index` and morphs from its image. `id`, `handle` (detached triggers), `crossfade`. Snippet args: `{ open, active, morphRef, imageRef }`. |
+| `Portal` | Mounts the dialog on `document.body`, a `container`, or in place with `container={null}`. `keepMounted` parks it inert. |
+| `Backdrop`, `Content` | Scrim and dialog. `Content` owns focus trap, scroll lock, keyboard, pull to dismiss (`pullToClose`). |
+| `Stage` | Optional region that scopes gallery keys and pan bounds, and can be the morph target. |
+| `Slides`, `Slide`, `Item` | Scroll snap track, slide wrapper, item with `index`, `caption` (string or snippet) and `preload` gating. |
+| `Zoom`, `Media` | Pinch, wheel, double tap and keyboard zoom (`minZoom`, `maxZoom`, `zoomStep`, `scrollToZoom`, `wheelSensitivity`, `keyboardPanDistance`, `doubleClickDelay`, `onZoomChange`); `bind:this` exposes `zoomIn`, `zoomOut`, `zoomTo`, `reset`. `Media` sizes the image box from `width` and `height`. |
+| `Close`, `Previous`, `Next`, `ZoomIn`, `ZoomOut` | Buttons with `data-disabled` at their bounds. |
+| `Counter`, `Caption` | Live regions. `Counter` snippet args: `{ current, total }`. `Caption` children are the fallback before items register. |
+| `ThumbnailGroup`, `Thumbnail` | Tablist with roving focus, arrow keys, Home and End. |
+| `ThumbnailStrip`, `ThumbnailStripTrack` | Photos style strip that centers the active thumbnail and follows the swipe. `scrubOnSelect`, `selectViewTransition`, `wrapSelectCommit`, `indicator` snippet. |
+| `CSPProvider` | Passes a `nonce` to the injected `<style>` tag. |
 
-## Styling-Vertrag
+`createHandle()` returns a `LightboxHandle` with `open(index, { triggerId })`, `close()`, `goTo(index)` and `isOpen` for opening from anywhere. `getLightbox`, `getItem`, `getTrigger` and `getStage` read the part contexts in custom parts.
 
-Data-Attribute: `data-open`, `data-closed`, `data-pulling`, `data-pull-dismissing`, `data-zoomed`, `data-active`, `data-scrolling`, `data-locked`.
-CSS-Variablen: `--lightbox-vt-duration`, `--lightbox-vt-easing` (auf dem Portal), `--lightbox-pull-progress`, `--lightbox-pull-snap-duration`, `--lightbox-pull-snap-easing` (auf dem Portal während Pull).
-Strukturelle Defaults liegen in `:where()` mit Spezifität 0 und lassen sich ohne `!important` überschreiben.
+## Styling
 
-## Nicht portiert
+Structural defaults live in `:where()` rules with zero specificity, injected once at runtime. Style the parts with classes and the state attributes: `data-open`, `data-closed`, `data-active`, `data-pulling`, `data-pull-snapping`, `data-pull-dismissing`, `data-zooming`, `data-zoomed`, `data-zoom`, `data-dragging`, `data-disabled`, `data-has-caption`, `data-scrubbing`, `data-positioned`. CSS variables include `--lightbox-vt-duration`, `--lightbox-vt-easing`, `--lightbox-zoom-progress`, `--lightbox-pull-progress`, `--lightbox-thumbnail-strip-travel`, `--lightbox-select-vt-duration` and `--lightbox-select-vt-easing`.
 
-ThumbnailStrip mit Scroll-Kopplung (`Thumbnail` reicht für Leisten), `Stage`, RTL, CSP-Nonce, Low-End-Erkennung, Haptik, Lazy-Loading der Engines, React-Kompatibilitätsschicht.
+## Differences from ramka
 
-## Entwicklung
+- Snippets and attachments replace the `render` prop and refs. `Trigger` and `Item` pass `morphRef` and `imageRef` attachments in their snippet args.
+- `bind:open` and `bind:index` replace `open` and `defaultOpen`, `value` and `defaultValue`.
+- No lazy loading of the morph, pull and zoom engines, and no browser specific paths for Firefox, Android Blink or composited WebKit morphs. The Svelte build is small enough to ship in one piece.
+
+## Development
 
 ```sh
-pnpm dev      # Demo
-pnpm check    # svelte-check
-pnpm build    # Paket nach dist/, publint
+pnpm dev     # playground in src/routes
+pnpm check   # svelte-check
+pnpm test    # vitest: unit tests in node, component tests in Chromium
+pnpm build   # svelte-package and publint
 ```
+
+## License
+
+MIT. Copyright (c) 2026 Artur Bień (ramka) and Enis Budancamanak (Svelte port). This package contains code ported from ramka, which is released under the MIT License; the full text is in [LICENSE](./LICENSE).

@@ -7,16 +7,33 @@ export function slideOffsets(track: HTMLElement) {
 	}));
 }
 
-/** Fractional slide index for the current scroll position, 1.5 = halfway between slide 1 and 2. */
-export function scrollProgress(track: HTMLElement) {
-	const slides = slideOffsets(track);
-	const x = track.scrollLeft;
+/** Fractional index for a scroll position; works for LTR (rising) and RTL (falling) offsets. */
+export function progressAt(slides: { index: number; offset: number }[], x: number) {
 	if (!slides.length) return 0;
-	if (x <= slides[0].offset) return slides[0].index;
+	const sign = slides.length > 1 && slides[1].offset < slides[0].offset ? -1 : 1;
+	const at = x * sign;
+	if (at <= slides[0].offset * sign) return slides[0].index;
 	for (let k = 0; k < slides.length - 1; k++) {
 		const a = slides[k];
 		const b = slides[k + 1];
-		if (x <= b.offset) return a.index + ((x - a.offset) / (b.offset - a.offset || 1)) * (b.index - a.index);
+		const [ao, bo] = [a.offset * sign, b.offset * sign];
+		if (at <= bo) return a.index + ((at - ao) / (bo - ao || 1)) * (b.index - a.index);
 	}
 	return slides[slides.length - 1].index;
+}
+
+/** Fractional slide index for the current scroll position, 1.5 = halfway between slide 1 and 2. */
+export function scrollProgress(track: HTMLElement) {
+	return progressAt(slideOffsets(track), track.scrollLeft);
+}
+
+/** Index whose centered offset is closest to `x`. */
+export function nearestIndex(slides: { index: number; offset: number }[], x: number) {
+	let best = -1;
+	let distance = Infinity;
+	for (const { index, offset } of slides) {
+		const d = Math.abs(offset - x);
+		if (d < distance) [best, distance] = [index, d];
+	}
+	return best;
 }

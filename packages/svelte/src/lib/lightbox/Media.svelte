@@ -11,16 +11,18 @@
 
 	let { width, height, children, ...rest }: Props = $props();
 	const item = getItem();
-	let intrinsic = $state<number>();
-	const ratio = $derived(width && height ? width / height : intrinsic);
+	let auto = $state<{ w: number; h: number }>();
+	const w = $derived(width ?? auto?.w);
+	const h = $derived(height ?? auto?.h);
+	const sized = $derived(!!w && !!h);
 
 	function media(el: HTMLElement) {
 		item.setMedia(el);
 		const img = el.querySelector('img, video') as HTMLImageElement | HTMLVideoElement | null;
 		const read = () => {
-			const w = img instanceof HTMLImageElement ? img.naturalWidth || img.width : img?.videoWidth;
-			const h = img instanceof HTMLImageElement ? img.naturalHeight || img.height : img?.videoHeight;
-			if (w && h) intrinsic = w / h;
+			const w = img instanceof HTMLImageElement ? Number(img.getAttribute('width')) || img.naturalWidth : img?.videoWidth;
+			const h = img instanceof HTMLImageElement ? Number(img.getAttribute('height')) || img.naturalHeight : img?.videoHeight;
+			if (w && h) auto = { w, h };
 		};
 		read();
 		img?.addEventListener('load', read);
@@ -33,6 +35,13 @@
 	}
 </script>
 
-<div data-ramka-media data-sized={ratio ? '' : undefined} style:--ramka-ratio={ratio} {...rest} {@attach media}>
+<div
+	data-ramka-media
+	data-width={sized ? w : undefined}
+	data-height={sized ? h : undefined}
+	style:--ramka-ratio={sized ? w! / h! : undefined}
+	{...rest}
+	{@attach media}
+>
 	{@render children?.()}
 </div>

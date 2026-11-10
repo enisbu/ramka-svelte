@@ -22,7 +22,10 @@ export function pullToDismiss(lb: LightboxState) {
 		let wheelTimer = 0;
 
 		const host = () => lb.portal ?? content;
-		const blocked = () => lb.zoomed || lb.scrolling || lb.pullDismissing;
+		const blocked = () => !lb.open || lb.zoomed || lb.zooming || lb.scrolling || lb.pullDismissing;
+		const outside = (target: EventTarget | null) =>
+			!(target instanceof Element) || !!target.closest(IGNORED) || (!!lb.stageEl && !lb.stageEl.contains(target));
+		let snapTimer = 0;
 
 		function apply(dx: number, dy: number) {
 			const t = pullTransform(dx, dy);
@@ -33,7 +36,9 @@ export function pullToDismiss(lb: LightboxState) {
 		function begin() {
 			item = lb.items.get(lb.index)?.el;
 			if (!item) return false;
+			clearTimeout(snapTimer);
 			item.style.transition = 'none';
+			lb.pullSnapping = false;
 			lb.pulling = true;
 			return true;
 		}
@@ -52,7 +57,9 @@ export function pullToDismiss(lb: LightboxState) {
 			host().style.setProperty('--lightbox-pull-progress', '0');
 			el.style.transition = `transform ${SNAP_DURATION}ms ${easing}`;
 			el.style.transform = '';
-			setTimeout(() => {
+			lb.pullSnapping = true;
+			snapTimer = window.setTimeout(() => {
+				lb.pullSnapping = false;
 				el.style.transition = '';
 				host().style.removeProperty('--lightbox-pull-snap-duration');
 				host().style.removeProperty('--lightbox-pull-snap-easing');
@@ -61,7 +68,7 @@ export function pullToDismiss(lb: LightboxState) {
 
 		function onpointerdown(e: PointerEvent) {
 			if (e.pointerType === 'mouse' || !e.isPrimary || blocked()) return;
-			if ((e.target as Element).closest(IGNORED)) return;
+			if (outside(e.target)) return;
 			start = { x: e.clientX, y: e.clientY };
 			axis = 'none';
 			samples = [{ y: e.clientY, t: e.timeStamp }];
@@ -93,7 +100,7 @@ export function pullToDismiss(lb: LightboxState) {
 
 		function onwheel(e: WheelEvent) {
 			if (e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
-			if ((!lb.pulling && blocked()) || (e.target as Element).closest('[data-ramka-no-pull]')) return;
+			if (!lb.pulling && (blocked() || outside(e.target))) return;
 			e.preventDefault();
 			if (!lb.pulling && !begin()) return;
 			wheelY -= e.deltaY;
@@ -115,6 +122,7 @@ export function pullToDismiss(lb: LightboxState) {
 		content.addEventListener('wheel', onwheel, { passive: false });
 		return () => {
 			clearTimeout(wheelTimer);
+			clearTimeout(snapTimer);
 			content.removeEventListener('pointerdown', onpointerdown);
 			content.removeEventListener('pointermove', onpointermove);
 			content.removeEventListener('pointerup', onpointerup);

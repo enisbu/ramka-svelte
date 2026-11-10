@@ -1,34 +1,54 @@
 {
 	"name": "@ramka/svelte",
 	"version": "0.0.1",
+	"description": "Svelte 5 port of ramka: unstyled, accessible lightbox primitives with view-transition morphs, swipe, pull-to-dismiss and pinch zoom.",
+	"license": "MIT",
 	"keywords": [
-		"svelte"
+		"svelte",
+		"svelte5",
+		"lightbox",
+		"gallery",
+		"view-transitions",
+		"pinch-zoom",
+		"swipe",
+		"carousel",
+		"headless",
+		"accessible",
+		"ramka"
 	],
+	"homepage": "TODO",
+	"bugs": {
+		"url": "TODO"
+	},
+	"repository": {
+		"type": "git",
+		"url": "TODO"
+	},
+	"type": "module",
 	"files": [
 		"dist",
 		"!dist/**/*.test.*",
 		"!dist/**/*.spec.*",
 		"LICENSE"
 	],
-	"type": "module",
-	"sideEffects": [
-		"**/*.css"
-	],
-	"types": "./dist/index.d.ts",
+	"sideEffects": false,
 	"svelte": "./dist/index.js",
-	"imports": {
-		"#lib": "./src/lib/index.js",
-		"#lib/*": "./src/lib/*"
-	},
+	"types": "./dist/index.d.ts",
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
-			"svelte": "./dist/index.js"
+			"svelte": "./dist/index.js",
+			"default": "./dist/index.js"
 		},
 		"./lightbox": {
 			"types": "./dist/lightbox/index.d.ts",
-			"svelte": "./dist/lightbox/index.js"
+			"svelte": "./dist/lightbox/index.js",
+			"default": "./dist/lightbox/index.js"
 		}
+	},
+	"imports": {
+		"#lib": "./src/lib/index.js",
+		"#lib/*": "./src/lib/*"
 	},
 	"scripts": {
 		"dev": "svelte-package -w",
@@ -37,24 +57,31 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"prepack": "svelte-kit sync && svelte-package && publint",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"test": "vitest run",
+		"test:watch": "vitest"
+	},
+	"peerDependencies": {
+		"svelte": "^5.40.0"
+	},
+	"dependencies": {
+		"esm-env": "^1.2.2"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^8.0.0",
 		"@sveltejs/kit": "^3.0.0",
 		"@sveltejs/package": "^2.5.8",
 		"@sveltejs/vite-plugin-svelte": "^7.2.0",
+		"@vitest/browser-playwright": "^5.1.0",
+		"playwright": "1.62.1",
 		"publint": "^0.3.21",
 		"svelte": "^5.57.2",
 		"svelte-check": "^4.6.0",
 		"typescript": "^6.0.3",
-		"vite": "^8.3.0"
+		"vite": "^8.3.0",
+		"vitest": "^5.1.0",
+		"vitest-browser-svelte": "^3.1.0"
 	},
-	"peerDependencies": {
-		"svelte": "^5.40.0"
-	},
-	"description": "Svelte 5 port of ramka: unstyled, accessible lightbox primitives with view-transition morphs, swipe, pull-to-dismiss and pinch zoom.",
-	"license": "MIT",
 	"publishConfig": {
 		"access": "public"
 	}
