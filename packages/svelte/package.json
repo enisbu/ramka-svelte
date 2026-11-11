@@ -1,6 +1,6 @@
 {
 	"name": "@ramka/svelte",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"description": "Svelte 5 port of ramka: unstyled, accessible lightbox primitives with view-transition morphs, swipe, pull-to-dismiss and pinch zoom.",
 	"license": "MIT",
 	"keywords": [
